@@ -20,6 +20,16 @@ const SEVIYE_XP_GEREKSINIMLERI = [
     1400,   // Seviye 8
     1900,   // Seviye 9
     2500,   // Seviye 10
+    3200,   // Seviye 11
+    4000,   // Seviye 12
+    5000,   // Seviye 13
+    6200,   // Seviye 14
+    7600,   // Seviye 15
+    9200,   // Seviye 16
+    11000,  // Seviye 17
+    13000,  // Seviye 18
+    15500,  // Seviye 19
+    18500,  // Seviye 20
 ];
 
 // --- TİPLER ---
@@ -43,9 +53,19 @@ const UNVANLAR = [
     '⚡ Su Ustası',       // 8
     '👑 Su Kralı',        // 9
     '🏆 Efsane',          // 10
+    '💎 Kristal',         // 11
+    '🌟 Yıldız',          // 12
+    '⭐ Süper Yıldız',    // 13
+    '🔥 Ateş',            // 14
+    '❄️ Buz',             // 15
+    '🌪️ Fırtına',         // 16
+    '🦄 Efsanevi',        // 17
+    '👾 Mitolojik',       // 18
+    '🚀 Kozmik',          //19
+    '🌌 Evrensel',        // 20
 ];
 
-// --- XP KAZANIM TABLOK ---
+// --- XP KAZANIM TABLOSU ---
 export const XP_KAZANIMLARI = {
     SU_ICME: 10,              // Her su içmede
     HEDEF_TAMAMLAMA: 50,      // Günlük hedef tamamlama
@@ -92,18 +112,18 @@ function hesaplaSeviyeDurumu(toplamXP: number): SeviyeDurumu {
     }
 
     // Max seviye kontrolü
-    if (seviye > 10) seviye = 10;
+    if (seviye > 20) seviye = 20;
 
-    const sonrakiSeviyeXP = seviye < 10
+    const sonrakiSeviyeXP = seviye < 20
         ? SEVIYE_XP_GEREKSINIMLERI[seviye]
-        : SEVIYE_XP_GEREKSINIMLERI[9];
+        : SEVIYE_XP_GEREKSINIMLERI[19];
 
     return {
         seviye,
         toplamXP,
         mevcutSeviyeXP: kalanXP,
         sonrakiSeviyeXP,
-        unvan: UNVANLAR[seviye - 1] || UNVANLAR[9],
+        unvan: UNVANLAR[seviye - 1] || UNVANLAR[19],
     };
 }
 

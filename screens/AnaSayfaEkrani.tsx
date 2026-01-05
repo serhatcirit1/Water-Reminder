@@ -15,7 +15,7 @@ import * as Haptics from 'expo-haptics';
 import Svg, { Path, Defs, LinearGradient, Stop, Circle } from 'react-native-svg';
 import { useTema } from '../TemaContext';
 import {
-    hedefYukle, bardakBoyutuYukle,
+    hedefYukle, bardakBoyutuYukle, bardakBoyutuKaydet,
     rekorKontrolEt, suIcmeSaatiKaydet, sonIcmeZamaniKaydet, BARDAK_SECENEKLERI,
     streakHesapla, StreakBilgisi, sonIcmeZamaniYukle
 } from '../ayarlarUtils';
@@ -421,7 +421,10 @@ export function AnaSayfaEkrani() {
                                     styles.sizeOption,
                                     bardakBoyutu === secenek.ml && styles.sizeOptionActive
                                 ]}
-                                onPress={() => setBardakBoyutu(secenek.ml)}
+                                onPress={async () => {
+                                    setBardakBoyutu(secenek.ml);
+                                    await bardakBoyutuKaydet(secenek.ml);
+                                }}
                             >
                                 <Text style={[
                                     styles.sizeOptionText,

@@ -331,16 +331,16 @@ export function IstatistiklerEkrani() {
 
                     {/* 24 Saatlik Çizgi Grafik */}
                     <View style={styles.lineChartContainer}>
-                        <Svg width={SCREEN_WIDTH - 80} height={120}>
+                        <Svg width={SCREEN_WIDTH - 100} height={150}>
                             {/* Arka plan çizgileri */}
-                            <Line x1={0} y1={30} x2={SCREEN_WIDTH - 80} y2={30} stroke="#1E5166" strokeWidth={0.5} />
-                            <Line x1={0} y1={60} x2={SCREEN_WIDTH - 80} y2={60} stroke="#1E5166" strokeWidth={0.5} />
-                            <Line x1={0} y1={90} x2={SCREEN_WIDTH - 80} y2={90} stroke="#1E5166" strokeWidth={1} />
+                            <Line x1={0} y1={30} x2={SCREEN_WIDTH - 100} y2={30} stroke="#1E5166" strokeWidth={0.5} />
+                            <Line x1={0} y1={60} x2={SCREEN_WIDTH - 100} y2={60} stroke="#1E5166" strokeWidth={0.5} />
+                            <Line x1={0} y1={90} x2={SCREEN_WIDTH - 100} y2={90} stroke="#1E5166" strokeWidth={1} />
 
                             {/* Çizgi Path */}
                             {saatIstatistikleri.length > 0 && (() => {
                                 const maxToplam = Math.max(...saatIstatistikleri.map(s => s.toplam), 1);
-                                const chartWidth = SCREEN_WIDTH - 80;
+                                const chartWidth = SCREEN_WIDTH - 100;
                                 const chartHeight = 60;
 
                                 let pathD = '';
@@ -361,10 +361,10 @@ export function IstatistiklerEkrani() {
                                 );
                             })()}
 
-                            {/* Noktalar ve tıklama alanları */}
+                            {/* Noktalar */}
                             {saatIstatistikleri.map((s, i) => {
                                 const maxToplam = Math.max(...saatIstatistikleri.map(st => st.toplam), 1);
-                                const x = (i / 23) * (SCREEN_WIDTH - 80);
+                                const x = (i / 23) * (SCREEN_WIDTH - 100);
                                 const y = 90 - (s.toplam / maxToplam) * 60;
                                 const isTop = s.toplam === maxToplam && s.toplam > 0;
                                 return (
@@ -374,34 +374,21 @@ export function IstatistiklerEkrani() {
                                         cy={y}
                                         r={isTop ? 5 : 3}
                                         fill={isTop ? '#FFD700' : s.toplam > 0 ? '#4FC3F7' : '#1E5166'}
-                                        onPress={() => setFavoriSaat(favoriSaat?.saat === s.saat ? null : { saat: s.saat, toplam: s.toplam })}
                                     />
                                 );
                             })}
 
                             {/* Saat etiketleri */}
                             {[0, 6, 12, 18, 23].map((hour) => {
-                                const x = (hour / 23) * (SCREEN_WIDTH - 80);
+                                const x = (hour / 23) * (SCREEN_WIDTH - 100);
                                 return (
-                                    <SvgText key={hour} x={x} y={108} fontSize="9" fill="#90CAF9" textAnchor="middle">
+                                    <SvgText key={hour} x={x} y={128} fontSize="12" fill="#4FC3F7" textAnchor="middle" fontWeight="700">
                                         {hour}:00
                                     </SvgText>
                                 );
                             })}
                         </Svg>
                     </View>
-
-                    {/* Seçili Saat Tooltip */}
-                    {favoriSaat && (
-                        <TouchableOpacity
-                            style={styles.saatTooltip}
-                            onPress={() => setFavoriSaat(null)}
-                        >
-                            <Text style={styles.saatTooltipText}>
-                                🕐 {favoriSaat.saat}:00 • 💧 {favoriSaat.toplam} bardak su içilmiş
-                            </Text>
-                        </TouchableOpacity>
-                    )}
                 </View>
 
                 {/* Trend Analizi */}
@@ -751,32 +738,64 @@ const styles = StyleSheet.create({
     streakValueSecondary: { fontSize: 18, fontWeight: 'bold', color: '#4FC3F7' },
     streakDivider: { width: 1, height: 40, backgroundColor: '#1E5166', marginHorizontal: 15 },
 
-    favoriCard: { backgroundColor: '#134156', borderRadius: 20, padding: 20, marginBottom: 20 },
-    favoriHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 5 },
-    favoriEmoji: { fontSize: 24, marginRight: 10 },
-    favoriTitle: { fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' },
-    favoriSubtitle: { fontSize: 12, color: '#90CAF9', marginBottom: 20 },
-    favoriInfoRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
-    favoriInfoBox: { backgroundColor: '#0D3A4D', borderRadius: 15, padding: 15, flex: 0.48, alignItems: 'center' },
-    favoriInfoEmoji: { fontSize: 28, marginBottom: 8 },
-    favoriInfoValue: { fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' },
-    favoriInfoLabel: { fontSize: 11, color: '#90CAF9', marginTop: 4 },
+    favoriCard: {
+        backgroundColor: '#0B3B52',
+        borderRadius: 24,
+        padding: 24,
+        marginBottom: 20,
+        borderWidth: 1,
+        borderColor: '#1E5166',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 5,
+    },
+    favoriHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
+    favoriEmoji: { fontSize: 28, marginRight: 12 },
+    favoriTitle: { fontSize: 22, fontWeight: 'bold', color: '#FFFFFF', letterSpacing: 0.3 },
+    favoriSubtitle: { fontSize: 13, color: '#81D4FA', marginBottom: 24, opacity: 0.85 },
+    favoriInfoRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 24, gap: 12 },
+    favoriInfoBox: {
+        backgroundColor: 'rgba(13, 58, 77, 0.6)',
+        borderRadius: 18,
+        padding: 18,
+        flex: 1,
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: 'rgba(79, 195, 247, 0.15)',
+        shadowColor: '#4FC3F7',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+    },
+    favoriInfoEmoji: { fontSize: 32, marginBottom: 10 },
+    favoriInfoValue: { fontSize: 18, fontWeight: 'bold', color: '#4FC3F7', letterSpacing: 0.5 },
+    favoriInfoLabel: { fontSize: 12, color: '#90CAF9', marginTop: 6, fontWeight: '500' },
     chartContainer: { alignItems: 'center' },
 
     // Çizgi Grafik
     lineChartContainer: {
         alignItems: 'center',
-        backgroundColor: '#0D3A4D',
-        borderRadius: 15,
-        padding: 15,
-        marginTop: 10,
+        backgroundColor: 'rgba(13, 58, 77, 0.5)',
+        borderRadius: 20,
+        padding: 20,
+        marginTop: 12,
+        borderWidth: 1,
+        borderColor: 'rgba(79, 195, 247, 0.1)',
     },
     saatTooltip: {
-        backgroundColor: '#1E88E5',
-        borderRadius: 10,
-        padding: 12,
-        marginTop: 15,
+        backgroundColor: '#1565C0',
+        borderRadius: 16,
+        padding: 14,
+        marginTop: 16,
         alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#4FC3F7',
+        shadowColor: '#4FC3F7',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 6,
     },
     saatTooltipText: { fontSize: 13, color: '#FFFFFF', fontWeight: '600' },
 

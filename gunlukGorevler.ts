@@ -76,6 +76,54 @@ const GOREV_SABLONLARI: Omit<GunlukGorev, 'ilerleme' | 'tamamlandi'>[] = [
         hedef: 750,
         xpOdulu: 35,
     },
+    {
+        id: 'sabah_rutini',
+        baslik: 'Sabah Rutini',
+        aciklama: 'Uyandıktan sonra ilk 30 dakikada 250 ml su iç',
+        emoji: '🌄',
+        hedef: 250,
+        xpOdulu: 25,
+    },
+    {
+        id: 'hedef_asimi',
+        baslik: 'Hedef Aşımı',
+        aciklama: 'Bugün günlük hedefinin %120\'sini tamamla',
+        emoji: '🚀',
+        hedef: 0, // Dinamik hesaplanacak
+        xpOdulu: 40,
+    },
+    {
+        id: 'sicak_gun',
+        baslik: 'Sıcak Gün Mücadelesi',
+        aciklama: 'Hava sıcakken 3000 ml su iç',
+        emoji: '🌡️',
+        hedef: 3000,
+        xpOdulu: 50,
+    },
+    {
+        id: 'streak_koruma',
+        baslik: 'Seriyi Koru',
+        aciklama: 'Bugün hedefini tamamla ve seriini devam ettir',
+        emoji: '🔥',
+        hedef: 0, // Dinamik
+        xpOdulu: 30,
+    },
+    {
+        id: 'gece_oncesi',
+        baslik: 'Gece Öncesi',
+        aciklama: 'Uyumadan 1 saat önce 200 ml su iç',
+        emoji: '🌙',
+        hedef: 200,
+        xpOdulu: 20,
+    },
+    {
+        id: 'reguler_icim',
+        baslik: 'Düzenli İçim',
+        aciklama: 'Her 2 saatte bir su iç (5 kez)',
+        emoji: '⏰',
+        hedef: 5,
+        xpOdulu: 35,
+    },
 ];
 
 // --- FONKSİYONLAR ---

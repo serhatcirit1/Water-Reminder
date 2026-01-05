@@ -1,19 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import { Text, View } from 'react-native';
+import { Text, View, ActivityIndicator } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Ekranlar ve Context
 import { TemaProvider, useTema } from './TemaContext';
-import { AnaSayfaEkrani, IstatistiklerEkrani, AyarlarEkrani } from './screens';
+import { AnaSayfaEkrani, IstatistiklerEkrani, AyarlarEkrani, OnboardingEkrani } from './screens';
 
 const Tab = createBottomTabNavigator();
 
 // Tab Bar Icon bileşeni (Emoji kullanarak)
 const TabBarIcon = ({ label, focused }: { label: string; focused: boolean }) => (
-  <View style={{ alignItems: 'center', justifyContent: 'center', top: 5 }}>
+  <View style={{ alignItems: 'center', justifyContent: 'center', top: -2 }}>
     <Text style={{ fontSize: 24, opacity: focused ? 1 : 0.5 }}>{label}</Text>
   </View>
 );
@@ -69,14 +70,56 @@ function NavigationContent() {
   );
 }
 
+function AppContent() {
+  const { renkler } = useTema();
+  const [loading, setLoading] = useState(true);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  useEffect(() => {
+    checkOnboarding();
+  }, []);
+
+  const checkOnboarding = async () => {
+    try {
+      const completed = await AsyncStorage.getItem('@onboarding_tamamlandi');
+      setShowOnboarding(completed !== 'true');
+    } catch (error) {
+      console.error('Onboarding kontrolü hatası:', error);
+      setShowOnboarding(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleOnboardingComplete = () => {
+    setShowOnboarding(false);
+  };
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: renkler.arkaplan }}>
+        <ActivityIndicator size="large" color={renkler.vurguAcik} />
+      </View>
+    );
+  }
+
+  if (showOnboarding) {
+    return <OnboardingEkrani onComplete={handleOnboardingComplete} />;
+  }
+
+  return (
+    <NavigationContainer>
+      <NavigationContent />
+      <StatusBar style="auto" />
+    </NavigationContainer>
+  );
+}
+
 export default function App() {
   return (
     <SafeAreaProvider>
       <TemaProvider>
-        <NavigationContainer>
-          <NavigationContent />
-          <StatusBar style="auto" />
-        </NavigationContainer>
+        <AppContent />
       </TemaProvider>
     </SafeAreaProvider>
   );

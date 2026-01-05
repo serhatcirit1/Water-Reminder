@@ -52,6 +52,20 @@ export const ROZET_TANIMLARI: Omit<Rozet, 'kazanildi' | 'kazanilmaTarihi'>[] = [
         emoji: '🏆',
         kosul: '30 günlük streak',
     },
+    {
+        id: 'streak_60',
+        isim: 'İki Aylık Titan',
+        aciklama: '60 gün üst üste hedefini tamamla',
+        emoji: '💎',
+        kosul: '60 günlük streak',
+    },
+    {
+        id: 'streak_100',
+        isim: 'Yüzün Gücü',
+        aciklama: '100 gün üst üste hedefini tamamla',
+        emoji: '👑',
+        kosul: '100 günlük streak',
+    },
 
     // Toplam Su Rozetleri
     {
@@ -76,11 +90,32 @@ export const ROZET_TANIMLARI: Omit<Rozet, 'kazanildi' | 'kazanilmaTarihi'>[] = [
         kosul: '25000 ml toplam',
     },
     {
-        id: 'toplam_125000',
+        id: 'toplam_100000',
+        isim: 'Profesyonel',
+        aciklama: 'Toplam 100000 ml (100L) su iç',
+        emoji: '🌟',
+        kosul: '100000 ml toplam',
+    },
+    {
+        id: 'toplam_200000',
         isim: 'Su Efsanesi',
-        aciklama: 'Toplam 125000 ml (125L) su iç',
-        emoji: '👑',
-        kosul: '125000 ml toplam',
+        aciklama: 'Toplam 200000 ml (200L) su iç',
+        emoji: '⚡',
+        kosul: '200000 ml toplam',
+    },
+    {
+        id: 'toplam_500000',
+        isim: 'Su Ustası',
+        aciklama: 'Toplam 500000 ml (500L) su iç',
+        emoji: '💸',
+        kosul: '500000 ml toplam',
+    },
+    {
+        id: 'toplam_1000000',
+        isim: 'Efsanevi',
+        aciklama: 'Toplam 1000000 ml (1000L) su iç',
+        emoji: '🌈',
+        kosul: '1000000 ml toplam',
     },
 
     // Özel Rozetler
@@ -111,6 +146,55 @@ export const ROZET_TANIMLARI: Omit<Rozet, 'kazanildi' | 'kazanilmaTarihi'>[] = [
         aciklama: 'Kişisel rekorunu kır',
         emoji: '🚀',
         kosul: 'Yeni rekor',
+    },
+    {
+        id: 'gece_kusu',
+        isim: 'Gece Kuşu',
+        aciklama: 'Gece 23:00-06:00 arası 3 bardak su iç',
+        emoji: '🌙',
+        kosul: 'Gece su tüketimi',
+    },
+    {
+        id: 'ogle_sansi',
+        isim: 'Öğle Şansı',
+        aciklama: 'Öğlen 12:00-14:00 arası 2 bardak su iç',
+        emoji: '☀️',
+        kosul: 'Öğlen su tüketimi',
+    },
+    {
+        id: 'mukemmeliyetci',
+        isim: 'Mükemmeliyetçi',
+        aciklama: '10 gün %100\'ün üzerinde hedef tamamla',
+        emoji: '💯',
+        kosul: '%100+ hedef 10 gün',
+    },
+    {
+        id: 'maraton',
+        isim: 'Maraton Koşucusu',
+        aciklama: 'Bir günde 5L su iç',
+        emoji: '🏃',
+        kosul: '5L tek günde',
+    },
+    {
+        id: 'hafta_sonu_savascisi',
+        isim: 'Hafta Sonu Savaşçısı',
+        aciklama: 'Cumartesi ve Pazar hedefini tamamla',
+        emoji: '🎖️',
+        kosul: 'Hafta sonu hedef',
+    },
+    {
+        id: 'saglik_sampiyonu',
+        isim: 'Sağlık Şampiyonu',
+        aciklama: 'Bir ayda 25/30 gün hedefini tamamla',
+        emoji: '🥇',
+        kosul: 'Aylık 25 gün başarı',
+    },
+    {
+        id: 'hiz_icici',
+        isim: 'Hız İçici',
+        aciklama: '2 saat içinde 5 bardak su iç',
+        emoji: '⚡',
+        kosul: 'Hızlı içme',
     },
 ];
 
@@ -196,6 +280,8 @@ export async function rozetKazan(rozetId: string): Promise<Rozet | null> {
  * Streak'e göre rozet kontrolü
  */
 export async function streakRozetKontrol(streak: number): Promise<Rozet | null> {
+    if (streak >= 100) return await rozetKazan('streak_100');
+    if (streak >= 60) return await rozetKazan('streak_60');
     if (streak >= 30) return await rozetKazan('streak_30');
     if (streak >= 14) return await rozetKazan('streak_14');
     if (streak >= 7) return await rozetKazan('streak_7');
@@ -207,7 +293,10 @@ export async function streakRozetKontrol(streak: number): Promise<Rozet | null> 
  * Toplam ml'ye göre rozet kontrolü
  */
 export async function toplamRozetKontrol(toplamMl: number): Promise<Rozet | null> {
-    if (toplamMl >= 125000) return await rozetKazan('toplam_125000');
+    if (toplamMl >= 1000000) return await rozetKazan('toplam_1000000');
+    if (toplamMl >= 500000) return await rozetKazan('toplam_500000');
+    if (toplamMl >= 200000) return await rozetKazan('toplam_200000');
+    if (toplamMl >= 100000) return await rozetKazan('toplam_100000');
     if (toplamMl >= 25000) return await rozetKazan('toplam_25000');
     if (toplamMl >= 12500) return await rozetKazan('toplam_12500');
     if (toplamMl >= 2500) return await rozetKazan('toplam_2500');
