@@ -4,10 +4,12 @@
 // Bildirim ayarları, hedef ve uygulama bilgileri
 
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, ScrollView, Alert, TouchableOpacity, Switch } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, Alert, TouchableOpacity, Switch, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PickerModal, TimePickerModal } from '../components/PickerModal';
+import { PremiumEkrani } from './index';
 import {
     bildirimIzniIste,
     bildirimAyarlariniKaydet,
@@ -38,6 +40,8 @@ import {
 import { useTema } from '../TemaContext';
 import { healthKitDestekleniyor, healthKitAyarYukle, healthKitToggle } from '../healthKit';
 import { aiAyarlariniYukle, aiAyarlariniKaydet, AIAyarlari } from '../aiUtils';
+import { usePremium } from '../PremiumContext';
+import { premiumDurumKaydet } from '../premiumUtils';
 
 // --- COMPONENT ---
 export function AyarlarEkrani() {
@@ -69,6 +73,9 @@ export function AyarlarEkrani() {
     const [detoks, setDetoks] = useState<DetoksAyar>({ aktif: false });
     const [aiAktif, setAiAktif] = useState(true);
 
+    // Premium Context
+    const { isPremium: premiumAktif, setPremium } = usePremium();
+
     // Modal State'leri
     const [hedefModalGoster, setHedefModalGoster] = useState(false);
     const [bildirimAralikModalGoster, setBildirimAralikModalGoster] = useState(false);
@@ -77,6 +84,7 @@ export function AyarlarEkrani() {
     const [akilliAralikModalGoster, setAkilliAralikModalGoster] = useState(false);
     const [bioritimUyanmaModalGoster, setBioritimUyanmaModalGoster] = useState(false);
     const [bioritimUyumaModalGoster, setBioritimUyumaModalGoster] = useState(false);
+    const [premiumModalGoster, setPremiumModalGoster] = useState(false);
 
     // Tema hook
     const { mod, renkler, modDegistir } = useTema();
@@ -269,6 +277,31 @@ export function AyarlarEkrani() {
             <ScrollView style={[styles.container, { backgroundColor: renkler.arkaplan }]}>
                 {/* Başlık */}
                 <Text style={styles.baslik}>⚙️ Ayarlar</Text>
+
+                {/* Premium Banner */}
+                {!premiumAktif && (
+                    <TouchableOpacity
+                        style={styles.premiumBanner}
+                        onPress={() => setPremiumModalGoster(true)}
+                    >
+                        <LinearGradient
+                            colors={['#FFD700', '#FFA000']}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 0 }}
+                            style={styles.premiumBannerGradient}
+                        >
+                            <View style={styles.premiumBannerContent}>
+                                <View style={styles.premiumBannerTextContainer}>
+                                    <Text style={styles.premiumBannerTitle}>WATER PREMIUM 💎</Text>
+                                    <Text style={styles.premiumBannerSubtitle}>AI analizler, özel temalar ve daha fazlası</Text>
+                                </View>
+                                <View style={styles.premiumBannerBadge}>
+                                    <Text style={styles.premiumBannerBadgeText}>KEŞFET</Text>
+                                </View>
+                            </View>
+                        </LinearGradient>
+                    </TouchableOpacity>
+                )}
 
                 {/* Kişiselleştirilmiş Hedef */}
                 <View style={[styles.hedefContainer, { backgroundColor: renkler.kartArkaplan }]}>
@@ -688,6 +721,52 @@ export function AyarlarEkrani() {
                             thumbColor={mod === 'koyu' ? '#fff' : '#f4f3f4'}
                         />
                     </View>
+
+                    {/* Premium Temalar */}
+                    <View style={{ marginTop: 15 }}>
+                        <Text style={[styles.modEtiket, { marginBottom: 12 }]}>🎭 Özel Temalar (Premium)</Text>
+                        <View style={styles.renkSecenekleri}>
+                            {[
+                                { id: 'altin', renk: '#FFD700', ikon: '👑' },
+                                { id: 'okyanus', renk: '#2AA198', ikon: '🌊' },
+                                { id: 'zumrut', renk: '#2ECC71', ikon: '🌿' },
+                                { id: 'midnight', renk: '#BB86FC', ikon: '🌌' },
+                            ].map((tema) => (
+                                <TouchableOpacity
+                                    key={tema.id}
+                                    style={[
+                                        styles.renkButon,
+                                        { backgroundColor: tema.renk },
+                                        mod === tema.id && styles.renkButonSecili
+                                    ]}
+                                    onPress={() => {
+                                        if (premiumAktif) {
+                                            modDegistir(tema.id as any);
+                                        } else {
+                                            setPremiumModalGoster(true);
+                                        }
+                                    }}
+                                >
+                                    <Text style={{ fontSize: 18 }}>{tema.ikon}</Text>
+                                    {!premiumAktif && (
+                                        <View style={{
+                                            position: 'absolute',
+                                            top: -5,
+                                            right: -5,
+                                            backgroundColor: '#000',
+                                            borderRadius: 10,
+                                            width: 20,
+                                            height: 20,
+                                            alignItems: 'center',
+                                            justifyContent: 'center'
+                                        }}>
+                                            <Text style={{ fontSize: 10 }}>🔒</Text>
+                                        </View>
+                                    )}
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                    </View>
                 </View>
 
                 {/* Apple Health Entegrasyonu (Sadece iOS) */}
@@ -746,6 +825,46 @@ export function AyarlarEkrani() {
                     </TouchableOpacity>
                 </View>
 
+                {/* 🔧 Geliştirici Test Modu */}
+                <View style={[styles.temaContainer, { backgroundColor: '#1a1a2e', borderWidth: 1, borderColor: '#FF6B6B' }]}>
+                    <Text style={[styles.temaBaslik, { color: '#FF6B6B' }]}>🔧 Geliştirici Test Modu</Text>
+                    <Text style={[styles.sessizAciklama, { color: '#888', marginBottom: 10 }]}>
+                        ⚠️ Sadece test amaçlı - Premium özelliklerini test et
+                    </Text>
+
+                    <View style={styles.modSatir}>
+                        <View style={{ flex: 1 }}>
+                            <Text style={[styles.modEtiket, { color: '#fff' }]}>
+                                {premiumAktif ? '💎 Premium Aktif' : '🔒 Premium Kapalı'}
+                            </Text>
+                            <Text style={[styles.sessizAciklama, { fontSize: 11, marginTop: 2, color: '#666' }]}>
+                                Premium durumunu aç/kapat
+                            </Text>
+                        </View>
+                        <Switch
+                            value={premiumAktif}
+                            onValueChange={async (value) => {
+                                const yeniDurum = {
+                                    aktif: value,
+                                    paketId: value ? 'omur_boyu' as const : undefined,
+                                    satinAlmaTarihi: value ? new Date().toISOString() : undefined
+                                };
+                                await premiumDurumKaydet(yeniDurum);
+                                // Context'i güncelle
+                                setPremium(yeniDurum);
+                                Alert.alert(
+                                    value ? '💎 Premium Aktif' : '🔒 Premium Kapalı',
+                                    value
+                                        ? 'Premium özellikler şimdi aktif!'
+                                        : 'Premium özellikler kapatıldı.'
+                                );
+                            }}
+                            trackColor={{ false: '#333', true: '#FF6B6B' }}
+                            thumbColor={premiumAktif ? '#fff' : '#666'}
+                        />
+                    </View>
+                </View>
+
                 {/* İpuçları */}
                 <View style={[styles.ipucuContainer, { backgroundColor: renkler.kartArkaplan }]}>
                     <Text style={styles.ipucuBaslik}>💡 Su İçme İpuçları</Text>
@@ -761,6 +880,16 @@ export function AyarlarEkrani() {
                 {/* Alt boşluk */}
                 <View style={{ height: 50 }} />
             </ScrollView>
+
+            {/* Premium Modal */}
+            <Modal
+                visible={premiumModalGoster}
+                animationType="slide"
+                presentationStyle="pageSheet"
+                onRequestClose={() => setPremiumModalGoster(false)}
+            >
+                <PremiumEkrani onClose={() => setPremiumModalGoster(false)} />
+            </Modal>
 
             {/* Günlük Hedef Picker Modal */}
             <PickerModal
@@ -1177,5 +1306,50 @@ const styles = StyleSheet.create({
         color: '#4FC3F7',
         fontSize: 16,
         fontWeight: 'bold',
+    },
+    // Premium Banner
+    premiumBanner: {
+        marginHorizontal: 20,
+        marginBottom: 25,
+        borderRadius: 20,
+        overflow: 'hidden',
+        elevation: 8,
+        shadowColor: '#4FC3F7',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 10,
+    },
+    premiumBannerGradient: {
+        padding: 20,
+    },
+    premiumBannerContent: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    premiumBannerTextContainer: {
+        flex: 1,
+    },
+    premiumBannerTitle: {
+        color: '#FFF',
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    premiumBannerSubtitle: {
+        color: '#E1F5FE',
+        fontSize: 12,
+        marginTop: 4,
+        opacity: 0.9,
+    },
+    premiumBannerBadge: {
+        backgroundColor: '#FFF',
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 12,
+    },
+    premiumBannerBadgeText: {
+        color: '#01579B',
+        fontSize: 12,
+        fontWeight: '900',
     },
 });

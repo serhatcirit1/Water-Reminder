@@ -6,14 +6,16 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import {
     View, Text, StyleSheet, ScrollView, TouchableOpacity,
-    Alert, Animated, Dimensions
+    Alert, Animated, Dimensions, Modal
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
-import Svg, { Path, Defs, LinearGradient, Stop, Circle } from 'react-native-svg';
+import { LinearGradient } from 'expo-linear-gradient';
+import Svg, { Circle, Path, Defs, Stop, LinearGradient as SvgLinearGradient } from 'react-native-svg';
 import { useTema } from '../TemaContext';
+import { PremiumEkrani } from './index';
 import {
     hedefYukle, bardakBoyutuYukle, bardakBoyutuKaydet,
     rekorKontrolEt, suIcmeSaatiKaydet, sonIcmeZamaniKaydet, BARDAK_SECENEKLERI,
@@ -31,6 +33,7 @@ import {
     suIcmeSaatiKaydet as aiSuIcmeSaatiKaydet,
     bildirimTepkisiKaydet
 } from '../aiUtils';
+import { usePremium } from '../PremiumContext';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -65,6 +68,10 @@ export function AnaSayfaEkrani() {
     const [sonIcmeZamani, setSonIcmeZamani] = useState<Date | null>(null);
     const [gorevDurumu, setGorevDurumu] = useState<GunlukGorevDurumu | null>(null);
     const [aiOneri, setAiOneri] = useState<AIHedefOnerisi | null>(null);
+    const [premiumModalGoster, setPremiumModalGoster] = useState(false);
+
+    // Premium Context
+    const { isPremium: premiumAktif } = usePremium();
 
     // Animasyonlar
     const waveAnim = useRef(new Animated.Value(0)).current;
@@ -302,6 +309,29 @@ export function AnaSayfaEkrani() {
                     </View>
                 )}
 
+                {/* Premium Banner */}
+                {!premiumAktif && (
+                    <TouchableOpacity
+                        style={styles.premiumBanner}
+                        onPress={() => setPremiumModalGoster(true)}
+                    >
+                        <LinearGradient
+                            colors={['#FFD700', '#FFA000', '#FFD700']}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 1 }}
+                            style={styles.premiumBannerGradient}
+                        >
+                            <View style={styles.premiumBannerContent}>
+                                <View style={styles.premiumBannerTextContainer}>
+                                    <Text style={styles.premiumBannerTitle}>WATER PREMIUM 💎</Text>
+                                    <Text style={styles.premiumBannerSubtitle}>AI Analizler & Özel Temalar</Text>
+                                </View>
+                                <Text style={styles.premiumBannerEmoji}>✨</Text>
+                            </View>
+                        </LinearGradient>
+                    </TouchableOpacity>
+                )}
+
                 {/* Ana Dairesel İlerleme */}
                 <Animated.View style={[styles.circleContainer, { transform: [{ scale: scaleAnim }] }]}>
                     {/* Progress Ring */}
@@ -359,15 +389,15 @@ export function AnaSayfaEkrani() {
                         }]}>
                             <Svg width={400} height={200} viewBox="0 0 400 200">
                                 <Defs>
-                                    <LinearGradient id="waveGradient1" x1="0" y1="0" x2="0" y2="1">
+                                    <SvgLinearGradient id="waveGradient1" x1="0" y1="0" x2="0" y2="1">
                                         <Stop offset="0" stopColor="#4FC3F7" stopOpacity="0.95" />
                                         <Stop offset="0.5" stopColor="#29B6F6" stopOpacity="0.8" />
                                         <Stop offset="1" stopColor="#0288D1" stopOpacity="0.6" />
-                                    </LinearGradient>
-                                    <LinearGradient id="waveGradient2" x1="0" y1="0" x2="0" y2="1">
+                                    </SvgLinearGradient>
+                                    <SvgLinearGradient id="waveGradient2" x1="0" y1="0" x2="0" y2="1">
                                         <Stop offset="0" stopColor="#81D4FA" stopOpacity="0.5" />
                                         <Stop offset="1" stopColor="#4FC3F7" stopOpacity="0.3" />
-                                    </LinearGradient>
+                                    </SvgLinearGradient>
                                 </Defs>
                                 {/* Arka dalga */}
                                 <Path
@@ -544,6 +574,16 @@ export function AnaSayfaEkrani() {
 
                 <View style={{ height: 100 }} />
             </ScrollView>
+
+            {/* Premium Modal */}
+            <Modal
+                visible={premiumModalGoster}
+                animationType="slide"
+                presentationStyle="pageSheet"
+                onRequestClose={() => setPremiumModalGoster(false)}
+            >
+                <PremiumEkrani onClose={() => setPremiumModalGoster(false)} />
+            </Modal>
         </SafeAreaView>
     );
 }
@@ -760,4 +800,46 @@ const styles = StyleSheet.create({
     },
     geriAlEmoji: { fontSize: 18, marginRight: 8 },
     geriAlText: { fontSize: 14, color: '#FF5722', fontWeight: '600' },
+
+    // Premium Banner Stilleri
+    premiumBanner: {
+        width: '100%',
+        borderRadius: 20,
+        overflow: 'hidden',
+        marginBottom: 15,
+        shadowColor: '#FFD700',
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.3,
+        shadowRadius: 10,
+        elevation: 8,
+    },
+    premiumBannerGradient: {
+        paddingVertical: 15,
+        paddingHorizontal: 20,
+    },
+    premiumBannerContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+    premiumBannerTextContainer: {
+        flex: 1,
+    },
+    premiumBannerTitle: {
+        color: '#000',
+        fontSize: 16,
+        fontWeight: '900',
+        letterSpacing: 0.5,
+    },
+    premiumBannerSubtitle: {
+        color: '#000',
+        fontSize: 11,
+        marginTop: 2,
+        opacity: 0.7,
+        fontWeight: '600',
+    },
+    premiumBannerEmoji: {
+        fontSize: 24,
+        marginLeft: 10,
+    },
 });

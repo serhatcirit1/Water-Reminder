@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Ekranlar ve Context
 import { TemaProvider, useTema } from './TemaContext';
+import { PremiumProvider } from './PremiumContext';
 import { AnaSayfaEkrani, IstatistiklerEkrani, AyarlarEkrani, OnboardingEkrani } from './screens';
 
 const Tab = createBottomTabNavigator();
@@ -118,9 +119,11 @@ function AppContent() {
 export default function App() {
   return (
     <SafeAreaProvider>
-      <TemaProvider>
-        <AppContent />
-      </TemaProvider>
+      <PremiumProvider>
+        <TemaProvider>
+          <AppContent />
+        </TemaProvider>
+      </PremiumProvider>
     </SafeAreaProvider>
   );
 }

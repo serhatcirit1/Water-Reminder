@@ -105,6 +105,13 @@
 - [ ] **Çoklu Cihaz** - Telefon + tablet senkronizasyonu
 - [ ] **Arkadaş Karşılaştırma** - Arkadaşlarla yarışma
 
+### 💎 Premium Geliştirmeleri (YENİ)
+- [ ] **Premium Status Middleware** - Premium durumunu kontrol eden merkezi sistem
+- [ ] **AI Analiz Motoru** - Premium kullanıcılar için özel içme alışkanlığı analizi
+- [ ] **Özel Temalar** - Premium'a özel 5 yeni renk paleti ve font
+- [ ] **Gelişmiş İstatistikler** - Geçmişe dönük 1 yıllık veri analizi ve CSV export
+- [ ] **Öncelikli Destek** - İletişim bölümünde premium kullanıcı vurgusu
+
 ### ⭐⭐⭐⭐⭐ Uzman (1+ hafta)
 - [ ] **Apple Watch** - watchOS companion app
 
