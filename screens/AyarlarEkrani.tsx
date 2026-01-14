@@ -42,6 +42,7 @@ import { healthKitDestekleniyor, healthKitAyarYukle, healthKitToggle } from '../
 import { aiAyarlariniYukle, aiAyarlariniKaydet, AIAyarlari } from '../aiUtils';
 import { usePremium } from '../PremiumContext';
 import { premiumDurumKaydet } from '../premiumUtils';
+import { csvOlusturVePaylas } from '../exportUtils';
 
 // --- COMPONENT ---
 export function AyarlarEkrani() {
@@ -794,6 +795,38 @@ export function AyarlarEkrani() {
                         </Text>
                     </View>
                 )}
+
+                {/* 📊 Veri Dışa Aktarma (Premium) */}
+                <View style={[styles.temaContainer, { backgroundColor: renkler.kartArkaplan }]}>
+                    <Text style={styles.temaBaslik}>📊 Veri Dışa Aktarma</Text>
+                    <Text style={styles.hedefAciklama}>
+                        Tüm su tüketim verilerini CSV olarak indir
+                    </Text>
+
+                    <TouchableOpacity
+                        style={[
+                            styles.oneriButon,
+                            { marginTop: 15, opacity: premiumAktif ? 1 : 0.6 }
+                        ]}
+                        onPress={async () => {
+                            if (premiumAktif) {
+                                await csvOlusturVePaylas();
+                            } else {
+                                setPremiumModalGoster(true);
+                            }
+                        }}
+                    >
+                        <Text style={styles.oneriButonYazi}>
+                            {premiumAktif ? '📥 CSV Olarak Dışa Aktar' : '🔒 Premium Özellik'}
+                        </Text>
+                    </TouchableOpacity>
+
+                    {!premiumAktif && (
+                        <Text style={[styles.sessizAciklama, { marginTop: 10 }]}>
+                            Bu özellik Premium üyelere özeldir
+                        </Text>
+                    )}
+                </View>
 
                 {/* Uygulama Bilgileri */}
                 <View style={[styles.bilgiContainer, { backgroundColor: renkler.kartArkaplan }]}>

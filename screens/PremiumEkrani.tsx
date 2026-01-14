@@ -32,6 +32,7 @@ const PREMIUM_OZELLIKLER = [
     { id: 4, baslik: 'Ödüllü Rozetler', detay: 'Sadece Premium üyelere özel 12+ nadir rozet.', emoji: '💎' },
     { id: 5, baslik: 'Akıllı Hatırlatmalar', detay: 'Hava durumu ve biyoritminize tam uyumlu bildirimler.', emoji: '🔔' },
     { id: 6, baslik: 'Özel Temalar', detay: '5 yeni renk paleti ve özel uygulama ikonları.', emoji: '🎨' },
+    { id: 7, baslik: 'Veri Dışa Aktarma', detay: 'Tüm su tüketim verilerinizi CSV olarak indirin.', emoji: '📊' },
 ];
 
 const FIYAT_PLANLARI = [
