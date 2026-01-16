@@ -21,6 +21,7 @@ import {
 import { seviyeDurumuYukle, SeviyeDurumu } from '../seviyeSistemi';
 import { rozetleriYukle, Rozet } from '../rozetler';
 import { gunlukGorevleriYukle, GunlukGorevDurumu } from '../gunlukGorevler';
+import { usePremium } from '../PremiumContext';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const GECMIS_KEY = '@su_gecmisi';
@@ -38,6 +39,7 @@ export function IstatistiklerEkrani() {
     // State
     const [yukleniyor, setYukleniyor] = useState(true);
     const [aktifTab, setAktifTab] = useState<'haftalik' | 'aylik'>('haftalik');
+    const [referansTarih, setReferansTarih] = useState(new Date());
     const [gunlukHedef, setGunlukHedef] = useState(2000);
     const [rekor, setRekor] = useState<RekorBilgisi | null>(null);
     const [streak, setStreak] = useState<StreakBilgisi | null>(null);
@@ -54,6 +56,9 @@ export function IstatistiklerEkrani() {
     const [son15GunToplam, setSon15GunToplam] = useState(0);
     const [onceki15GunToplam, setOnceki15GunToplam] = useState(0);
 
+    // Premium
+    const { isPremium: premiumAktif } = usePremium();
+
     // Tooltip ve seçili öğeler
     const [seciliRozet, setSeciliRozet] = useState<Rozet | null>(null);
     const [tooltipVeri, setTooltipVeri] = useState<{ tarih: string; ml: number } | null>(null);
@@ -63,12 +68,14 @@ export function IstatistiklerEkrani() {
 
     useFocusEffect(
         useCallback(() => {
-            verileriYukle();
-        }, [])
+            // Sayfa her odaklandığında veya tarih değiştiğinde yükle
+            // Eğer sayfa zaten yüklüyse (yukleniyor false ise) sessiz güncelleme yap
+            verileriYukle(!yukleniyor);
+        }, [referansTarih, aktifTab])
     );
 
-    const verileriYukle = async () => {
-        setYukleniyor(true);
+    const verileriYukle = async (sessiz = false) => {
+        if (!sessiz) setYukleniyor(true);
         try {
             const hedef = await hedefYukle();
             setGunlukHedef(hedef);
@@ -83,7 +90,7 @@ export function IstatistiklerEkrani() {
             setSeviye(seviyeData);
 
             const rozetData = await rozetleriYukle();
-            setRozetler(rozetData.rozetler); // Tüm rozetler (kilitli dahil)
+            setRozetler(rozetData.rozetler);
 
             const gorevData = await gunlukGorevleriYukle();
             setGorevDurumu(gorevData);
@@ -102,17 +109,16 @@ export function IstatistiklerEkrani() {
         } catch (hata) {
             console.error('İstatistikler yüklenemedi:', hata);
         } finally {
-            setYukleniyor(false);
+            if (!sessiz) setYukleniyor(false);
         }
     };
 
     const gecmisVerileriYukle = async (hedef: number) => {
         const kayitliGecmis = await AsyncStorage.getItem(GECMIS_KEY);
         const gecmis = kayitliGecmis ? JSON.parse(kayitliGecmis) : {};
-        const bugun = new Date();
         const gunler = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
 
-        // Haftalık (son 7 gün)
+        // Haftalık (Referans tarihten geriye 7 gün)
         const haftalik: GunlukVeri[] = [];
         let buHafta = 0;
         let gecenHafta = 0;
@@ -120,7 +126,7 @@ export function IstatistiklerEkrani() {
         let onceki15 = 0;
 
         for (let i = 6; i >= 0; i--) {
-            const tarih = new Date(bugun);
+            const tarih = new Date(referansTarih);
             tarih.setDate(tarih.getDate() - i);
             const tarihStr = tarih.toISOString().split('T')[0];
             const veri = gecmis[tarihStr];
@@ -148,10 +154,10 @@ export function IstatistiklerEkrani() {
         setHaftalikVeri(haftalik);
         setBuHaftaToplam(buHafta);
 
-        // Aylık (son 30 gün)
+        // Aylık (Referans tarihten geriye 30 gün)
         const aylik: GunlukVeri[] = [];
         for (let i = 29; i >= 0; i--) {
-            const tarih = new Date(bugun);
+            const tarih = new Date(referansTarih);
             tarih.setDate(tarih.getDate() - i);
             const tarihStr = tarih.toISOString().split('T')[0];
             const veri = gecmis[tarihStr];
@@ -185,7 +191,7 @@ export function IstatistiklerEkrani() {
         setOnceki15GunToplam(onceki15);
 
         // Bar animasyonlarını başlat
-        animasyonlariBaslat(7);
+        animasyonlariBaslat(aktifTab === 'haftalik' ? 7 : 30);
     };
 
     const animasyonlariBaslat = (count: number) => {
@@ -423,11 +429,50 @@ export function IstatistiklerEkrani() {
                     </View>
                 </View>
 
+                {/* Tarih Navigasyonu */}
+                <View style={styles.navContainer}>
+                    <TouchableOpacity
+                        style={styles.navButton}
+                        onPress={() => {
+                            const yeniTarih = new Date(referansTarih);
+                            yeniTarih.setDate(yeniTarih.getDate() - (aktifTab === 'haftalik' ? 7 : 30));
+                            setReferansTarih(yeniTarih);
+                        }}
+                    >
+                        <Text style={styles.navButtonText}>◀ Önceki {aktifTab === 'haftalik' ? 'Hafta' : '30 Gün'}</Text>
+                    </TouchableOpacity>
+
+                    <View style={styles.dateBadge}>
+                        <Text style={styles.dateBadgeText}>
+                            {referansTarih.toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}
+                        </Text>
+                    </View>
+
+                    <TouchableOpacity
+                        style={[
+                            styles.navButton,
+                            referansTarih.toDateString() === new Date().toDateString() && styles.navDisabled
+                        ]}
+                        disabled={referansTarih.toDateString() === new Date().toDateString()}
+                        onPress={() => {
+                            const yeniTarih = new Date(referansTarih);
+                            yeniTarih.setDate(yeniTarih.getDate() + (aktifTab === 'haftalik' ? 7 : 30));
+                            if (yeniTarih > new Date()) {
+                                setReferansTarih(new Date());
+                            } else {
+                                setReferansTarih(yeniTarih);
+                            }
+                        }}
+                    >
+                        <Text style={styles.navButtonText}>Sonraki ▶</Text>
+                    </TouchableOpacity>
+                </View>
+
                 {/* Tab Seçici */}
                 <View style={styles.tabContainer}>
                     <TouchableOpacity
                         style={[styles.tab, aktifTab === 'haftalik' && styles.tabActive]}
-                        onPress={() => { setAktifTab('haftalik'); animasyonlariBaslat(7); }}
+                        onPress={() => { setAktifTab('haftalik'); }}
                     >
                         <Text style={[styles.tabText, aktifTab === 'haftalik' && styles.tabTextActive]}>
                             📊 Haftalık
@@ -435,7 +480,7 @@ export function IstatistiklerEkrani() {
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={[styles.tab, aktifTab === 'aylik' && styles.tabActive]}
-                        onPress={() => { setAktifTab('aylik'); animasyonlariBaslat(30); }}
+                        onPress={() => { setAktifTab('aylik'); }}
                     >
                         <Text style={[styles.tabText, aktifTab === 'aylik' && styles.tabTextActive]}>
                             📅 Aylık
@@ -447,7 +492,12 @@ export function IstatistiklerEkrani() {
                 {aktifTab === 'haftalik' && (
                     <View style={styles.chartCard}>
                         <View style={styles.chartHeader}>
-                            <Text style={styles.chartTitle}>Haftalık Görünüm</Text>
+                            <View>
+                                <Text style={styles.chartTitle}>Haftalık Görünüm</Text>
+                                <Text style={[styles.chartSubtitle, { fontSize: 11, marginTop: 2 }]}>
+                                    {haftalikVeri[0]?.tarih} - {haftalikVeri[6]?.tarih}
+                                </Text>
+                            </View>
                             <Text style={styles.chartSubtitle}>Toplam: {(toplamHaftalik / 1000).toFixed(1)}L</Text>
                         </View>
 
@@ -500,7 +550,12 @@ export function IstatistiklerEkrani() {
                 {aktifTab === 'aylik' && (
                     <View style={styles.chartCard}>
                         <View style={styles.chartHeader}>
-                            <Text style={styles.chartTitle}>Aylık Görünüm (30 Gün)</Text>
+                            <View>
+                                <Text style={styles.chartTitle}>Aylık Görünüm</Text>
+                                <Text style={[styles.chartSubtitle, { fontSize: 11, marginTop: 2 }]}>
+                                    {aylikVeri[0]?.tarih} - {aylikVeri[29]?.tarih}
+                                </Text>
+                            </View>
                             <Text style={styles.chartSubtitle}>Toplam: {(toplamAylik / 1000).toFixed(1)}L</Text>
                         </View>
 
@@ -566,6 +621,8 @@ export function IstatistiklerEkrani() {
                         </View>
                     </View>
                 )}
+
+
 
                 {/* Başarı Oranı */}
                 <View style={styles.basariCard}>
@@ -906,4 +963,43 @@ const styles = StyleSheet.create({
     rozetTooltipTitle: { fontSize: 16, fontWeight: 'bold', color: '#FFFFFF', marginBottom: 4 },
     rozetTooltipDesc: { fontSize: 12, color: '#90CAF9', marginBottom: 4 },
     rozetTooltipStatus: { fontSize: 11, color: '#4CAF50', fontWeight: '600' },
+    navContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        backgroundColor: 'rgba(13, 58, 77, 0.4)',
+        padding: 10,
+        borderRadius: 15,
+        borderWidth: 1,
+        borderColor: 'rgba(79, 195, 247, 0.1)',
+        marginBottom: 10,
+    },
+    navButton: {
+        backgroundColor: '#134156',
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: 'rgba(79, 195, 247, 0.2)',
+    },
+    navButtonText: {
+        color: '#4FC3F7',
+        fontSize: 12,
+        fontWeight: 'bold',
+    },
+    navDisabled: {
+        opacity: 0.3,
+        borderColor: 'transparent',
+    },
+    dateBadge: {
+        backgroundColor: '#0D47A1',
+        paddingHorizontal: 15,
+        paddingVertical: 6,
+        borderRadius: 20,
+    },
+    dateBadgeText: {
+        color: '#FFFFFF',
+        fontSize: 14,
+        fontWeight: 'bold',
+    },
 });

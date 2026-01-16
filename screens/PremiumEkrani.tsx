@@ -26,7 +26,6 @@ import { usePremium } from '../PremiumContext';
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const PREMIUM_OZELLIKLER = [
-    { id: 1, baslik: 'Sınırsız Geçmiş', detay: 'Yıllara dayanan verilerinizle gelişiminizi izleyin.', emoji: '📈' },
     { id: 2, baslik: 'Gelişmiş AI İçgörüleri', detay: 'Derin öğrenme ile su içme alışkanlıklarınızı analiz edin.', emoji: '🧠' },
     { id: 3, baslik: 'Apple Health & Sync', detay: 'Verilerinizi tüm cihazlarınızla senkronize edin.', emoji: '⌚' },
     { id: 4, baslik: 'Ödüllü Rozetler', detay: 'Sadece Premium üyelere özel 12+ nadir rozet.', emoji: '💎' },

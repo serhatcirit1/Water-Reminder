@@ -35,6 +35,7 @@ import {
     bildirimTepkisiKaydet
 } from '../aiUtils';
 import { usePremium } from '../PremiumContext';
+import { tumRozetleriKontrolEt } from '../rozetler';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -228,6 +229,20 @@ export function AnaSayfaEkrani() {
             await hedefTamamlamaXP();
             Alert.alert('🎉 Tebrikler!', 'Günlük hedefe ulaştın!');
         }
+
+        // Streak ve Rozet Güncelleme
+        const guncelStreak = await streakHesapla(gunlukHedef);
+        setStreak(guncelStreak);
+
+        const kazanilanRozetler = await tumRozetleriKontrolEt(
+            guncelStreak.mevcutStreak,
+            yeniToplamMl,
+            yeniRekor
+        );
+
+        kazanilanRozetler.forEach(rozet => {
+            Alert.alert('🏅 Rozet Kazandın!', `${rozet.isim}: ${rozet.aciklama}`);
+        });
     };
 
     // Bugünü geri al fonksiyonu

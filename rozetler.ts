@@ -333,6 +333,53 @@ export async function rekorRozetKontrol(): Promise<Rozet | null> {
 }
 
 /**
+ * Tüm rozetleri genel bir şekilde kontrol et (Su eklendiğinde çağrılır)
+ */
+export async function tumRozetleriKontrolEt(
+    mevcutStreak: number,
+    gunlukToplamMl: number,
+    yeniRekorMu: boolean
+): Promise<Rozet[]> {
+    const kazanilanlar: Rozet[] = [];
+
+    // 1. Streak Kontrol
+    const sRozet = await streakRozetKontrol(mevcutStreak);
+    if (sRozet) kazanilanlar.push(sRozet);
+
+    // 2. Toplam Su Kontrol
+    try {
+        const gecmisStr = await AsyncStorage.getItem('@su_gecmisi');
+        if (gecmisStr) {
+            const gecmis = JSON.parse(gecmisStr);
+            let toplamMl = 0;
+            Object.values(gecmis).forEach((v: any) => {
+                toplamMl += v.ml || (v.miktar * 250) || (typeof v === 'number' ? v * 250 : 0);
+            });
+            const tRozet = await toplamRozetKontrol(toplamMl);
+            if (tRozet) kazanilanlar.push(tRozet);
+        }
+    } catch (e) { }
+
+    // 3. Saat Kontrol
+    const saRozet = await saatRozetKontrol();
+    if (saRozet) kazanilanlar.push(saRozet);
+
+    // 4. Rekor Kontrol
+    if (yeniRekorMu) {
+        const rRozet = await rekorRozetKontrol();
+        if (rRozet) kazanilanlar.push(rRozet);
+    }
+
+    // 5. İlk Hedef Kontrol
+    if (gunlukToplamMl >= 2000) { // Varsayılan hedef eşiği
+        const iRozet = await ilkHedefRozetKontrol();
+        if (iRozet) kazanilanlar.push(iRozet);
+    }
+
+    return kazanilanlar;
+}
+
+/**
  * Kazanılan rozet sayısını getir
  */
 export async function kazanilanRozetSayisi(): Promise<number> {
