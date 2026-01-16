@@ -43,8 +43,7 @@ import { aiAyarlariniYukle, aiAyarlariniKaydet, AIAyarlari } from '../aiUtils';
 import { usePremium } from '../PremiumContext';
 import { premiumDurumKaydet } from '../premiumUtils';
 import { csvOlusturVePaylas } from '../exportUtils';
-import { aylikPdfOlusturVePaylas } from '../pdfExport';
-import { BARDAKLAR, seciliBardakYukle, seciliBardakKaydet, bardakAcikMi, acikBardaklarYukle } from '../glassCollection';
+import { aylikPdfOlusturVePaylas, haftalikPdfOlusturVePaylas } from '../pdfExport';
 
 // --- COMPONENT ---
 export function AyarlarEkrani() {
@@ -75,12 +74,6 @@ export function AyarlarEkrani() {
     });
     const [detoks, setDetoks] = useState<DetoksAyar>({ aktif: false });
     const [aiAktif, setAiAktif] = useState(true);
-
-    // Bardak koleksiyonu
-    const [seciliBardak, setSeciliBardak] = useState('klasik');
-    const [acikBardaklar, setAcikBardaklar] = useState<string[]>(['klasik']);
-    const [kullaniciXP, setKullaniciXP] = useState(0);
-    const [streak, setStreak] = useState(0);
 
     // Premium Context
     const { isPremium: premiumAktif, setPremium } = usePremium();
@@ -145,12 +138,6 @@ export function AyarlarEkrani() {
             // AI ayarlarını yükle
             const aiAyar = await aiAyarlariniYukle();
             setAiAktif(aiAyar.aktif);
-
-            // Bardak koleksiyonu yükle
-            const kayitliBardak = await seciliBardakYukle();
-            setSeciliBardak(kayitliBardak);
-            const aciklar = await acikBardaklarYukle();
-            setAcikBardaklar(aciklar);
         } catch (hata) {
             console.error('Ayarlar yüklenemedi:', hata);
         } finally {
@@ -822,121 +809,168 @@ export function AyarlarEkrani() {
                     </View>
                 )}
 
-                {/* 🏆 Bardak Koleksiyonu (Premium) */}
                 <View style={[styles.temaContainer, { backgroundColor: renkler.kartArkaplan }]}>
-                    <Text style={styles.temaBaslik}>🏆 Bardak Koleksiyonu</Text>
+                    <Text style={styles.temaBaslik}>📊 Premium Raporlar</Text>
                     <Text style={styles.hedefAciklama}>
-                        Özel bardak görselleriyle koleksiyonunu tamamla
+                        Detaylı analiz ve performans raporları
                     </Text>
 
-                    {premiumAktif ? (
-                        <View style={{ marginTop: 15 }}>
-                            <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 10 }}>
-                                {BARDAKLAR.map((bardak) => {
-                                    const acik = bardakAcikMi(bardak, acikBardaklar, kullaniciXP, streak, premiumAktif);
-                                    const secili = seciliBardak === bardak.id;
+                    {/* Rapor Kartları */}
+                    <View style={{ marginTop: 20, gap: 12 }}>
 
-                                    return (
-                                        <TouchableOpacity
-                                            key={bardak.id}
-                                            style={{
-                                                backgroundColor: acik ? '#134156' : '#333',
-                                                borderColor: secili ? '#4FC3F7' : 'transparent',
-                                                borderWidth: secili ? 2 : 0,
-                                                opacity: acik ? 1 : 0.5,
-                                                width: 60,
-                                                height: 60,
-                                                borderRadius: 12,
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                            }}
-                                            onPress={async () => {
-                                                if (acik) {
-                                                    setSeciliBardak(bardak.id);
-                                                    await seciliBardakKaydet(bardak.id);
-                                                } else {
-                                                    Alert.alert(
-                                                        '🔒 Kilitli',
-                                                        bardak.aciklama
-                                                    );
-                                                }
-                                            }}
-                                        >
-                                            <Text style={{ fontSize: 28 }}>{bardak.emoji}</Text>
-                                            {!acik && (
-                                                <View style={{
-                                                    position: 'absolute',
-                                                    bottom: 2,
-                                                    right: 2,
-                                                }}>
-                                                    <Text style={{ fontSize: 10 }}>🔒</Text>
-                                                </View>
-                                            )}
-                                        </TouchableOpacity>
-                                    );
-                                })}
-                            </View>
-                            <Text style={[styles.sessizAciklama, { marginTop: 10, textAlign: 'center' }]}>
-                                Seçili: {BARDAKLAR.find(b => b.id === seciliBardak)?.ad || 'Klasik Bardak'}
-                            </Text>
-                        </View>
-                    ) : (
+                        {/* CSV Rapor Kartı */}
                         <TouchableOpacity
-                            style={[styles.oneriButon, { marginTop: 15, opacity: 0.6 }]}
-                            onPress={() => setPremiumModalGoster(true)}
+                            style={{
+                                backgroundColor: premiumAktif ? '#1976D2' : '#424242',
+                                borderRadius: 16,
+                                padding: 16,
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                opacity: premiumAktif ? 1 : 0.7,
+                                shadowColor: '#1976D2',
+                                shadowOffset: { width: 0, height: 4 },
+                                shadowOpacity: premiumAktif ? 0.3 : 0,
+                                shadowRadius: 8,
+                                elevation: premiumAktif ? 6 : 0,
+                            }}
+                            onPress={async () => {
+                                if (premiumAktif) {
+                                    await csvOlusturVePaylas(gunlukHedef);
+                                } else {
+                                    setPremiumModalGoster(true);
+                                }
+                            }}
                         >
-                            <Text style={styles.oneriButonYazi}>🔒 Premium Özellik</Text>
+                            <View style={{
+                                width: 48,
+                                height: 48,
+                                borderRadius: 12,
+                                backgroundColor: 'rgba(255,255,255,0.2)',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                marginRight: 14,
+                            }}>
+                                <Text style={{ fontSize: 24 }}>📥</Text>
+                            </View>
+                            <View style={{ flex: 1 }}>
+                                <Text style={{ color: '#fff', fontSize: 16, fontWeight: '700' }}>
+                                    CSV Detaylı Rapor
+                                </Text>
+                                <Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: 12, marginTop: 2 }}>
+                                    Excel uyumlu, tüm veriler + istatistikler
+                                </Text>
+                            </View>
+                            {!premiumAktif && <Text style={{ fontSize: 20 }}>🔒</Text>}
                         </TouchableOpacity>
-                    )}
-                </View>
-                <View style={[styles.temaContainer, { backgroundColor: renkler.kartArkaplan }]}>
-                    <Text style={styles.temaBaslik}>📊 Veri Dışa Aktarma</Text>
-                    <Text style={styles.hedefAciklama}>
-                        Su tüketim verilerini dışa aktar
-                    </Text>
 
-                    {/* CSV Export */}
-                    <TouchableOpacity
-                        style={[
-                            styles.oneriButon,
-                            { marginTop: 15, opacity: premiumAktif ? 1 : 0.6 }
-                        ]}
-                        onPress={async () => {
-                            if (premiumAktif) {
-                                await csvOlusturVePaylas();
-                            } else {
-                                setPremiumModalGoster(true);
-                            }
-                        }}
-                    >
-                        <Text style={styles.oneriButonYazi}>
-                            {premiumAktif ? '📥 CSV Olarak Dışa Aktar' : '🔒 CSV Export'}
-                        </Text>
-                    </TouchableOpacity>
+                        {/* Haftalık PDF Kartı */}
+                        <TouchableOpacity
+                            style={{
+                                backgroundColor: premiumAktif ? '#7B1FA2' : '#424242',
+                                borderRadius: 16,
+                                padding: 16,
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                opacity: premiumAktif ? 1 : 0.7,
+                                shadowColor: '#7B1FA2',
+                                shadowOffset: { width: 0, height: 4 },
+                                shadowOpacity: premiumAktif ? 0.3 : 0,
+                                shadowRadius: 8,
+                                elevation: premiumAktif ? 6 : 0,
+                            }}
+                            onPress={async () => {
+                                if (premiumAktif) {
+                                    await haftalikPdfOlusturVePaylas(gunlukHedef);
+                                } else {
+                                    setPremiumModalGoster(true);
+                                }
+                            }}
+                        >
+                            <View style={{
+                                width: 48,
+                                height: 48,
+                                borderRadius: 12,
+                                backgroundColor: 'rgba(255,255,255,0.2)',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                marginRight: 14,
+                            }}>
+                                <Text style={{ fontSize: 24 }}>📊</Text>
+                            </View>
+                            <View style={{ flex: 1 }}>
+                                <Text style={{ color: '#fff', fontSize: 16, fontWeight: '700' }}>
+                                    Haftalık PDF Rapor
+                                </Text>
+                                <Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: 12, marginTop: 2 }}>
+                                    Son 7 günün detaylı analizi
+                                </Text>
+                            </View>
+                            {!premiumAktif && <Text style={{ fontSize: 20 }}>🔒</Text>}
+                        </TouchableOpacity>
 
-                    {/* PDF Rapor */}
-                    <TouchableOpacity
-                        style={[
-                            styles.oneriButon,
-                            { marginTop: 10, opacity: premiumAktif ? 1 : 0.6, backgroundColor: '#E91E63' }
-                        ]}
-                        onPress={async () => {
-                            if (premiumAktif) {
-                                await aylikPdfOlusturVePaylas(gunlukHedef * 250); // Bardak sayısı * 250ml
-                            } else {
-                                setPremiumModalGoster(true);
-                            }
-                        }}
-                    >
-                        <Text style={styles.oneriButonYazi}>
-                            {premiumAktif ? '📄 Aylık PDF Rapor' : '🔒 PDF Rapor'}
-                        </Text>
-                    </TouchableOpacity>
+                        {/* Aylık PDF Kartı */}
+                        <TouchableOpacity
+                            style={{
+                                backgroundColor: premiumAktif ? '#C2185B' : '#424242',
+                                borderRadius: 16,
+                                padding: 16,
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                opacity: premiumAktif ? 1 : 0.7,
+                                shadowColor: '#C2185B',
+                                shadowOffset: { width: 0, height: 4 },
+                                shadowOpacity: premiumAktif ? 0.3 : 0,
+                                shadowRadius: 8,
+                                elevation: premiumAktif ? 6 : 0,
+                            }}
+                            onPress={async () => {
+                                if (premiumAktif) {
+                                    await aylikPdfOlusturVePaylas(gunlukHedef);
+                                } else {
+                                    setPremiumModalGoster(true);
+                                }
+                            }}
+                        >
+                            <View style={{
+                                width: 48,
+                                height: 48,
+                                borderRadius: 12,
+                                backgroundColor: 'rgba(255,255,255,0.2)',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                marginRight: 14,
+                            }}>
+                                <Text style={{ fontSize: 24 }}>📄</Text>
+                            </View>
+                            <View style={{ flex: 1 }}>
+                                <Text style={{ color: '#fff', fontSize: 16, fontWeight: '700' }}>
+                                    Aylık PDF Rapor
+                                </Text>
+                                <Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: 12, marginTop: 2 }}>
+                                    Trend grafikleri, karşılaştırma, streak
+                                </Text>
+                            </View>
+                            {!premiumAktif && <Text style={{ fontSize: 20 }}>🔒</Text>}
+                        </TouchableOpacity>
+
+                    </View>
 
                     {!premiumAktif && (
-                        <Text style={[styles.sessizAciklama, { marginTop: 10 }]}>
-                            Bu özellikler Premium üyelere özeldir
-                        </Text>
+                        <TouchableOpacity
+                            style={{
+                                marginTop: 16,
+                                paddingVertical: 12,
+                                backgroundColor: 'rgba(79, 195, 247, 0.15)',
+                                borderRadius: 12,
+                                borderWidth: 1,
+                                borderColor: 'rgba(79, 195, 247, 0.3)',
+                            }}
+                            onPress={() => setPremiumModalGoster(true)}
+                        >
+                            <Text style={{ color: '#4FC3F7', textAlign: 'center', fontWeight: '600' }}>
+                                ⭐ Premium'a Yükselt
+                            </Text>
+                        </TouchableOpacity>
                     )}
                 </View>
 
