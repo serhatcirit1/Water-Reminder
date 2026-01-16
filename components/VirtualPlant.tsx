@@ -256,16 +256,16 @@ const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
         justifyContent: 'flex-end',
-        height: 200,
+        height: 260,
         marginVertical: 10,
     },
     potContainer: {
         position: 'absolute',
-        bottom: 0,
+        bottom: 50,
     },
     plantWrapper: {
         position: 'absolute',
-        bottom: 40,
+        bottom: 90,
         alignItems: 'center',
         justifyContent: 'flex-end',
     },
@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
     },
     infoContainer: {
         position: 'absolute',
-        bottom: -45,
+        bottom: 5,
         alignItems: 'center',
     },
     stageName: {

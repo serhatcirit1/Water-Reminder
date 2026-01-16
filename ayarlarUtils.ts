@@ -43,8 +43,8 @@ export async function hedefYukle(): Promise<number> {
     }
 }
 
-// Hedef seçenekleri (ml cinsinden)
-export const HEDEF_SECENEKLERI = [1500, 2000, 2500, 3000, 3500];
+// Hedef seçenekleri (ml cinsinden - 250 ml artışlarla)
+export const HEDEF_SECENEKLERI = [1500, 1750, 2000, 2250, 2500, 2750, 3000, 3250, 3500, 3750, 4000];
 
 // --- BARDAK BOYUTU SİSTEMİ ---
 const BARDAK_KEY = '@bardak_boyutu';
@@ -171,9 +171,10 @@ export async function profilYukle(): Promise<KullaniciProfil> {
 }
 
 /**
- * Kilo ve yaşa göre önerilen günlük su miktarını hesapla
+ * Kilo ve yaşa göre önerilen günlük su miktarını hesapla (ml cinsinden)
  * Formül: Kilo x 30-35ml = günlük ml
  * Aktif kişiler için +500ml
+ * Sonuç 250 ml'nin katlarına yuvarlanır
  */
 export function onerilenSuHesapla(profil: KullaniciProfil, bardakBoyutu: number): number {
     // Temel: kilo x 33ml
@@ -189,11 +190,11 @@ export function onerilenSuHesapla(profil: KullaniciProfil, bardakBoyutu: number)
         gunlukMl += 500;
     }
 
-    // Bardak sayısına çevir ve yuvarla
-    const bardakSayisi = Math.round(gunlukMl / bardakBoyutu);
+    // 250 ml'nin katlarına yuvarla
+    const yuvarlanmis = Math.round(gunlukMl / 250) * 250;
 
-    // Min 4, max 15 bardak
-    return Math.max(4, Math.min(15, bardakSayisi));
+    // Min 1500, max 4000 ml
+    return Math.max(1500, Math.min(4000, yuvarlanmis));
 }
 
 // --- REKOR SİSTEMİ ---

@@ -83,12 +83,15 @@ interface TemaContextType {
     renkler: TemaRenkleri;
     modDegistir: (yeniMod: TemaModu) => void;
     koyuMu: boolean;
+    otomatikMod: boolean;
+    otomatikModDegistir: (aktif: boolean) => void;
 }
 
 const TemaContext = createContext<TemaContextType | undefined>(undefined);
 
-// --- STORAGE KEY ---
+// --- STORAGE KEYS ---
 const TEMA_MOD_KEY = '@tema_mod';
+const OTOMATIK_MOD_KEY = '@tema_otomatik';
 
 // --- PROVIDER ---
 interface TemaProviderProps {
@@ -97,16 +100,46 @@ interface TemaProviderProps {
 
 export function TemaProvider({ children }: TemaProviderProps) {
     const [mod, setMod] = useState<TemaModu>('koyu');
+    const [otomatikMod, setOtomatikMod] = useState<boolean>(false);
+    const [manuelMod, setManuelMod] = useState<TemaModu>('koyu');
 
     // İlk yükleme
     useEffect(() => {
         temaYukle();
     }, []);
 
+    // Otomatik mod kontrolü - her dakika kontrol et
+    useEffect(() => {
+        if (!otomatikMod) return;
+
+        const saatKontrol = () => {
+            const saat = new Date().getHours();
+            // 06:00 - 19:00 arası açık mod
+            const gunduzMu = saat >= 6 && saat < 19;
+            setMod(gunduzMu ? 'acik' : 'koyu');
+        };
+
+        saatKontrol(); // İlk kontrol
+        const interval = setInterval(saatKontrol, 60000); // Her dakika
+
+        return () => clearInterval(interval);
+    }, [otomatikMod]);
+
     const temaYukle = async () => {
         try {
             const kayitliMod = await AsyncStorage.getItem(TEMA_MOD_KEY);
-            if (kayitliMod) setMod(kayitliMod as TemaModu);
+            const kayitliOtomatik = await AsyncStorage.getItem(OTOMATIK_MOD_KEY);
+
+            if (kayitliOtomatik === 'true') {
+                setOtomatikMod(true);
+                // Otomatik modda saate göre tema belirle
+                const saat = new Date().getHours();
+                const gunduzMu = saat >= 6 && saat < 19;
+                setMod(gunduzMu ? 'acik' : 'koyu');
+            } else if (kayitliMod) {
+                setMod(kayitliMod as TemaModu);
+                setManuelMod(kayitliMod as TemaModu);
+            }
         } catch (hata) {
             console.error('Tema yüklenemedi:', hata);
         }
@@ -114,14 +147,32 @@ export function TemaProvider({ children }: TemaProviderProps) {
 
     const modDegistir = async (yeniMod: TemaModu) => {
         setMod(yeniMod);
+        setManuelMod(yeniMod);
+        setOtomatikMod(false); // Manuel seçim otomatik modu kapatır
         await AsyncStorage.setItem(TEMA_MOD_KEY, yeniMod);
+        await AsyncStorage.setItem(OTOMATIK_MOD_KEY, 'false');
+    };
+
+    const otomatikModDegistir = async (aktif: boolean) => {
+        setOtomatikMod(aktif);
+        await AsyncStorage.setItem(OTOMATIK_MOD_KEY, aktif ? 'true' : 'false');
+
+        if (aktif) {
+            // Otomatik moda geçince saate göre tema belirle
+            const saat = new Date().getHours();
+            const gunduzMu = saat >= 6 && saat < 19;
+            setMod(gunduzMu ? 'acik' : 'koyu');
+        } else {
+            // Manuel moda geri dön
+            setMod(manuelMod);
+        }
     };
 
     const renkler = RENKLER[mod];
     const koyuMu = mod === 'koyu';
 
     return (
-        <TemaContext.Provider value={{ mod, renkler, modDegistir, koyuMu }}>
+        <TemaContext.Provider value={{ mod, renkler, modDegistir, koyuMu, otomatikMod, otomatikModDegistir }}>
             {children}
         </TemaContext.Provider>
     );

@@ -43,6 +43,8 @@ import { aiAyarlariniYukle, aiAyarlariniKaydet, AIAyarlari } from '../aiUtils';
 import { usePremium } from '../PremiumContext';
 import { premiumDurumKaydet } from '../premiumUtils';
 import { csvOlusturVePaylas } from '../exportUtils';
+import { aylikPdfOlusturVePaylas } from '../pdfExport';
+import { BARDAKLAR, seciliBardakYukle, seciliBardakKaydet, bardakAcikMi, acikBardaklarYukle } from '../glassCollection';
 
 // --- COMPONENT ---
 export function AyarlarEkrani() {
@@ -74,6 +76,12 @@ export function AyarlarEkrani() {
     const [detoks, setDetoks] = useState<DetoksAyar>({ aktif: false });
     const [aiAktif, setAiAktif] = useState(true);
 
+    // Bardak koleksiyonu
+    const [seciliBardak, setSeciliBardak] = useState('klasik');
+    const [acikBardaklar, setAcikBardaklar] = useState<string[]>(['klasik']);
+    const [kullaniciXP, setKullaniciXP] = useState(0);
+    const [streak, setStreak] = useState(0);
+
     // Premium Context
     const { isPremium: premiumAktif, setPremium } = usePremium();
 
@@ -88,7 +96,7 @@ export function AyarlarEkrani() {
     const [premiumModalGoster, setPremiumModalGoster] = useState(false);
 
     // Tema hook
-    const { mod, renkler, modDegistir } = useTema();
+    const { mod, renkler, modDegistir, otomatikMod, otomatikModDegistir } = useTema();
 
     useEffect(() => {
         ayarlariYukle();
@@ -137,6 +145,12 @@ export function AyarlarEkrani() {
             // AI ayarlarını yükle
             const aiAyar = await aiAyarlariniYukle();
             setAiAktif(aiAyar.aktif);
+
+            // Bardak koleksiyonu yükle
+            const kayitliBardak = await seciliBardakYukle();
+            setSeciliBardak(kayitliBardak);
+            const aciklar = await acikBardaklarYukle();
+            setAcikBardaklar(aciklar);
         } catch (hata) {
             console.error('Ayarlar yüklenemedi:', hata);
         } finally {
@@ -211,16 +225,12 @@ export function AyarlarEkrani() {
         await profilKaydet(yeniProfil);
     };
 
-    // Önerilen hedefi uygula (ml cinsinden)
+    // Önerilen hedefi uygula (ml cinsinden - 250 ml katları)
     const oneriUygula = async () => {
-        const onerilenMl = profil.kilo * 33 + (profil.aktifMi ? 500 : 0);
-        // En yakın hedef seçeneğine yuvarla
-        const enYakin = HEDEF_SECENEKLERI.reduce((prev, curr) =>
-            Math.abs(curr - onerilenMl) < Math.abs(prev - onerilenMl) ? curr : prev
-        );
-        setGunlukHedef(enYakin);
-        await hedefKaydet(enYakin);
-        Alert.alert('Hedef Güncellendi', `Yeni hedefiniz: ${enYakin} ml 💧`);
+        const onerilenMl = onerilenSuHesapla(profil, bardakBoyutu);
+        setGunlukHedef(onerilenMl);
+        await hedefKaydet(onerilenMl);
+        Alert.alert('Hedef Güncellendi', `Yeni hedefiniz: ${onerilenMl} ml 💧`);
     };
 
     // AI özelliklerini aç/kapat
@@ -367,7 +377,7 @@ export function AyarlarEkrani() {
                     {/* Önerilen */}
                     <View style={styles.oneriContainer}>
                         <Text style={styles.oneriYazi}>
-                            Önerilen: {Math.round((profil.kilo * 33 + (profil.aktifMi ? 500 : 0)) / 100) * 100} ml/gün
+                            Önerilen: {Math.round((profil.kilo * 33 + (profil.aktifMi ? 500 : 0)) / 250) * 250} ml/gün
                         </Text>
                         <TouchableOpacity style={styles.oneriButon} onPress={oneriUygula}>
                             <Text style={styles.oneriButonYazi}>Uygula</Text>
@@ -710,18 +720,34 @@ export function AyarlarEkrani() {
                 <View style={[styles.temaContainer, { backgroundColor: renkler.kartArkaplan }]}>
                     <Text style={styles.temaBaslik}>🎨 Tema Ayarları</Text>
 
-                    {/* Koyu/Açık Mod */}
+                    {/* Otomatik Gece Modu */}
                     <View style={styles.modSatir}>
-                        <Text style={styles.modEtiket}>
-                            {mod === 'koyu' ? '🌙 Koyu Mod' : '☀️ Açık Mod'}
-                        </Text>
+                        <View>
+                            <Text style={styles.modEtiket}>🌙 Otomatik Gece Modu</Text>
+                            <Text style={styles.sessizAciklama}>06:00-19:00 açık, sonrası koyu</Text>
+                        </View>
                         <Switch
-                            value={mod === 'koyu'}
-                            onValueChange={(value) => modDegistir(value ? 'koyu' : 'acik')}
+                            value={otomatikMod}
+                            onValueChange={otomatikModDegistir}
                             trackColor={{ false: '#ccc', true: '#4FC3F7' }}
-                            thumbColor={mod === 'koyu' ? '#fff' : '#f4f3f4'}
+                            thumbColor={otomatikMod ? '#fff' : '#f4f3f4'}
                         />
                     </View>
+
+                    {/* Koyu/Açık Mod (Otomatik kapalıyken göster) */}
+                    {!otomatikMod && (
+                        <View style={[styles.modSatir, { marginTop: 10 }]}>
+                            <Text style={styles.modEtiket}>
+                                {mod === 'koyu' ? '🌑 Koyu Mod' : '☀️ Açık Mod'}
+                            </Text>
+                            <Switch
+                                value={mod === 'koyu'}
+                                onValueChange={(value) => modDegistir(value ? 'koyu' : 'acik')}
+                                trackColor={{ false: '#ccc', true: '#4FC3F7' }}
+                                thumbColor={mod === 'koyu' ? '#fff' : '#f4f3f4'}
+                            />
+                        </View>
+                    )}
 
                     {/* Premium Temalar */}
                     <View style={{ marginTop: 15 }}>
@@ -796,13 +822,80 @@ export function AyarlarEkrani() {
                     </View>
                 )}
 
-                {/* 📊 Veri Dışa Aktarma (Premium) */}
+                {/* 🏆 Bardak Koleksiyonu (Premium) */}
+                <View style={[styles.temaContainer, { backgroundColor: renkler.kartArkaplan }]}>
+                    <Text style={styles.temaBaslik}>🏆 Bardak Koleksiyonu</Text>
+                    <Text style={styles.hedefAciklama}>
+                        Özel bardak görselleriyle koleksiyonunu tamamla
+                    </Text>
+
+                    {premiumAktif ? (
+                        <View style={{ marginTop: 15 }}>
+                            <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 10 }}>
+                                {BARDAKLAR.map((bardak) => {
+                                    const acik = bardakAcikMi(bardak, acikBardaklar, kullaniciXP, streak, premiumAktif);
+                                    const secili = seciliBardak === bardak.id;
+
+                                    return (
+                                        <TouchableOpacity
+                                            key={bardak.id}
+                                            style={{
+                                                backgroundColor: acik ? '#134156' : '#333',
+                                                borderColor: secili ? '#4FC3F7' : 'transparent',
+                                                borderWidth: secili ? 2 : 0,
+                                                opacity: acik ? 1 : 0.5,
+                                                width: 60,
+                                                height: 60,
+                                                borderRadius: 12,
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                            }}
+                                            onPress={async () => {
+                                                if (acik) {
+                                                    setSeciliBardak(bardak.id);
+                                                    await seciliBardakKaydet(bardak.id);
+                                                } else {
+                                                    Alert.alert(
+                                                        '🔒 Kilitli',
+                                                        bardak.aciklama
+                                                    );
+                                                }
+                                            }}
+                                        >
+                                            <Text style={{ fontSize: 28 }}>{bardak.emoji}</Text>
+                                            {!acik && (
+                                                <View style={{
+                                                    position: 'absolute',
+                                                    bottom: 2,
+                                                    right: 2,
+                                                }}>
+                                                    <Text style={{ fontSize: 10 }}>🔒</Text>
+                                                </View>
+                                            )}
+                                        </TouchableOpacity>
+                                    );
+                                })}
+                            </View>
+                            <Text style={[styles.sessizAciklama, { marginTop: 10, textAlign: 'center' }]}>
+                                Seçili: {BARDAKLAR.find(b => b.id === seciliBardak)?.ad || 'Klasik Bardak'}
+                            </Text>
+                        </View>
+                    ) : (
+                        <TouchableOpacity
+                            style={[styles.oneriButon, { marginTop: 15, opacity: 0.6 }]}
+                            onPress={() => setPremiumModalGoster(true)}
+                        >
+                            <Text style={styles.oneriButonYazi}>🔒 Premium Özellik</Text>
+                        </TouchableOpacity>
+                    )}
+                </View>
                 <View style={[styles.temaContainer, { backgroundColor: renkler.kartArkaplan }]}>
                     <Text style={styles.temaBaslik}>📊 Veri Dışa Aktarma</Text>
                     <Text style={styles.hedefAciklama}>
-                        Tüm su tüketim verilerini CSV olarak indir
+                        Su tüketim verilerini dışa aktar
                     </Text>
 
+                    {/* CSV Export */}
                     <TouchableOpacity
                         style={[
                             styles.oneriButon,
@@ -817,13 +910,32 @@ export function AyarlarEkrani() {
                         }}
                     >
                         <Text style={styles.oneriButonYazi}>
-                            {premiumAktif ? '📥 CSV Olarak Dışa Aktar' : '🔒 Premium Özellik'}
+                            {premiumAktif ? '📥 CSV Olarak Dışa Aktar' : '🔒 CSV Export'}
+                        </Text>
+                    </TouchableOpacity>
+
+                    {/* PDF Rapor */}
+                    <TouchableOpacity
+                        style={[
+                            styles.oneriButon,
+                            { marginTop: 10, opacity: premiumAktif ? 1 : 0.6, backgroundColor: '#E91E63' }
+                        ]}
+                        onPress={async () => {
+                            if (premiumAktif) {
+                                await aylikPdfOlusturVePaylas(gunlukHedef * 250); // Bardak sayısı * 250ml
+                            } else {
+                                setPremiumModalGoster(true);
+                            }
+                        }}
+                    >
+                        <Text style={styles.oneriButonYazi}>
+                            {premiumAktif ? '📄 Aylık PDF Rapor' : '🔒 PDF Rapor'}
                         </Text>
                     </TouchableOpacity>
 
                     {!premiumAktif && (
                         <Text style={[styles.sessizAciklama, { marginTop: 10 }]}>
-                            Bu özellik Premium üyelere özeldir
+                            Bu özellikler Premium üyelere özeldir
                         </Text>
                     )}
                 </View>
@@ -929,15 +1041,10 @@ export function AyarlarEkrani() {
                 visible={hedefModalGoster}
                 title="Günlük Su Hedefi (ml)"
                 value={gunlukHedef}
-                options={[
-                    { label: '1000 ml (1 L)', value: 1000 },
-                    { label: '1500 ml (1.5 L)', value: 1500 },
-                    { label: '2000 ml (2 L)', value: 2000 },
-                    { label: '2500 ml (2.5 L)', value: 2500 },
-                    { label: '3000 ml (3 L)', value: 3000 },
-                    { label: '3500 ml (3.5 L)', value: 3500 },
-                    { label: '4000 ml (4 L)', value: 4000 },
-                ]}
+                options={HEDEF_SECENEKLERI.map(ml => ({
+                    label: `${ml} ml (${(ml / 1000).toFixed(ml % 1000 === 0 ? 0 : 1)} L)`,
+                    value: ml
+                }))}
                 onSelect={(value) => hedefDegistir(Number(value))}
                 onClose={() => setHedefModalGoster(false)}
             />

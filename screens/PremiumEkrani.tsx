@@ -33,6 +33,9 @@ const PREMIUM_OZELLIKLER = [
     { id: 5, baslik: 'Akıllı Hatırlatmalar', detay: 'Hava durumu ve biyoritminize tam uyumlu bildirimler.', emoji: '🔔' },
     { id: 6, baslik: 'Özel Temalar', detay: '5 yeni renk paleti ve özel uygulama ikonları.', emoji: '🎨' },
     { id: 7, baslik: 'Veri Dışa Aktarma', detay: 'Tüm su tüketim verilerinizi CSV olarak indirin.', emoji: '📊' },
+    { id: 8, baslik: 'Sanal Bitki', detay: 'Su içtikçe büyüyen ve çiçek açan bitkini yetiştir.', emoji: '🌸' },
+    { id: 9, baslik: 'Bardak Koleksiyonu', detay: 'Özel bardak görselleriyle koleksiyonunu tamamla.', emoji: '🏆' },
+    { id: 10, baslik: 'Aylık PDF Rapor', detay: 'Detaylı performans raporunu PDF olarak indir.', emoji: '📄' },
 ];
 
 const FIYAT_PLANLARI = [

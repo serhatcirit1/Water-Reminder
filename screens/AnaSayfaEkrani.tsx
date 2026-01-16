@@ -26,6 +26,7 @@ import { gunlukGorevleriYukle, GunlukGorevDurumu, suIcmeGorevKontrol } from '../
 import { havaDurumuAl, HavaDurumuVerisi, sicaklikMesaji } from '../havaDurumu';
 import { InsightsCard } from '../components/InsightsCard';
 import { ForecastCard } from '../components/ForecastCard';
+import { VirtualPlant } from '../components/VirtualPlant';
 import {
     akilliHedefHesapla,
     AIHedefOnerisi,
@@ -518,6 +519,17 @@ export function AnaSayfaEkrani() {
                     </View>
                 </View>
 
+                {/* 🌸 Sanal Bitki (Premium) */}
+                {premiumAktif && (
+                    <View style={styles.bitkiKart}>
+                        <View style={styles.bitkiHeader}>
+                            <Text style={styles.bitkiBaslik}>🌱 Bahçem</Text>
+                            <Text style={styles.bitkiAciklama}>Su içtikçe bitkini büyüt!</Text>
+                        </View>
+                        <VirtualPlant toplamMl={toplamMl} gunlukHedef={gunlukHedef} />
+                    </View>
+                )}
+
                 {/* Motivasyon Kartı */}
                 <View style={styles.motivasyonKart}>
                     <Text style={styles.motivasyonEmoji}>
@@ -841,5 +853,29 @@ const styles = StyleSheet.create({
     premiumBannerEmoji: {
         fontSize: 24,
         marginLeft: 10,
+    },
+
+    // Sanal Bitki Kartı
+    bitkiKart: {
+        backgroundColor: '#134156',
+        borderRadius: 20,
+        padding: 20,
+        marginBottom: 15,
+        width: '100%',
+        borderWidth: 1,
+        borderColor: '#4CAF50',
+    },
+    bitkiHeader: {
+        marginBottom: 10,
+    },
+    bitkiBaslik: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#81C784',
+    },
+    bitkiAciklama: {
+        fontSize: 12,
+        color: '#A5D6A7',
+        marginTop: 4,
     },
 });
