@@ -1,7 +1,7 @@
 // ============================================
-// EXPORT UTILS - Premium CSV & Excel Export
+// EXPORT UTILS - Premium CSV & Data Export
 // ============================================
-// Premium kullanıcılar için gelişmiş veri dışa aktarma
+// Premium kullanıcılar için profesyonel veri dışa aktarma
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as FileSystem from 'expo-file-system/legacy';
@@ -19,17 +19,6 @@ interface GecmisKayit {
 
 interface GecmisVeri {
     [tarih: string]: GecmisKayit;
-}
-
-interface DetayliKayit {
-    tarih: string;
-    haftaninGunu: string;
-    ml: number;
-    bardakSayisi: number;
-    hedef: number;
-    basariYuzde: number;
-    hedefinUstunde: boolean;
-    haftalikOrtalama: number;
 }
 
 interface OzetIstatistik {
@@ -143,50 +132,67 @@ function ozetHesapla(gecmis: GecmisVeri, hedef: number): OzetIstatistik {
 }
 
 /**
- * Premium CSV oluştur (özet + detaylı satırlar)
+ * Premium Profesyonel CSV oluştur
  */
 export function premiumCsvOlustur(gecmis: GecmisVeri, hedef: number = 2000): string {
     const ozet = ozetHesapla(gecmis, hedef);
 
-    // Özet bölümü
-    const ozetBolumu = [
-        '# SU TÜKETİM RAPORU',
-        `# Oluşturma Tarihi: ${new Date().toLocaleDateString('tr-TR')}`,
-        '#',
-        `# ÖZET İSTATİSTİKLER`,
-        `# Toplam Gün Sayısı: ${ozet.toplamGun}`,
-        `# Toplam Tüketim: ${(ozet.toplamMl / 1000).toFixed(2)} Litre`,
-        `# Günlük Ortalama: ${ozet.ortalamaMl} ml`,
-        `# Günlük Hedef: ${hedef} ml`,
-        `# Başarılı Günler: ${ozet.basariliGunler} (${ozet.basariOrani}%)`,
-        ozet.enIyiGun ? `# En İyi Gün: ${ozet.enIyiGun.tarih} (${ozet.enIyiGun.ml} ml)` : '',
-        ozet.enKotuGun ? `# En Düşük: ${ozet.enKotuGun.tarih} (${ozet.enKotuGun.ml} ml)` : '',
-        '#',
-        '# DETAYLI VERİLER',
+    // Metadata & Executive Summary Section
+    const metadata = [
+        '--------------------------------------------------------------------------------',
+        '| SU TAKİP PREMIUM - PROFESYONEL VERİ EKSPORTU                                |',
+        '--------------------------------------------------------------------------------',
+        `| RApor Oluşturma Tarihi : ${new Date().toLocaleString('tr-TR')}                   |`,
+        `| Toplam İzlenen Gün     : ${ozet.toplamGun} gün                                     |`,
+        `| Toplam Su Tüketimi     : ${(ozet.toplamMl / 1000).toFixed(2)} Litre                            |`,
+        `| Günlük Ortalama        : ${ozet.ortalamaMl} ml                                     |`,
+        `| Hedef Başarı Oranı     : %${ozet.basariOrani} (Hedef: ${hedef}ml)                        |`,
+        '--------------------------------------------------------------------------------',
         '',
-    ].filter(line => line !== '').join('\n');
+    ];
 
-    // Header satırı
-    const header = 'Tarih,Gün,İçilen (ml),Bardak,Hedef (ml),Başarı (%),Hedef Durumu,7 Günlük Ort.';
+    // CSV Header (Column Names)
+    const header = [
+        'Tarih',
+        'Gün',
+        'Tüketim (ml)',
+        'Bardak Sayısı',
+        'Hedef (ml)',
+        'Başarı (%)',
+        'Durum',
+        '7-Günlük Hareketli Ort.',
+        'Haftalık Hedef Farkı (ml)'
+    ].join(',');
 
-    // Tarihleri sırala (en yeniden en eskiye)
+    // Sort dates descending
     const tarihler = Object.keys(gecmis).sort((a, b) =>
         new Date(b).getTime() - new Date(a).getTime()
     );
 
-    // Satırları oluştur
-    const satirlar = tarihler.map(tarih => {
+    // Data Row Generator
+    const rows = tarihler.map(tarih => {
         const kayit = gecmis[tarih];
         const date = new Date(tarih);
         const gunAdi = GUN_ADLARI_UZUN[date.getDay()];
         const basariYuzde = Math.round((kayit.ml / hedef) * 100);
-        const hedefinUstunde = kayit.ml >= hedef ? 'Başarılı' : 'Eksik';
-        const haftalikOrt = haftalikOrtalamaHesapla(gecmis, tarih);
+        const durum = kayit.ml >= hedef ? 'HEDEF TAMAMLANDI' : 'HEDEF ALTI';
+        const hareketliOrt = haftalikOrtalamaHesapla(gecmis, tarih);
+        const fark = kayit.ml - hedef;
 
-        return `${tarih},${gunAdi},${kayit.ml},${kayit.miktar},${hedef},${basariYuzde}%,${hedefinUstunde},${haftalikOrt}`;
+        return [
+            tarih,
+            gunAdi,
+            kayit.ml,
+            kayit.miktar,
+            hedef,
+            basariYuzde,
+            durum,
+            hareketliOrt,
+            fark
+        ].join(',');
     });
 
-    return ozetBolumu + [header, ...satirlar].join('\n');
+    return metadata.join('\n') + header + '\n' + rows.join('\n');
 }
 
 /**
@@ -199,103 +205,42 @@ export async function csvOlusturVePaylas(hedef: number = 2000): Promise<boolean>
         if (Object.keys(gecmis).length === 0) {
             Alert.alert(
                 'Veri Bulunamadı',
-                'Dışa aktarılacak su tüketim verisi bulunmuyor. Önce biraz su içmeyi deneyin! 💧'
+                'İstatistiksel analiz için yeterli veri bulunmuyor. 💪'
             );
             return false;
         }
 
-        // Premium CSV oluştur
         const csvIcerigi = premiumCsvOlustur(gecmis, hedef);
-
-        // Dosya adı oluştur (tarih damgalı)
         const simdi = new Date();
-        const dosyaAdi = `su_tuketimi_rapor_${simdi.getFullYear()}-${String(simdi.getMonth() + 1).padStart(2, '0')}-${String(simdi.getDate()).padStart(2, '0')}.csv`;
+        const dosyaAdi = `SuTakip_Rapor_${simdi.getFullYear()}${String(simdi.getMonth() + 1).padStart(2, '0')}${String(simdi.getDate()).padStart(2, '0')}.csv`;
 
-        // Dosya yolu
         const dosyaYolu = `${FileSystem.cacheDirectory}${dosyaAdi}`;
-
-        // Dosyayı yaz
         await FileSystem.writeAsStringAsync(dosyaYolu, csvIcerigi);
 
-        // Paylaşım mümkün mü kontrol et
         const paylasilabilir = await Sharing.isAvailableAsync();
-
         if (!paylasilabilir) {
-            Alert.alert(
-                'Paylaşım Desteklenmiyor',
-                'Bu cihazda dosya paylaşımı desteklenmiyor.'
-            );
+            Alert.alert('Hata', 'Paylaşım bu cihazda desteklenmiyor.');
             return false;
         }
 
-        // Paylaş
         await Sharing.shareAsync(dosyaYolu, {
             mimeType: 'text/csv',
-            dialogTitle: 'Su Tüketim Raporu Paylaş',
+            dialogTitle: 'Profesyonel Su Tüketim Analizi',
             UTI: 'public.comma-separated-values-text',
         });
 
         return true;
     } catch (hata) {
-        console.error('CSV dışa aktarma hatası:', hata);
-        Alert.alert(
-            'Hata',
-            'Veriler dışa aktarılırken bir hata oluştu. Lütfen tekrar deneyin.'
-        );
+        console.error('CSV Export Error:', hata);
+        Alert.alert('Sistem Hatası', 'Rapor hazırlanırken bir hata oluştu.');
         return false;
     }
 }
 
 /**
- * Toplam veri sayısını al (istatistik için)
+ * Toplam veri sayısını al
  */
 export async function toplamVeriSayisi(): Promise<number> {
     const gecmis = await suGecmisiniYukle();
     return Object.keys(gecmis).length;
-}
-
-/**
- * JSON olarak tüm veriyi dışa aktar (yedekleme için)
- */
-export async function jsonOlusturVePaylas(): Promise<boolean> {
-    try {
-        const gecmis = await suGecmisiniYukle();
-
-        if (Object.keys(gecmis).length === 0) {
-            Alert.alert('Veri Bulunamadı', 'Yedeklenecek veri yok.');
-            return false;
-        }
-
-        const yedek = {
-            uygulamaAdi: 'Su Takip Premium',
-            olusturmaTarihi: new Date().toISOString(),
-            versiyon: '1.0',
-            veri: gecmis,
-        };
-
-        const jsonIcerigi = JSON.stringify(yedek, null, 2);
-        const simdi = new Date();
-        const dosyaAdi = `su_takip_yedek_${simdi.getFullYear()}-${String(simdi.getMonth() + 1).padStart(2, '0')}-${String(simdi.getDate()).padStart(2, '0')}.json`;
-
-        const dosyaYolu = `${FileSystem.cacheDirectory}${dosyaAdi}`;
-        await FileSystem.writeAsStringAsync(dosyaYolu, jsonIcerigi);
-
-        const paylasilabilir = await Sharing.isAvailableAsync();
-        if (!paylasilabilir) {
-            Alert.alert('Hata', 'Paylaşım desteklenmiyor.');
-            return false;
-        }
-
-        await Sharing.shareAsync(dosyaYolu, {
-            mimeType: 'application/json',
-            dialogTitle: 'Yedekleme Dosyası',
-            UTI: 'public.json',
-        });
-
-        return true;
-    } catch (hata) {
-        console.error('JSON yedekleme hatası:', hata);
-        Alert.alert('Hata', 'Yedekleme oluşturulamadı.');
-        return false;
-    }
 }

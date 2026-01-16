@@ -49,7 +49,7 @@ import { aylikPdfOlusturVePaylas, haftalikPdfOlusturVePaylas } from '../pdfExpor
 export function AyarlarEkrani() {
     const [bildirimAktif, setBildirimAktif] = useState(false);
     const [hatirlatmaAraligi, setHatirlatmaAraligi] = useState(120);
-    const [gunlukHedef, setGunlukHedef] = useState(8);
+    const [gunlukHedef, setGunlukHedef] = useState(2000);
     const [bardakBoyutu, setBardakBoyutu] = useState(250);
     const [yukleniyor, setYukleniyor] = useState(true);
     const [sessizSaatler, setSessizSaatler] = useState<SessizSaatlerAyar>({

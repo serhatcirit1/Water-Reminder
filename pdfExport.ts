@@ -192,239 +192,372 @@ function detayliAylikIstatistikHesapla(
 }
 
 /**
- * İlerleme çubuğu SVG oluştur
+ * Modern Bar Chart SVG
  */
-function progressBarSvg(yuzde: number, renk: string = '#4FC3F7'): string {
-    const genislik = 200;
-    const doluluk = Math.min(100, Math.max(0, yuzde));
+function modernBarChartSvg(degerler: number[]): string {
+    const maxDeger = Math.max(...degerler, 1);
+    const height = 120;
+    const width = 400;
+    const barWidth = 40;
+    const gap = 20;
+    const borderRadius = 6;
+
+    const bars = degerler.map((deger, i) => {
+        const barHeight = (deger / maxDeger) * height;
+        const x = i * (barWidth + gap) + 30;
+        const y = height - barHeight;
+
+        return `
+            <g>
+                <rect x="${x}" y="0" width="${barWidth}" height="${height}" rx="${borderRadius}" fill="rgba(255,255,255,0.05)" />
+                <rect x="${x}" y="${y}" width="${barWidth}" height="${barHeight}" rx="${borderRadius}" fill="url(#barGradient)" />
+                <text x="${x + barWidth / 2}" y="${height + 20}" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="10" font-weight="600">HAFTA ${i + 1}</text>
+                <text x="${x + barWidth / 2}" y="${y - 10}" text-anchor="middle" fill="#4FC3F7" font-size="10" font-weight="700">${deger}</text>
+            </g>
+        `;
+    }).join('');
+
     return `
-        <svg width="${genislik}" height="12" style="display: block; margin: 10px auto;">
-            <rect x="0" y="0" width="${genislik}" height="12" rx="6" fill="rgba(255,255,255,0.2)"/>
-            <rect x="0" y="0" width="${(genislik * doluluk) / 100}" height="12" rx="6" fill="${renk}"/>
+        <svg width="${width}" height="${height + 40}" viewBox="0 0 ${width} ${height + 40}" style="display: block; margin: 20px auto;">
+            <defs>
+                <linearGradient id="barGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#4FC3F7;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#2196F3;stop-opacity:1" />
+                </linearGradient>
+            </defs>
+            ${bars}
         </svg>
     `;
 }
 
 /**
- * Mini bar chart SVG oluştur
+ * Modern Progress Ring SVG
  */
-function miniBarChartSvg(degerler: number[]): string {
-    const maxDeger = Math.max(...degerler, 1);
-    const barWidth = 30;
-    const barGap = 8;
-    const height = 60;
-    const totalWidth = degerler.length * (barWidth + barGap);
+function progressRingSvg(yuzde: number): string {
+    const radius = 45;
+    const stroke = 8;
+    const normalizedRadius = radius - stroke * 2;
+    const circumference = normalizedRadius * 2 * Math.PI;
+    const offset = circumference - (yuzde / 100) * circumference;
 
-    const bars = degerler.map((deger, i) => {
-        const barHeight = (deger / maxDeger) * height;
-        const x = i * (barWidth + barGap);
-        const y = height - barHeight;
-        return `<rect x="${x}" y="${y}" width="${barWidth}" height="${barHeight}" rx="4" fill="rgba(79, 195, 247, 0.8)"/>
-                <text x="${x + barWidth / 2}" y="${height + 15}" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="10">H${i + 1}</text>`;
-    }).join('');
-
-    return `<svg width="${totalWidth}" height="${height + 20}" style="display: block; margin: 15px auto;">${bars}</svg>`;
+    return `
+        <svg height="120" width="120" style="display: block; margin: 0 auto;">
+            <circle stroke="rgba(255,255,255,0.1)" stroke-width="${stroke}" fill="transparent" r="${normalizedRadius}" cx="60" cy="60"/>
+            <circle stroke="#4FC3F7" stroke-dasharray="${circumference} ${circumference}" style="stroke-dashoffset: ${offset}; transition: stroke-dashoffset 0.35s; transform: rotate(-90deg); transform-origin: 50% 50%;" stroke-width="${stroke}" stroke-linecap="round" fill="transparent" r="${normalizedRadius}" cx="60" cy="60"/>
+            <text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="white" font-size="20" font-weight="bold">${yuzde}%</text>
+        </svg>
+    `;
 }
 
 /**
- * Premium HTML rapor şablonu
+ * Premium HTML rapor şablonu (Aylık)
  */
 function premiumHtmlRaporOlustur(ozet: AylikOzet): string {
     const basariOrani = ozet.toplamGun > 0
         ? Math.round((ozet.basariliGunler / ozet.toplamGun) * 100)
         : 0;
 
-    const karsilastirmaRenk = ozet.oncekiAyKarsilastirma >= 0 ? '#4CAF50' : '#F44336';
-    const karsilastirmaIcon = ozet.oncekiAyKarsilastirma >= 0 ? '↑' : '↓';
+    const karsilastirmaRenk = ozet.oncekiAyKarsilastirma >= 0 ? '#4CAF50' : '#FF5252';
+    const karsilastirmaIcon = ozet.oncekiAyKarsilastirma >= 0 ? '↗' : '↘';
 
     return `
         <!DOCTYPE html>
         <html>
         <head>
             <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <style>
+                @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+                
                 * { margin: 0; padding: 0; box-sizing: border-box; }
                 body {
-                    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
-                    background: linear-gradient(180deg, #0A1628 0%, #1A237E 50%, #0D47A1 100%);
-                    color: white;
-                    min-height: 100vh;
-                    padding: 30px 20px;
+                    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+                    background-color: #050B18;
+                    color: #FFFFFF;
+                    width: 100%;
+                    padding: 40px;
                 }
+                
+                .wrapper {
+                    max-width: 800px;
+                    margin: 0 auto;
+                }
+
                 .header {
-                    text-align: center;
-                    padding: 20px 0 30px;
-                    border-bottom: 1px solid rgba(255,255,255,0.1);
-                    margin-bottom: 25px;
-                }
-                .header-icon {
-                    font-size: 50px;
-                    margin-bottom: 10px;
-                }
-                .header h1 {
-                    font-size: 28px;
-                    font-weight: 700;
-                    letter-spacing: -0.5px;
-                    margin-bottom: 5px;
-                }
-                .header .subtitle {
-                    font-size: 16px;
-                    opacity: 0.7;
-                }
-                .card {
-                    background: rgba(255,255,255,0.08);
-                    backdrop-filter: blur(10px);
-                    border: 1px solid rgba(255,255,255,0.1);
-                    border-radius: 16px;
-                    padding: 20px;
-                    margin-bottom: 16px;
-                }
-                .card-title {
-                    font-size: 12px;
-                    text-transform: uppercase;
-                    letter-spacing: 1px;
-                    opacity: 0.6;
-                    margin-bottom: 8px;
-                }
-                .card-value {
-                    font-size: 36px;
-                    font-weight: 700;
-                }
-                .card-value.small {
-                    font-size: 24px;
-                }
-                .card-subtitle {
-                    font-size: 13px;
-                    opacity: 0.6;
-                    margin-top: 5px;
-                }
-                .grid {
                     display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 40px;
+                }
+
+                .brand {
+                    display: flex;
+                    align-items: center;
                     gap: 12px;
                 }
-                .grid .card {
-                    flex: 1;
-                    text-align: center;
-                }
-                .streak-badge {
-                    display: inline-block;
-                    background: linear-gradient(135deg, #FF6B6B, #FF8E53);
-                    padding: 8px 16px;
-                    border-radius: 20px;
-                    font-weight: 600;
-                    font-size: 14px;
-                }
-                .comparison {
-                    display: inline-block;
-                    padding: 4px 10px;
+
+                .logo-square {
+                    width: 44px;
+                    height: 44px;
+                    background: linear-gradient(135deg, #4FC3F7, #2196F3);
                     border-radius: 12px;
-                    font-size: 13px;
-                    font-weight: 600;
-                    margin-top: 8px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 24px;
+                    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
                 }
-                .highlight-card {
-                    background: linear-gradient(135deg, rgba(79,195,247,0.3), rgba(33,150,243,0.2));
-                    border: 1px solid rgba(79,195,247,0.3);
+
+                .brand-name {
+                    font-size: 22px;
+                    font-weight: 800;
+                    letter-spacing: -0.5px;
                 }
-                .chart-section {
-                    text-align: center;
+
+                .report-title {
+                    text-align: right;
                 }
-                .footer {
-                    text-align: center;
-                    padding: 25px 0 10px;
-                    border-top: 1px solid rgba(255,255,255,0.1);
-                    margin-top: 20px;
-                }
-                .footer-text {
-                    font-size: 11px;
-                    opacity: 0.5;
-                }
-                .footer-logo {
+
+                .report-title h1 {
                     font-size: 14px;
-                    font-weight: 600;
-                    opacity: 0.7;
-                    margin-bottom: 5px;
+                    text-transform: uppercase;
+                    letter-spacing: 2px;
+                    color: #4FC3F7;
+                    margin-bottom: 4px;
                 }
-                .trophy { color: #FFD700; }
-                .water { color: #4FC3F7; }
+
+                .report-title p {
+                    font-size: 20px;
+                    font-weight: 700;
+                    opacity: 0.9;
+                }
+
+                .hero-card {
+                    background: linear-gradient(135deg, rgba(25, 118, 210, 0.1), rgba(13, 71, 161, 0.05));
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    border-radius: 32px;
+                    padding: 40px;
+                    margin-bottom: 24px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    overflow: hidden;
+                    position: relative;
+                }
+
+                .hero-card::before {
+                    content: '';
+                    position: absolute;
+                    top: -50%;
+                    right: -20%;
+                    width: 300px;
+                    height: 300px;
+                    background: radial-gradient(circle, rgba(79, 195, 247, 0.1) 0%, transparent 70%);
+                    z-index: 0;
+                }
+
+                .hero-content { position: relative; z-index: 1; }
+                .hero-label { font-size: 14px; font-weight: 600; opacity: 0.6; margin-bottom: 8px; }
+                .hero-value { font-size: 56px; font-weight: 800; line-height: 1; }
+                .hero-unit { font-size: 24px; font-weight: 600; color: #4FC3F7; margin-left: 8px; }
+                
+                .comparison-badge {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 4px;
+                    padding: 6px 14px;
+                    background: ${karsilastirmaRenk}20;
+                    color: ${karsilastirmaRenk};
+                    border-radius: 100px;
+                    font-size: 14px;
+                    font-weight: 700;
+                    margin-top: 16px;
+                }
+
+                .stats-grid {
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 20px;
+                    margin-bottom: 40px;
+                }
+
+                .stat-card {
+                    background: rgba(255, 255, 255, 0.04);
+                    border: 1px solid rgba(255, 255, 255, 0.08);
+                    border-radius: 24px;
+                    padding: 24px;
+                    text-align: center;
+                }
+
+                .stat-icon { font-size: 24px; margin-bottom: 12px; }
+                .stat-label { font-size: 12px; font-weight: 600; opacity: 0.5; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+                .stat-value { font-size: 28px; font-weight: 700; }
+                .stat-sub { font-size: 12px; opacity: 0.4; margin-top: 4px; }
+
+                .section {
+                    margin-bottom: 40px;
+                }
+
+                .section-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 24px;
+                    padding: 0 8px;
+                }
+
+                .section-title { font-size: 18px; font-weight: 700; }
+
+                .chart-container {
+                    background: rgba(255, 255, 255, 0.04);
+                    border: 1px solid rgba(255, 255, 255, 0.08);
+                    border-radius: 24px;
+                    padding: 32px;
+                }
+
+                .detail-table {
+                    width: 100%;
+                    border-collapse: separate;
+                    border-spacing: 0 8px;
+                }
+
+                .detail-table th {
+                    text-align: left;
+                    padding: 12px 20px;
+                    font-size: 12px;
+                    font-weight: 600;
+                    opacity: 0.5;
+                    text-transform: uppercase;
+                }
+
+                .detail-table td {
+                    background: rgba(255, 255, 255, 0.03);
+                    padding: 16px 20px;
+                    font-size: 14px;
+                }
+
+                .detail-table tr td:first-child { border-radius: 12px 0 0 12px; font-weight: 700; }
+                .detail-table tr td:last-child { border-radius: 0 12px 12px 0; text-align: right; }
+
+                .status-dot {
+                    display: inline-block;
+                    width: 8px;
+                    height: 8px;
+                    border-radius: 50%;
+                    margin-right: 8px;
+                }
+
+                .status-success { background: #4CAF50; box-shadow: 0 0 8px #4CAF50; }
+                .status-fail { background: #FF5252; }
+
+                .footer {
+                    margin-top: 60px;
+                    text-align: center;
+                    padding: 40px 0;
+                    border-top: 1px solid rgba(255, 255, 255, 0.05);
+                }
+
+                .footer p { font-size: 14px; opacity: 0.4; margin-bottom: 8px; }
+                .premium-shield {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 6px 16px;
+                    background: linear-gradient(135deg, #FFD700, #FFA000);
+                    color: #000;
+                    border-radius: 100px;
+                    font-size: 12px;
+                    font-weight: 800;
+                    text-transform: uppercase;
+                }
             </style>
         </head>
         <body>
-            <div class="header">
-                <div class="header-icon">💧</div>
-                <h1>Aylık Performans Raporu</h1>
-                <div class="subtitle">${ozet.ay} ${ozet.yil}</div>
-            </div>
+            <div class="wrapper">
+                <header class="header">
+                    <div class="brand">
+                        <div class="logo-square">💧</div>
+                        <div class="brand-name">SU TAKİP</div>
+                    </div>
+                    <div class="report-title">
+                        <h1>Aylık Performans</h1>
+                        <p>${ozet.ay} ${ozet.yil}</p>
+                    </div>
+                </header>
 
-            <!-- Ana İstatistik -->
-            <div class="card highlight-card">
-                <div class="card-title">Toplam Su Tüketimi</div>
-                <div class="card-value">${(ozet.toplamMl / 1000).toFixed(1)} <span style="font-size: 20px;">Litre</span></div>
-                <div class="card-subtitle">${ozet.toplamGun} gün boyunca</div>
-                ${ozet.oncekiAyKarsilastirma !== 0 ? `
-                <div class="comparison" style="background: ${karsilastirmaRenk}20; color: ${karsilastirmaRenk}">
-                    ${karsilastirmaIcon} Önceki aya göre %${Math.abs(ozet.oncekiAyKarsilastirma)}
+                <div class="hero-card">
+                    <div class="hero-content">
+                        <p class="hero-label">Toplam Su Tüketimi</p>
+                        <div class="hero-value">${(ozet.toplamMl / 1000).toFixed(1)}<span class="hero-unit">Litre</span></div>
+                        ${ozet.oncekiAyKarsilastirma !== 0 ? `
+                        <div class="comparison-badge">
+                            ${karsilastirmaIcon} %${Math.abs(ozet.oncekiAyKarsilastirma)} Gelişim
+                        </div>
+                        ` : ''}
+                    </div>
+                    <div class="hero-chart">
+                        ${progressRingSvg(basariOrani)}
+                    </div>
                 </div>
-                ` : ''}
-            </div>
 
-            <!-- Grid: Ortalama ve Streak -->
-            <div class="grid">
-                <div class="card">
-                    <div class="card-title">Günlük Ortalama</div>
-                    <div class="card-value small">${ozet.ortalamaMl}</div>
-                    <div class="card-subtitle">ml/gün</div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📈</div>
+                        <p class="stat-label">Ortalama</p>
+                        <p class="stat-value">${ozet.ortalamaMl}</p>
+                        <p class="stat-sub">ml / gün</p>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🔥</div>
+                        <p class="stat-label">Streak</p>
+                        <p class="stat-value">${ozet.streak}</p>
+                        <p class="stat-sub">günlük seri</p>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🎯</div>
+                        <p class="stat-label">Hedef</p>
+                        <p class="stat-value">${ozet.gunlukHedef}</p>
+                        <p class="stat-sub">ml günlük hedef</p>
+                    </div>
                 </div>
-                <div class="card">
-                    <div class="card-title">🔥 Streak</div>
-                    <div class="card-value small">${ozet.streak}</div>
-                    <div class="card-subtitle">gün üst üste</div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">Haftalık Trend</h2>
+                    </div>
+                    <div class="chart-container">
+                        ${modernBarChartSvg(ozet.haftalikOrtalamalar)}
+                    </div>
                 </div>
-            </div>
 
-            <!-- Hedef Başarısı -->
-            <div class="card">
-                <div class="card-title">Hedef Başarı Oranı</div>
-                <div class="card-value">${basariOrani}%</div>
-                ${progressBarSvg(basariOrani)}
-                <div class="card-subtitle">${ozet.basariliGunler} / ${ozet.toplamGun} gün hedefe ulaştın</div>
-            </div>
-
-            <!-- Haftalık Trend -->
-            <div class="card chart-section">
-                <div class="card-title">Haftalık Trend</div>
-                ${miniBarChartSvg(ozet.haftalikOrtalamalar)}
-                <div class="card-subtitle">Haftalık ortalama tüketim (ml)</div>
-            </div>
-
-            <!-- En İyi ve En Kötü Gün -->
-            <div class="grid">
-                ${ozet.enIyiGun ? `
-                <div class="card">
-                    <div class="card-title"><span class="trophy">🏆</span> En İyi Gün</div>
-                    <div class="card-value small">${ozet.enIyiGun.ml}</div>
-                    <div class="card-subtitle">${ozet.enIyiGun.tarih}</div>
+                <div class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">Ayın Öne Çıkanları</h2>
+                    </div>
+                    <div class="stats-grid" style="grid-template-columns: 1fr 1fr;">
+                        <div class="stat-card" style="text-align: left; display: flex; align-items: center; gap: 20px;">
+                            <div style="font-size: 32px;">🏆</div>
+                            <div>
+                                <p class="stat-label">En İyi Gün</p>
+                                <p class="stat-value" style="font-size: 20px;">${ozet.enIyiGun ? ozet.enIyiGun.ml + ' ml' : '-'}</p>
+                                <p class="stat-sub">${ozet.enIyiGun ? ozet.enIyiGun.tarih : ''}</p>
+                            </div>
+                        </div>
+                        <div class="stat-card" style="text-align: left; display: flex; align-items: center; gap: 20px;">
+                            <div style="font-size: 32px;">🕒</div>
+                            <div>
+                                <p class="stat-label">En Aktif Zaman</p>
+                                <p class="stat-value" style="font-size: 20px;">${ozet.enAktifZamanDilimi}</p>
+                                <p class="stat-sub">Ortalama bazlı</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                ` : ''}
-                ${ozet.enKotuGun && ozet.toplamGun > 1 ? `
-                <div class="card">
-                    <div class="card-title">📉 En Düşük</div>
-                    <div class="card-value small">${ozet.enKotuGun.ml}</div>
-                    <div class="card-subtitle">${ozet.enKotuGun.tarih}</div>
-                </div>
-                ` : ''}
-            </div>
 
-            <!-- Hedef Bilgisi -->
-            <div class="card">
-                <div class="card-title">🎯 Günlük Hedefin</div>
-                <div class="card-value small">${ozet.gunlukHedef} <span style="font-size: 14px;">ml</span></div>
-            </div>
-
-            <div class="footer">
-                <div class="footer-logo">💧 Su Takip Premium</div>
-                <div class="footer-text">Bu rapor ${new Date().toLocaleDateString('tr-TR')} tarihinde oluşturuldu</div>
+                <footer class="footer">
+                    <p>Bu rapor Serhat Cirit tarafından geliştirilen Su Takip Premium için oluşturulmuştur.</p>
+                    <div class="premium-shield">🛡️ Premium Certified Report</div>
+                    <p style="margin-top: 20px; opacity: 0.2; font-size: 10px;">Oluşturulma: ${new Date().toLocaleString('tr-TR')}</p>
+                </footer>
             </div>
         </body>
         </html>
@@ -531,67 +664,102 @@ export async function haftalikPdfOlusturVePaylas(gunlukHedef: number = 2000): Pr
             <head>
                 <meta charset="UTF-8">
                 <style>
+                    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+                    * { margin: 0; padding: 0; box-sizing: border-box; }
                     body {
-                        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-                        background: linear-gradient(180deg, #1A237E, #0D47A1);
+                        font-family: 'Plus Jakarta Sans', sans-serif;
+                        background: #050B18;
                         color: white;
-                        padding: 30px;
+                        padding: 40px;
                         min-height: 100vh;
                     }
-                    .header { text-align: center; margin-bottom: 30px; }
-                    .header h1 { font-size: 24px; }
-                    .card {
-                        background: rgba(255,255,255,0.1);
-                        border-radius: 12px;
-                        padding: 16px;
-                        margin-bottom: 12px;
+                    .header { margin-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 20px; }
+                    .header h1 { font-size: 24px; font-weight: 800; color: #4FC3F7; }
+                    
+                    .hero-grid {
+                        display: grid;
+                        grid-template-columns: repeat(3, 1fr);
+                        gap: 20px;
+                        margin-bottom: 32px;
                     }
+
+                    .card {
+                        background: rgba(255,255,255,0.04);
+                        border: 1px solid rgba(255,255,255,0.08);
+                        border-radius: 20px;
+                        padding: 20px;
+                    }
+
+                    .stat-value { font-size: 24px; font-weight: 800; color: #FFFFFF; }
+                    .stat-label { font-size: 11px; font-weight: 600; opacity: 0.5; text-transform: uppercase; margin-top: 4px; }
+                    
+                    .day-list { margin-top: 32px; }
                     .day-row {
                         display: flex;
                         justify-content: space-between;
-                        padding: 10px 0;
-                        border-bottom: 1px solid rgba(255,255,255,0.1);
+                        align-items: center;
+                        padding: 16px;
+                        background: rgba(255,255,255,0.02);
+                        margin-bottom: 8px;
+                        border-radius: 12px;
                     }
-                    .day-name { font-weight: 600; }
-                    .day-ml { color: #4FC3F7; font-weight: 700; }
-                    .stat { text-align: center; }
-                    .stat-value { font-size: 28px; font-weight: 700; }
-                    .stat-label { opacity: 0.7; font-size: 12px; }
+                    .day-info { display: flex; align-items: center; gap: 12px; }
+                    .day-name { font-weight: 700; }
+                    .day-ml { font-weight: 800; color: #4FC3F7; }
+                    
+                    .status-tag {
+                        padding: 4px 10px;
+                        border-radius: 6px;
+                        font-size: 10px;
+                        font-weight: 800;
+                        text-transform: uppercase;
+                    }
+                    .status-complete { background: #4CAF5020; color: #4CAF50; }
+                    .status-incomplete { background: #FF525220; color: #FF5252; }
+
+                    .footer { text-align: center; margin-top: 60px; opacity: 0.3; font-size: 12px; }
                 </style>
             </head>
             <body>
                 <div class="header">
-                    <div style="font-size: 40px;">📊</div>
-                    <h1>Haftalık Rapor</h1>
-                    <p style="opacity: 0.7;">Son 7 Gün</p>
+                    <h1>HAFTALIK SU ANALİZİ</h1>
+                    <p style="opacity: 0.5; font-size: 14px;">${gunler[0].tarih} - ${gunler[6].tarih}</p>
                 </div>
 
-                <div style="display: flex; gap: 12px; margin-bottom: 20px;">
-                    <div class="card stat" style="flex: 1;">
-                        <div class="stat-value">${(toplam / 1000).toFixed(1)}L</div>
-                        <div class="stat-label">Toplam</div>
+                <div class="hero-grid">
+                    <div class="card">
+                        <p class="stat-value">${(toplam / 1000).toFixed(1)}L</p>
+                        <p class="stat-label">Toplam Tüketim</p>
                     </div>
-                    <div class="card stat" style="flex: 1;">
-                        <div class="stat-value">${ortalama}</div>
-                        <div class="stat-label">Ortalama (ml)</div>
+                    <div class="card">
+                        <p class="stat-value">${ortalama}</p>
+                        <p class="stat-label">Günlük Ort (ml)</p>
                     </div>
-                    <div class="card stat" style="flex: 1;">
-                        <div class="stat-value">${basariOrani}%</div>
-                        <div class="stat-label">Başarı</div>
+                    <div class="card">
+                        <p class="stat-value">${basariOrani}%</p>
+                        <p class="stat-label">Hedef Başarısı</p>
                     </div>
                 </div>
 
-                <div class="card">
+                <div class="day-list">
                     ${gunler.map(g => `
                         <div class="day-row">
-                            <span class="day-name">${g.gun} (${g.tarih.slice(5)})</span>
-                            <span class="day-ml">${g.ml} ml ${g.ml >= gunlukHedef ? '✓' : ''}</span>
+                            <div class="day-info">
+                                <span class="day-name">${g.gun}</span>
+                                <span style="opacity: 0.3; font-size: 12px;">${g.tarih}</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 16px;">
+                                <span class="day-ml">${g.ml} ml</span>
+                                <span class="status-tag ${g.ml >= gunlukHedef ? 'status-complete' : 'status-incomplete'}">
+                                    ${g.ml >= gunlukHedef ? 'Tamamlandı' : 'Eksik'}
+                                </span>
+                            </div>
                         </div>
                     `).join('')}
                 </div>
 
-                <div style="text-align: center; margin-top: 30px; opacity: 0.5; font-size: 11px;">
-                    Su Takip Premium • ${new Date().toLocaleDateString('tr-TR')}
+                <div class="footer">
+                    SU TAKİP PREMIUM • PROFESSIONAL REPORTING SYSTEM
                 </div>
             </body>
             </html>
