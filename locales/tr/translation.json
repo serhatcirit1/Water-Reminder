@@ -538,6 +538,7 @@
         "error_title": "Hata",
         "error_msg": "Rapor oluşturulamadı.",
         "share_unsupported": "Bu cihazda dosya paylaşımı desteklenmiyor.",
+        "active_time_val": "Öğle (12:00-18:00)",
         "days": {
             "sun": "Pazar",
             "mon": "Pazartesi",
@@ -568,5 +569,33 @@
             "nov": "Kasım",
             "dec": "Aralık"
         }
+    },
+    "csv": {
+        "title": "SU TAKİP PREMIUM - PROFESYONEL VERİ EKSPORTU",
+        "report_date": "Rapor Oluşturma Tarihi",
+        "total_tracked_days": "Toplam İzlenen Gün",
+        "days": "gün",
+        "total_consumption": "Toplam Su Tüketimi",
+        "liters": "Litre",
+        "daily_average": "Günlük Ortalama",
+        "goal_success_rate": "Hedef Başarı Oranı",
+        "goal": "Hedef",
+        "date": "Tarih",
+        "day": "Gün",
+        "consumption_ml": "Tüketim (ml)",
+        "glass_count": "Bardak Sayısı",
+        "goal_ml": "Hedef (ml)",
+        "success_pct": "Başarı (%)",
+        "status": "Durum",
+        "moving_avg_7d": "7-Günlük Hareketli Ort.",
+        "weekly_goal_diff": "Haftalık Hedef Farkı (ml)",
+        "goal_completed": "HEDEF TAMAMLANDI",
+        "below_goal": "HEDEF ALTI",
+        "no_data_title": "Veri Bulunamadı",
+        "no_data_msg": "İstatistiksel analiz için yeterli veri bulunmuyor. 💪",
+        "error_title": "Sistem Hatası",
+        "error_msg": "Rapor hazırlanırken bir hata oluştu.",
+        "share_title": "Profesyonel Su Tüketim Analizi",
+        "share_unsupported": "Paylaşım bu cihazda desteklenmiyor."
     }
 }

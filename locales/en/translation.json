@@ -538,6 +538,7 @@
         "error_title": "Error",
         "error_msg": "Report could not be generated.",
         "share_unsupported": "File sharing not supported on this device.",
+        "active_time_val": "Afternoon (12:00-18:00)",
         "days": {
             "sun": "Sunday",
             "mon": "Monday",
@@ -568,5 +569,33 @@
             "nov": "November",
             "dec": "December"
         }
+    },
+    "csv": {
+        "title": "WATER PREMIUM - PROFESSIONAL DATA EXPORT",
+        "report_date": "Report Creation Date",
+        "total_tracked_days": "Total Tracked Days",
+        "days": "days",
+        "total_consumption": "Total Water Consumption",
+        "liters": "Liters",
+        "daily_average": "Daily Average",
+        "goal_success_rate": "Goal Success Rate",
+        "goal": "Goal",
+        "date": "Date",
+        "day": "Day",
+        "consumption_ml": "Consumption (ml)",
+        "glass_count": "Glass Count",
+        "goal_ml": "Goal (ml)",
+        "success_pct": "Success (%)",
+        "status": "Status",
+        "moving_avg_7d": "7-Day Moving Avg",
+        "weekly_goal_diff": "Weekly Goal Diff (ml)",
+        "goal_completed": "GOAL COMPLETED",
+        "below_goal": "BELOW GOAL",
+        "no_data_title": "No Data Found",
+        "no_data_msg": "Not enough data for statistical analysis. 💪",
+        "error_title": "System Error",
+        "error_msg": "An error occurred while preparing the report.",
+        "share_title": "Professional Water Consumption Analysis",
+        "share_unsupported": "Sharing is not supported on this device."
     }
 }

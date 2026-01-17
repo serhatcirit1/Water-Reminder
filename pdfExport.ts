@@ -565,7 +565,7 @@ function premiumHtmlRaporOlustur(ozet: AylikOzet): string {
                 <footer class="footer">
                     <p>${i18n.t('pdf.generated_by')}</p>
                     <div class="premium-shield">${i18n.t('pdf.premium_certified')}</div>
-                    <p style="margin-top: 20px; opacity: 0.2; font-size: 10px;">${i18n.t('pdf.created_at')}: ${new Date().toLocaleString('tr-TR')}</p>
+                    <p style="margin-top: 20px; opacity: 0.2; font-size: 10px;">${i18n.t('pdf.created_at')}: ${new Date().toLocaleString(i18n.language === 'en' ? 'en-US' : 'tr-TR')}</p>
                 </footer>
             </div>
         </body>
@@ -637,7 +637,7 @@ export async function haftalikPdfOlusturVePaylas(gunlukHedef: number = 2000): Pr
         const gecmis = await suGecmisiniYukle();
 
         if (Object.keys(gecmis).length === 0) {
-            Alert.alert('Veri Bulunamadı', 'Rapor için veri yok.');
+            Alert.alert(i18n.t('pdf.no_data_title'), i18n.t('pdf.no_data_msg'));
             return false;
         }
 
@@ -768,7 +768,7 @@ export async function haftalikPdfOlusturVePaylas(gunlukHedef: number = 2000): Pr
                 </div>
 
                 <div class="footer">
-                    SU TAKİP PREMIUM • PROFESSIONAL REPORTING SYSTEM
+                    WATER PREMIUM • PROFESSIONAL REPORTING SYSTEM
                 </div>
             </body>
             </html>

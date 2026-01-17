@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import { Alert } from 'react-native';
+import i18n from './locales/i18n';
 
 // Storage Keys
 const GECMIS_KEY = '@su_gecmisi';
@@ -31,16 +32,11 @@ interface OzetIstatistik {
     basariOrani: number;
 }
 
-// --- SABİTLER ---
-const GUN_ADLARI_UZUN: Record<number, string> = {
-    0: 'Pazar',
-    1: 'Pazartesi',
-    2: 'Salı',
-    3: 'Çarşamba',
-    4: 'Perşembe',
-    5: 'Cuma',
-    6: 'Cumartesi',
-};
+// --- HELPER FUNCTIONS ---
+function getDayName(index: number): string {
+    const days = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+    return i18n.t(`pdf.days.${days[index]}`);
+}
 
 // --- FONKSİYONLAR ---
 
@@ -140,28 +136,28 @@ export function premiumCsvOlustur(gecmis: GecmisVeri, hedef: number = 2000): str
     // Metadata & Executive Summary Section
     const metadata = [
         '--------------------------------------------------------------------------------',
-        '| SU TAKİP PREMIUM - PROFESYONEL VERİ EKSPORTU                                |',
+        `| ${i18n.t('csv.title')}                                |`,
         '--------------------------------------------------------------------------------',
-        `| RApor Oluşturma Tarihi : ${new Date().toLocaleString('tr-TR')}                   |`,
-        `| Toplam İzlenen Gün     : ${ozet.toplamGun} gün                                     |`,
-        `| Toplam Su Tüketimi     : ${(ozet.toplamMl / 1000).toFixed(2)} Litre                            |`,
-        `| Günlük Ortalama        : ${ozet.ortalamaMl} ml                                     |`,
-        `| Hedef Başarı Oranı     : %${ozet.basariOrani} (Hedef: ${hedef}ml)                        |`,
+        `| ${i18n.t('csv.report_date')} : ${new Date().toLocaleString(i18n.language === 'en' ? 'en-US' : 'tr-TR')}                   |`,
+        `| ${i18n.t('csv.total_tracked_days')}     : ${ozet.toplamGun} ${i18n.t('csv.days')}                                     |`,
+        `| ${i18n.t('csv.total_consumption')}     : ${(ozet.toplamMl / 1000).toFixed(2)} ${i18n.t('csv.liters')}                            |`,
+        `| ${i18n.t('csv.daily_average')}        : ${ozet.ortalamaMl} ml                                     |`,
+        `| ${i18n.t('csv.goal_success_rate')}     : %${ozet.basariOrani} (${i18n.t('csv.goal')}: ${hedef}ml)                        |`,
         '--------------------------------------------------------------------------------',
         '',
     ];
 
     // CSV Header (Column Names)
     const header = [
-        'Tarih',
-        'Gün',
-        'Tüketim (ml)',
-        'Bardak Sayısı',
-        'Hedef (ml)',
-        'Başarı (%)',
-        'Durum',
-        '7-Günlük Hareketli Ort.',
-        'Haftalık Hedef Farkı (ml)'
+        i18n.t('csv.date'),
+        i18n.t('csv.day'),
+        i18n.t('csv.consumption_ml'),
+        i18n.t('csv.glass_count'),
+        i18n.t('csv.goal_ml'),
+        i18n.t('csv.success_pct'),
+        i18n.t('csv.status'),
+        i18n.t('csv.moving_avg_7d'),
+        i18n.t('csv.weekly_goal_diff')
     ].join(',');
 
     // Sort dates descending
@@ -173,9 +169,9 @@ export function premiumCsvOlustur(gecmis: GecmisVeri, hedef: number = 2000): str
     const rows = tarihler.map(tarih => {
         const kayit = gecmis[tarih];
         const date = new Date(tarih);
-        const gunAdi = GUN_ADLARI_UZUN[date.getDay()];
+        const gunAdi = getDayName(date.getDay());
         const basariYuzde = Math.round((kayit.ml / hedef) * 100);
-        const durum = kayit.ml >= hedef ? 'HEDEF TAMAMLANDI' : 'HEDEF ALTI';
+        const durum = kayit.ml >= hedef ? i18n.t('csv.goal_completed') : i18n.t('csv.below_goal');
         const hareketliOrt = haftalikOrtalamaHesapla(gecmis, tarih);
         const fark = kayit.ml - hedef;
 
@@ -204,8 +200,8 @@ export async function csvOlusturVePaylas(hedef: number = 2000): Promise<boolean>
 
         if (Object.keys(gecmis).length === 0) {
             Alert.alert(
-                'Veri Bulunamadı',
-                'İstatistiksel analiz için yeterli veri bulunmuyor. 💪'
+                i18n.t('csv.no_data_title'),
+                i18n.t('csv.no_data_msg')
             );
             return false;
         }
@@ -219,20 +215,20 @@ export async function csvOlusturVePaylas(hedef: number = 2000): Promise<boolean>
 
         const paylasilabilir = await Sharing.isAvailableAsync();
         if (!paylasilabilir) {
-            Alert.alert('Hata', 'Paylaşım bu cihazda desteklenmiyor.');
+            Alert.alert(i18n.t('csv.error_title'), i18n.t('csv.share_unsupported'));
             return false;
         }
 
         await Sharing.shareAsync(dosyaYolu, {
             mimeType: 'text/csv',
-            dialogTitle: 'Profesyonel Su Tüketim Analizi',
+            dialogTitle: i18n.t('csv.share_title'),
             UTI: 'public.comma-separated-values-text',
         });
 
         return true;
     } catch (hata) {
         console.error('CSV Export Error:', hata);
-        Alert.alert('Sistem Hatası', 'Rapor hazırlanırken bir hata oluştu.');
+        Alert.alert(i18n.t('csv.error_title'), i18n.t('csv.error_msg'));
         return false;
     }
 }
