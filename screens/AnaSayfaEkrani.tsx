@@ -36,6 +36,7 @@ import {
 } from '../aiUtils';
 import { usePremium } from '../PremiumContext';
 import { tumRozetleriKontrolEt } from '../rozetler';
+import { suSesiCal } from '../sesUtils';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -78,6 +79,7 @@ export function AnaSayfaEkrani() {
     // Animasyonlar
     const waveAnim = useRef(new Animated.Value(0)).current;
     const scaleAnim = useRef(new Animated.Value(1)).current;
+    const progressAnim = useRef(new Animated.Value(0)).current;
 
     // Wave animasyonu
     useEffect(() => {
@@ -146,6 +148,13 @@ export function AnaSayfaEkrani() {
             console.error('Veri yüklenemedi:', hata);
         } finally {
             setYukleniyor(false);
+            // İlk yüklemede progress animasyonu
+            const baslangicYuzde = Math.min((toplamMl / gunlukHedef) * 100, 100);
+            Animated.timing(progressAnim, {
+                toValue: baslangicYuzde,
+                duration: 800,
+                useNativeDriver: false,
+            }).start();
         }
     };
 
@@ -173,6 +182,9 @@ export function AnaSayfaEkrani() {
     const suEkle = async () => {
         await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
+        // Su damlası sesi çal
+        suSesiCal();
+
         Animated.sequence([
             Animated.timing(scaleAnim, { toValue: 0.95, duration: 100, useNativeDriver: true }),
             Animated.timing(scaleAnim, { toValue: 1, duration: 100, useNativeDriver: true }),
@@ -180,9 +192,17 @@ export function AnaSayfaEkrani() {
 
         const yeniMiktar = suMiktari + 1;
         const yeniToplamMl = toplamMl + bardakBoyutu;
+        const yeniYuzde = Math.min((yeniToplamMl / gunlukHedef) * 100, 100);
 
         setSuMiktari(yeniMiktar);
         setToplamMl(yeniToplamMl);
+
+        // Progress bar animasyonu
+        Animated.timing(progressAnim, {
+            toValue: yeniYuzde,
+            duration: 500,
+            useNativeDriver: false,
+        }).start();
 
         const veri: GunlukVeri = {
             tarih: new Date().toDateString(),
@@ -284,10 +304,16 @@ export function AnaSayfaEkrani() {
     const aylar = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
     const tarihStr = `${bugun.getDate()} ${aylar[bugun.getMonth()]} ${gunler[bugun.getDay()]}`;
 
-    // Dalga yolu oluştur
-    const createWavePath = (offset: number) => {
+    // Dalga yolu oluştur - Animasyonlu yüzde kullan
+    const animatedYuzde = progressAnim.interpolate({
+        inputRange: [0, 100],
+        outputRange: [0, 100],
+        extrapolate: 'clamp',
+    });
+
+    const createWavePath = (offset: number, animYuzde: number) => {
         const height = 200;
-        const fillHeight = height * (1 - yuzde / 100);
+        const fillHeight = height * (1 - animYuzde / 100);
         const amplitude = 8;
         const frequency = 0.03;
 
@@ -396,12 +422,22 @@ export function AnaSayfaEkrani() {
                     <View style={styles.progressCircle}>
                         {/* Gelişmiş Dalga Animasyonu */}
                         <Animated.View style={[styles.waveContainer, {
-                            transform: [{
-                                translateX: waveAnim.interpolate({
-                                    inputRange: [0, 1],
-                                    outputRange: [0, -100]
-                                })
-                            }]
+                            transform: [
+                                {
+                                    translateX: waveAnim.interpolate({
+                                        inputRange: [0, 1],
+                                        outputRange: [0, -100]
+                                    })
+                                },
+                                {
+                                    // Progress animasyonu: yüzde arttıkça dalga yukarı çıkar
+                                    translateY: progressAnim.interpolate({
+                                        inputRange: [0, 100],
+                                        outputRange: [180, 0], // 0%'de en aşağıda, 100%'de en yukarıda
+                                        extrapolate: 'clamp'
+                                    })
+                                }
+                            ]
                         }]}>
                             <Svg width={400} height={200} viewBox="0 0 400 200">
                                 <Defs>
@@ -415,23 +451,23 @@ export function AnaSayfaEkrani() {
                                         <Stop offset="1" stopColor="#4FC3F7" stopOpacity="0.3" />
                                     </SvgLinearGradient>
                                 </Defs>
-                                {/* Arka dalga */}
+                                {/* Arka dalga - sabit yükseklikte, container hareket ediyor */}
                                 <Path
-                                    d={`M0 ${200 - (yuzde / 100) * 180 + 15}
-                                        Q50 ${200 - (yuzde / 100) * 180 - 10} 100 ${200 - (yuzde / 100) * 180 + 15}
-                                        T200 ${200 - (yuzde / 100) * 180 + 15}
-                                        T300 ${200 - (yuzde / 100) * 180 + 15}
-                                        T400 ${200 - (yuzde / 100) * 180 + 15}
+                                    d={`M0 35
+                                        Q50 10 100 35
+                                        T200 35
+                                        T300 35
+                                        T400 35
                                         L400 200 L0 200 Z`}
                                     fill="url(#waveGradient2)"
                                 />
                                 {/* Ön dalga */}
                                 <Path
-                                    d={`M0 ${200 - (yuzde / 100) * 180}
-                                        Q50 ${200 - (yuzde / 100) * 180 - 20} 100 ${200 - (yuzde / 100) * 180}
-                                        T200 ${200 - (yuzde / 100) * 180}
-                                        T300 ${200 - (yuzde / 100) * 180}
-                                        T400 ${200 - (yuzde / 100) * 180}
+                                    d={`M0 20
+                                        Q50 0 100 20
+                                        T200 20
+                                        T300 20
+                                        T400 20
                                         L400 200 L0 200 Z`}
                                     fill="url(#waveGradient1)"
                                 />

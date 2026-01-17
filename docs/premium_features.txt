@@ -1,0 +1,131 @@
+================================================================================
+                    SU TAKİP UYGULAMA ÖZELLİKLERİ LİSTESİ
+================================================================================
+                         Son Güncelleme: 17 Ocak 2026
+================================================================================
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                           💎 PREMIUM ÖZELLİKLER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. 🧠 Gelişmiş AI İçgörüleri
+   - Derin öğrenme ile su içme alışkanlıklarını analiz
+   - Kişiselleştirilmiş içgörüler ve öneriler
+   - Trend tahminleri ve forecasting
+
+2. ⌚ Apple Health & Sync
+   - Su tüketimini Apple Health'e kaydetme
+   - Adım sayısı entegrasyonu
+   - Cihazlar arası senkronizasyon
+
+3. 💎 Ödüllü Rozetler
+   - 12+ özel premium rozet
+   - Nadir başarı rozetleri
+   - Koleksiyoncu rozetleri
+
+4. 🔔 Akıllı Hatırlatmalar
+   - Hava durumuna dayalı bildirimler
+   - Biyoritme uyumlu hatırlatmalar
+   - Adaptif bildirim zamanlaması
+
+5. 🎨 Özel Temalar
+   - 5+ yeni renk paleti
+   - Özel uygulama ikonları
+   - Karanlık/Aydınlık mod varyasyonları
+
+6. 📊 Premium Raporlar
+   - Haftalık PDF raporları
+   - Aylık detaylı PDF analizleri
+   - Profesyonel CSV veri dışa aktarma
+
+7. 🌸 Sanal Bitki
+   - Su içtikçe büyüyen bitki
+   - Çiçek açma animasyonları
+   - Bitki sağlık göstergesi
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                          🆓 ÜCRETSİZ ÖZELLİKLER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. 💧 Temel Su Takibi
+   - Günlük su tüketimi kaydı
+   - Bardak boyutu seçimi (100-500ml)
+   - Gerçek zamanlı ilerleme göstergesi
+
+2. 🎯 Hedef Belirleme
+   - Kişisel günlük hedef ayarlama
+   - Hedef tamamlama bildirimleri
+   - Hedef başarı yüzdesi
+
+3. 📊 Temel İstatistikler
+   - Haftalık görünüm (7 gün)
+   - Aylık görünüm (30 gün)
+   - Geçmiş verilere erişim (tarih navigasyonu)
+
+4. 🔥 Streak (Seri) Sistemi
+   - Günlük seri takibi
+   - En uzun seri kaydı
+   - Seri kırılma uyarıları
+
+5. 🏆 Rekor Takibi
+   - Günlük maksimum tüketim rekoru
+   - Rekor kırma bildirimleri
+
+6. 🏅 Temel Rozetler
+   - İlk Hedef rozeti
+   - Streak rozetleri (3, 7, 14, 30 gün)
+   - Toplam su rozetleri
+   - Saat bazlı rozetler (Erken Kuş, Gece Baykuşu)
+   - Rekor Kırıcı rozeti
+
+7. ⭐ Seviye Sistemi
+   - XP kazanma (su içme, hedef tamamlama)
+   - Seviye atlama
+   - Unvan sistemi
+
+8. 📋 Günlük Görevler
+   - 5 günlük görev
+   - Görev tamamlama XP'si
+   - Progress göstergesi
+
+9. 🔔 Temel Hatırlatmalar
+   - Zamanlı su içme hatırlatmaları
+   - Ayarlanabilir aralıklar
+   - Günlük özet bildirimleri
+
+10. 🕐 Favori Saatler Analizi
+    - 24 saatlik aktivite grafiği
+    - En aktif zaman dilimi
+    - Favori saat gösterimi
+
+11. 📈 Trend Analizi
+    - Bu hafta vs geçen hafta karşılaştırması
+    - Son 15 gün vs önceki 15 gün
+    - Yüzdelik değişim göstergesi
+
+12. 🌡️ Hava Durumu Entegrasyonu
+    - Anlık sıcaklık gösterimi
+    - Sıcaklığa dayalı öneriler
+
+13. 🎨 Tema Sistemi
+    - Açık/Karanlık mod
+    - Temel renk seçenekleri
+
+14. ⚙️ Ayarlar
+    - Hedef ayarlama
+    - Bildirim tercihleri
+    - Ses açma/kapama
+    - Haptic feedback
+    - Veri yedekleme (JSON)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                            💰 PREMIUM FİYATLANDIRMA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+• Aylık Plan     : 49,99 TL/ay
+• Yıllık Plan    : 299,99 TL/yıl (%50 tasarruf) - EN POPÜLER
+• Ömür Boyu      : 799,99 TL (tek seferlik)
+
+================================================================================

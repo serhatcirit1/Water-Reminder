@@ -337,7 +337,7 @@ export function IstatistiklerEkrani() {
 
                     {/* 24 Saatlik Çizgi Grafik */}
                     <View style={styles.lineChartContainer}>
-                        <Svg width={SCREEN_WIDTH - 100} height={150}>
+                        <Svg width={SCREEN_WIDTH - 100} height={160}>
                             {/* Arka plan çizgileri */}
                             <Line x1={0} y1={30} x2={SCREEN_WIDTH - 100} y2={30} stroke="#1E5166" strokeWidth={0.5} />
                             <Line x1={0} y1={60} x2={SCREEN_WIDTH - 100} y2={60} stroke="#1E5166" strokeWidth={0.5} />
@@ -384,11 +384,13 @@ export function IstatistiklerEkrani() {
                                 );
                             })}
 
-                            {/* Saat etiketleri */}
+                            {/* Saat etiketleri - Düzeltildi */}
                             {[0, 6, 12, 18, 23].map((hour) => {
                                 const x = (hour / 23) * (SCREEN_WIDTH - 100);
+                                // İlk ve son etiketleri içeri al
+                                const adjustedX = hour === 0 ? x + 15 : hour === 23 ? x - 15 : x;
                                 return (
-                                    <SvgText key={hour} x={x} y={128} fontSize="12" fill="#4FC3F7" textAnchor="middle" fontWeight="700">
+                                    <SvgText key={hour} x={adjustedX} y={145} fontSize="11" fill="#4FC3F7" textAnchor="middle" fontWeight="600">
                                         {hour}:00
                                     </SvgText>
                                 );

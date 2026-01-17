@@ -53,7 +53,7 @@ const AY_ADLARI = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
 /**
  * AsyncStorage'dan su geçmişini al
  */
-async function suGecmisiniYukle(): Promise<GecmisVeri> {
+export async function suGecmisiniYukle(): Promise<GecmisVeri> {
     try {
         const kayitli = await AsyncStorage.getItem(GECMIS_KEY);
         if (kayitli) {
@@ -68,7 +68,7 @@ async function suGecmisiniYukle(): Promise<GecmisVeri> {
 /**
  * Streak hesapla
  */
-function streakHesapla(gecmis: GecmisVeri, gunlukHedef: number): number {
+export function streakHesapla(gecmis: GecmisVeri, gunlukHedef: number): number {
     const bugun = new Date();
     let streak = 0;
 
@@ -93,7 +93,7 @@ function streakHesapla(gecmis: GecmisVeri, gunlukHedef: number): number {
 /**
  * Detaylı aylık istatistik hesapla
  */
-function detayliAylikIstatistikHesapla(
+export function detayliAylikIstatistikHesapla(
     gecmis: GecmisVeri,
     ay: number,
     yil: number,
