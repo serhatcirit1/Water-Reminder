@@ -102,9 +102,13 @@ export function AnaSayfaEkrani() {
 
     const verileriYukle = async () => {
         setYukleniyor(true);
+        let currentToplamMl = 0;
+        let currentHedef = 2500;
+
         try {
             const hedef = await hedefYukle();
             setGunlukHedef(hedef);
+            currentHedef = hedef;
 
             const bBoyut = await bardakBoyutuYukle();
             setBardakBoyutu(bBoyut);
@@ -117,9 +121,11 @@ export function AnaSayfaEkrani() {
                 if (veri.tarih === bugun) {
                     setSuMiktari(veri.miktar);
                     setToplamMl(veri.toplamMl || veri.miktar * 250);
+                    currentToplamMl = veri.toplamMl || veri.miktar * 250;
                     setHedefeTamamlandi((veri.toplamMl || veri.miktar * 250) >= hedef);
                 } else {
                     await yeniGunBaslat(veri);
+                    // Yeni gün başladı, currentToplamMl = 0 kalır
                 }
             }
 
@@ -151,7 +157,8 @@ export function AnaSayfaEkrani() {
         } finally {
             setYukleniyor(false);
             // İlk yüklemede progress animasyonu
-            const baslangicYuzde = Math.min((toplamMl / gunlukHedef) * 100, 100);
+            // State update hemen yansımayacağı için yerel değişkenleri kullanıyoruz
+            const baslangicYuzde = Math.min((currentToplamMl / currentHedef) * 100, 100);
             Animated.timing(progressAnim, {
                 toValue: baslangicYuzde,
                 duration: 800,
@@ -235,7 +242,7 @@ export function AnaSayfaEkrani() {
         const saat = new Date().getHours();
         const tamamlananGorev = await suIcmeGorevKontrol(yeniToplamMl, saat, bardakBoyutu);
         if (tamamlananGorev) {
-            Alert.alert('✅ Görev Tamamlandı!', `${tamamlananGorev.baslik} - +${tamamlananGorev.xpOdulu} XP kazandın!`);
+            Alert.alert(t('alerts.taskCompleted'), t('alerts.taskCompletedMsg', { task: t(tamamlananGorev.baslik), xp: tamamlananGorev.xpOdulu }));
         }
         // Görev durumunu güncelle
         const yeniGorevDurumu = await gunlukGorevleriYukle();
@@ -263,7 +270,7 @@ export function AnaSayfaEkrani() {
         );
 
         kazanilanRozetler.forEach(rozet => {
-            Alert.alert(t('stats.badgeEarned') + ' 🏅', `${rozet.isim}: ${rozet.aciklama}`);
+            Alert.alert(t('stats.badgeEarned') + ' 🏅', `${t(rozet.isim)}: ${t(rozet.aciklama)}`);
         });
     };
 
@@ -302,9 +309,9 @@ export function AnaSayfaEkrani() {
 
     // Tarih formatı
     const bugun = new Date();
-    const gunler = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
-    const aylar = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
-    const tarihStr = `${bugun.getDate()} ${aylar[bugun.getMonth()]} ${gunler[bugun.getDay()]}`;
+    const dayKeys = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const monthKeys = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+    const tarihStr = `${bugun.getDate()} ${t('common.months.' + monthKeys[bugun.getMonth()])} ${t('common.days.' + dayKeys[bugun.getDay()])}`;
 
     // Dalga yolu oluştur - Animasyonlu yüzde kullan
     const animatedYuzde = progressAnim.interpolate({
@@ -422,59 +429,37 @@ export function AnaSayfaEkrani() {
                     </Svg>
 
                     <View style={styles.progressCircle}>
-                        {/* Gelişmiş Dalga Animasyonu */}
-                        <Animated.View style={[styles.waveContainer, {
-                            transform: [
-                                {
+                        {/* Su Seviyesi - Alttan yukarı dolan */}
+                        <Animated.View style={[styles.waterFill, {
+                            height: progressAnim.interpolate({
+                                inputRange: [0, 100],
+                                outputRange: ['0%', '100%'],
+                                extrapolate: 'clamp'
+                            })
+                        }]}>
+                            {/* Dalga Animasyonu */}
+                            <Animated.View style={[styles.waveWrapper, {
+                                transform: [{
                                     translateX: waveAnim.interpolate({
                                         inputRange: [0, 1],
-                                        outputRange: [0, -100]
+                                        outputRange: [0, -50]
                                     })
-                                },
-                                {
-                                    // Progress animasyonu: yüzde arttıkça dalga yukarı çıkar
-                                    // 0%'de dalga tamamen aşağıda (200), 100%'de tamamen yukarıda (0)
-                                    translateY: progressAnim.interpolate({
-                                        inputRange: [0, 100],
-                                        outputRange: [200, 0],
-                                        extrapolate: 'clamp'
-                                    })
-                                }
-                            ]
-                        }]}>
-                            <Svg width={400} height={200} viewBox="0 0 400 200">
-                                <Defs>
-                                    <SvgLinearGradient id="waveGradient1" x1="0" y1="0" x2="0" y2="1">
-                                        <Stop offset="0" stopColor="#4FC3F7" stopOpacity="0.95" />
-                                        <Stop offset="0.5" stopColor="#29B6F6" stopOpacity="0.8" />
-                                        <Stop offset="1" stopColor="#0288D1" stopOpacity="0.6" />
-                                    </SvgLinearGradient>
-                                    <SvgLinearGradient id="waveGradient2" x1="0" y1="0" x2="0" y2="1">
-                                        <Stop offset="0" stopColor="#81D4FA" stopOpacity="0.5" />
-                                        <Stop offset="1" stopColor="#4FC3F7" stopOpacity="0.3" />
-                                    </SvgLinearGradient>
-                                </Defs>
-                                {/* Arka dalga - sabit yükseklikte, container hareket ediyor */}
-                                <Path
-                                    d={`M0 35
-                                        Q50 10 100 35
-                                        T200 35
-                                        T300 35
-                                        T400 35
-                                        L400 200 L0 200 Z`}
-                                    fill="url(#waveGradient2)"
-                                />
-                                {/* Ön dalga */}
-                                <Path
-                                    d={`M0 20
-                                        Q50 0 100 20
-                                        T200 20
-                                        T300 20
-                                        T400 20
-                                        L400 200 L0 200 Z`}
-                                    fill="url(#waveGradient1)"
-                                />
-                            </Svg>
+                                }]
+                            }]}>
+                                <Svg width={500} height={40} viewBox="0 0 500 40">
+                                    <Defs>
+                                        <SvgLinearGradient id="waveGrad" x1="0" y1="0" x2="0" y2="1">
+                                            <Stop offset="0" stopColor="#B3E5FC" stopOpacity="0.9" />
+                                            <Stop offset="0.5" stopColor="#81D4FA" stopOpacity="0.6" />
+                                            <Stop offset="1" stopColor="#4FC3F7" stopOpacity="0.3" />
+                                        </SvgLinearGradient>
+                                    </Defs>
+                                    <Path
+                                        d="M0 20 C30 8 60 32 100 20 C140 8 170 32 200 20 C240 8 270 32 300 20 C340 8 370 32 400 20 C440 8 470 32 500 20 L500 40 L0 40 Z"
+                                        fill="url(#waveGrad)"
+                                    />
+                                </Svg>
+                            </Animated.View>
                         </Animated.View>
 
                         {/* Daire Maskesi */}
@@ -540,7 +525,7 @@ export function AnaSayfaEkrani() {
                     <View style={styles.statItem}>
                         <Text style={styles.statEmoji}>🥛</Text>
                         <Text style={styles.statValue}>{suMiktari}</Text>
-                        <Text style={styles.statLabel}>Bardak</Text>
+                        <Text style={styles.statLabel}>{t('home.glass')}</Text>
                     </View>
                     <View style={styles.statDivider} />
                     <View style={styles.statItem}>
@@ -560,13 +545,13 @@ export function AnaSayfaEkrani() {
                     <View style={styles.miniKart}>
                         <Text style={styles.miniKartEmoji}>⭐</Text>
                         <Text style={styles.miniKartDeger}>Lv.{seviye?.seviye || 1}</Text>
-                        <Text style={styles.miniKartLabel}>{seviye?.unvan || 'Damla'}</Text>
+                        <Text style={styles.miniKartLabel}>{seviye ? t(seviye.unvan) : t('levels.lvl_1')}</Text>
                     </View>
                     <View style={styles.miniKart}>
                         <Text style={styles.miniKartEmoji}>⏰</Text>
                         <Text style={styles.miniKartDeger}>
                             {sonIcmeZamani
-                                ? `${Math.floor((Date.now() - sonIcmeZamani.getTime()) / 60000)} dk`
+                                ? `${Math.floor((Date.now() - sonIcmeZamani.getTime()) / 60000)} ${t('common.min')}`
                                 : '-'}
                         </Text>
                         <Text style={styles.miniKartLabel}>{t('home.lastDrink')}</Text>
@@ -683,12 +668,20 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
         position: 'relative',
     },
-    waveContainer: {
+    waterFill: {
         position: 'absolute',
-        width: 400,
-        height: 200,
         bottom: 0,
-        left: -100,
+        left: 0,
+        right: 0,
+        backgroundColor: 'rgba(79, 195, 247, 0.4)',
+        overflow: 'hidden',
+    },
+    waveWrapper: {
+        position: 'absolute',
+        top: -20,
+        left: -150,
+        width: 500,
+        height: 40,
     },
     circleMask: {
         position: 'absolute',

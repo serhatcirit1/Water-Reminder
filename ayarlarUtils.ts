@@ -610,16 +610,17 @@ export async function favoriSaatHesapla(): Promise<{ saat: number; toplam: numbe
 
 /**
  * En aktif zaman dilimini hesapla (sabah/öğle/akşam/gece)
+ * Returns translation keys for localization
  */
-export async function enAktifZamanDilimi(): Promise<{ dilim: string; emoji: string; toplam: number }> {
+export async function enAktifZamanDilimi(): Promise<{ dilim: string; dilimKey: string; emoji: string; toplam: number }> {
     const saatler = await suIcmeSaatleriYukle();
 
     // Zaman dilimlerine böl
     const dilimler = {
-        sabah: { toplam: 0, emoji: '🌅', ad: 'Sabah (6-12)' },      // 6-11
-        ogle: { toplam: 0, emoji: '☀️', ad: 'Öğle (12-18)' },       // 12-17
-        aksam: { toplam: 0, emoji: '🌆', ad: 'Akşam (18-22)' },     // 18-21
-        gece: { toplam: 0, emoji: '🌙', ad: 'Gece (22-6)' },        // 22-5
+        sabah: { toplam: 0, emoji: '🌅', key: 'stats.timeSlots.morning' },      // 6-11
+        ogle: { toplam: 0, emoji: '☀️', key: 'stats.timeSlots.afternoon' },       // 12-17
+        aksam: { toplam: 0, emoji: '🌆', key: 'stats.timeSlots.evening' },     // 18-21
+        gece: { toplam: 0, emoji: '🌙', key: 'stats.timeSlots.night' },        // 22-5
     };
 
     for (const s of saatler) {
@@ -640,7 +641,7 @@ export async function enAktifZamanDilimi(): Promise<{ dilim: string; emoji: stri
     if (dilimler.aksam.toplam > enAktif.toplam) enAktif = dilimler.aksam;
     if (dilimler.gece.toplam > enAktif.toplam) enAktif = dilimler.gece;
 
-    return { dilim: enAktif.ad, emoji: enAktif.emoji, toplam: enAktif.toplam };
+    return { dilim: enAktif.key, dilimKey: enAktif.key, emoji: enAktif.emoji, toplam: enAktif.toplam };
 }
 
 // --- BIORITIM AYARLARI ---

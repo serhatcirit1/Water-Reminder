@@ -5,6 +5,7 @@
 
 import * as Location from 'expo-location';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import i18n from './locales/i18n';
 
 // --- SABİTLER ---
 const HAVA_DURUMU_KEY = '@hava_durumu';
@@ -106,34 +107,34 @@ export async function havaDurumuAl(): Promise<HavaDurumuVerisi | null> {
 function weatherCodeToInfo(code: number, sicaklik: number): { aciklama: string; icon: string } {
     // WMO Weather interpretation codes
     const weatherCodes: { [key: number]: { aciklama: string; icon: string } } = {
-        0: { aciklama: 'Açık', icon: '☀️' },
-        1: { aciklama: 'Az bulutlu', icon: '🌤️' },
-        2: { aciklama: 'Parçalı bulutlu', icon: '⛅' },
-        3: { aciklama: 'Bulutlu', icon: '☁️' },
-        45: { aciklama: 'Sisli', icon: '🌫️' },
-        48: { aciklama: 'Sisli', icon: '🌫️' },
-        51: { aciklama: 'Hafif yağmur', icon: '🌧️' },
-        53: { aciklama: 'Yağmur', icon: '🌧️' },
-        55: { aciklama: 'Yoğun yağmur', icon: '🌧️' },
-        61: { aciklama: 'Hafif yağmur', icon: '🌧️' },
-        63: { aciklama: 'Yağmur', icon: '🌧️' },
-        65: { aciklama: 'Yoğun yağmur', icon: '🌧️' },
-        71: { aciklama: 'Hafif kar', icon: '🌨️' },
-        73: { aciklama: 'Kar', icon: '❄️' },
-        75: { aciklama: 'Yoğun kar', icon: '❄️' },
-        77: { aciklama: 'Kar taneleri', icon: '❄️' },
-        80: { aciklama: 'Sağanak', icon: '🌦️' },
-        81: { aciklama: 'Sağanak', icon: '🌦️' },
-        82: { aciklama: 'Şiddetli sağanak', icon: '⛈️' },
-        85: { aciklama: 'Kar sağanağı', icon: '🌨️' },
-        86: { aciklama: 'Kar sağanağı', icon: '🌨️' },
-        95: { aciklama: 'Gök gürültülü', icon: '⛈️' },
-        96: { aciklama: 'Dolu ile fırtına', icon: '⛈️' },
-        99: { aciklama: 'Şiddetli fırtına', icon: '⛈️' },
+        0: { aciklama: i18n.t('weather.clear'), icon: '☀️' },
+        1: { aciklama: i18n.t('weather.partly_cloudy'), icon: '🌤️' },
+        2: { aciklama: i18n.t('weather.partly_cloudy'), icon: '⛅' },
+        3: { aciklama: i18n.t('weather.cloudy'), icon: '☁️' },
+        45: { aciklama: i18n.t('weather.foggy'), icon: '🌫️' },
+        48: { aciklama: i18n.t('weather.foggy'), icon: '🌫️' },
+        51: { aciklama: i18n.t('weather.rain'), icon: '🌧️' },
+        53: { aciklama: i18n.t('weather.rain'), icon: '🌧️' },
+        55: { aciklama: i18n.t('weather.rain'), icon: '🌧️' },
+        61: { aciklama: i18n.t('weather.rain'), icon: '🌧️' },
+        63: { aciklama: i18n.t('weather.rain'), icon: '🌧️' },
+        65: { aciklama: i18n.t('weather.rain'), icon: '🌧️' },
+        71: { aciklama: i18n.t('weather.snow'), icon: '🌨️' },
+        73: { aciklama: i18n.t('weather.snow'), icon: '❄️' },
+        75: { aciklama: i18n.t('weather.snow'), icon: '❄️' },
+        77: { aciklama: i18n.t('weather.snow'), icon: '❄️' },
+        80: { aciklama: i18n.t('weather.rain'), icon: '🌦️' },
+        81: { aciklama: i18n.t('weather.rain'), icon: '🌦️' },
+        82: { aciklama: i18n.t('weather.storm'), icon: '⛈️' },
+        85: { aciklama: i18n.t('weather.snow'), icon: '🌨️' },
+        86: { aciklama: i18n.t('weather.snow'), icon: '🌨️' },
+        95: { aciklama: i18n.t('weather.storm'), icon: '⛈️' },
+        96: { aciklama: i18n.t('weather.storm'), icon: '⛈️' },
+        99: { aciklama: i18n.t('weather.storm'), icon: '⛈️' },
     };
 
     const info = weatherCodes[code] || {
-        aciklama: sicaklik > 25 ? 'Sıcak' : sicaklik > 15 ? 'Ilık' : 'Serin',
+        aciklama: sicaklik > 25 ? i18n.t('weather.msg_hot') : sicaklik > 15 ? i18n.t('weather.msg_mild') : i18n.t('weather.msg_cool'),
         icon: sicaklik > 25 ? '☀️' : sicaklik > 15 ? '🌤️' : '🌥️'
     };
 
@@ -143,7 +144,7 @@ function weatherCodeToInfo(code: number, sicaklik: number): { aciklama: string; 
 function getVarsayilanDeger(): HavaDurumuVerisi {
     return {
         sicaklik: 20,
-        aciklama: 'Veri yok',
+        aciklama: i18n.t('weather.no_data'),
         icon: '🌡️',
         sehir: '-',
         timestamp: Date.now(),
@@ -166,9 +167,9 @@ export function sicakligaGoreAralik(sicaklik: number): number {
  * Sıcaklığa göre motivasyon mesajı
  */
 export function sicaklikMesaji(sicaklik: number): string {
-    if (sicaklik >= 35) return '🔥 Bugün çok sıcak! Bol su içmeyi unutma!';
-    if (sicaklik >= 30) return '☀️ Sıcak bir gün! Su içmeyi ihmal etme!';
-    if (sicaklik >= 25) return '🌡️ Ilık bir hava var, su içmeye devam!';
-    if (sicaklik >= 15) return '🌤️ Güzel bir hava, sağlıklı kal!';
-    return '🌥️ Serin hava olsa da su içmeyi unutma!';
+    if (sicaklik >= 35) return i18n.t('weather.msg_hot');
+    if (sicaklik >= 30) return i18n.t('weather.msg_warm');
+    if (sicaklik >= 25) return i18n.t('weather.msg_mild');
+    if (sicaklik >= 15) return i18n.t('weather.msg_nice');
+    return i18n.t('weather.msg_cool');
 }

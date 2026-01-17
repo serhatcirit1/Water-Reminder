@@ -118,7 +118,8 @@ export function IstatistiklerEkrani() {
     const gecmisVerileriYukle = async (hedef: number) => {
         const kayitliGecmis = await AsyncStorage.getItem(GECMIS_KEY);
         const gecmis = kayitliGecmis ? JSON.parse(kayitliGecmis) : {};
-        const gunler = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
+        const shortDayKeys = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+        const getShortDay = (dayIndex: number) => t(`stats.shortDays.${shortDayKeys[dayIndex]}`);
 
         // Haftalık (Referans tarihten geriye 7 gün)
         const haftalik: GunlukVeri[] = [];
@@ -146,7 +147,7 @@ export function IstatistiklerEkrani() {
             }
 
             haftalik.push({
-                gun: gunler[tarih.getDay()],
+                gun: getShortDay(tarih.getDay()),
                 tarih: tarihStr,
                 miktar,
                 ml,
@@ -268,7 +269,7 @@ export function IstatistiklerEkrani() {
                 {seviye && (
                     <View style={styles.levelCard}>
                         <View style={styles.levelHeader}>
-                            <Text style={styles.levelTitle}>{seviye.unvan}</Text>
+                            <Text style={styles.levelTitle}>{t(seviye.unvan)}</Text>
                             <Text style={styles.levelNumber}>{t('home.level')} {seviye.seviye}</Text>
                         </View>
                         <View style={styles.xpBarBg}>
@@ -324,15 +325,15 @@ export function IstatistiklerEkrani() {
                         {aktifDilim && (
                             <View style={styles.favoriInfoBox}>
                                 <Text style={styles.favoriInfoEmoji}>{aktifDilim.emoji}</Text>
-                                <Text style={styles.favoriInfoValue}>{aktifDilim.dilim}</Text>
-                                <Text style={styles.favoriInfoLabel}>En Aktif Dilim</Text>
+                                <Text style={styles.favoriInfoValue}>{t(aktifDilim.dilim)}</Text>
+                                <Text style={styles.favoriInfoLabel}>{t('stats.mostActiveSlot')}</Text>
                             </View>
                         )}
                         {favoriSaat && (
                             <View style={styles.favoriInfoBox}>
                                 <Text style={styles.favoriInfoEmoji}>⭐</Text>
                                 <Text style={styles.favoriInfoValue}>{favoriSaat.saat}:00</Text>
-                                <Text style={styles.favoriInfoLabel}>{favoriSaat.toplam} bardak</Text>
+                                <Text style={styles.favoriInfoLabel}>{favoriSaat.toplam} {t('stats.glasses')}</Text>
                             </View>
                         )}
                     </View>
@@ -448,7 +449,7 @@ export function IstatistiklerEkrani() {
 
                     <View style={styles.dateBadge}>
                         <Text style={styles.dateBadgeText}>
-                            {referansTarih.toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}
+                            {referansTarih.toLocaleDateString(t('common.locale'), { day: 'numeric', month: 'short' })}
                         </Text>
                     </View>
 
@@ -700,7 +701,7 @@ export function IstatistiklerEkrani() {
                                         styles.gorevText,
                                         gorev.tamamlandi && styles.gorevTamamlandi
                                     ]}>
-                                        {gorev.aciklama}
+                                        {t(gorev.aciklama)}
                                     </Text>
                                 </View>
                             ))}
@@ -724,10 +725,10 @@ export function IstatistiklerEkrani() {
                                 {seciliRozet.kazanildi ? seciliRozet.emoji : '🔒'}
                             </Text>
                             <View style={styles.rozetTooltipContent}>
-                                <Text style={styles.rozetTooltipTitle}>{seciliRozet.isim}</Text>
-                                <Text style={styles.rozetTooltipDesc}>{seciliRozet.aciklama}</Text>
+                                <Text style={styles.rozetTooltipTitle}>{t(seciliRozet.isim)}</Text>
+                                <Text style={styles.rozetTooltipDesc}>{t(seciliRozet.aciklama)}</Text>
                                 <Text style={styles.rozetTooltipStatus}>
-                                    {seciliRozet.kazanildi ? `✅ ${t('stats.badgeEarned')}` : `🎯 ${seciliRozet.kosul}`}
+                                    {seciliRozet.kazanildi ? `✅ ${t('stats.badgeEarned')}` : `🎯 ${t(seciliRozet.kosul)}`}
                                 </Text>
                             </View>
                         </TouchableOpacity>
@@ -753,7 +754,7 @@ export function IstatistiklerEkrani() {
                                     styles.rozetName,
                                     !rozet.kazanildi && styles.rozetNameKilitli
                                 ]}>
-                                    {rozet.isim}
+                                    {t(rozet.isim)}
                                 </Text>
                             </TouchableOpacity>
                         ))}

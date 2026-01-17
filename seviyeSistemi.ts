@@ -43,26 +43,26 @@ export interface SeviyeDurumu {
 
 // --- UNVANLAR ---
 const UNVANLAR = [
-    '💧 Damla',           // 1
-    '🌊 Dere',            // 2
-    '🏊 Yüzücü',          // 3
-    '🐟 Balık',           // 4
-    '🐬 Yunus',           // 5
-    '🐋 Balina',          // 6
-    '🌊 Okyanus',         // 7
-    '⚡ Su Ustası',       // 8
-    '👑 Su Kralı',        // 9
-    '🏆 Efsane',          // 10
-    '💎 Kristal',         // 11
-    '🌟 Yıldız',          // 12
-    '⭐ Süper Yıldız',    // 13
-    '🔥 Ateş',            // 14
-    '❄️ Buz',             // 15
-    '🌪️ Fırtına',         // 16
-    '🦄 Efsanevi',        // 17
-    '👾 Mitolojik',       // 18
-    '🚀 Kozmik',          //19
-    '🌌 Evrensel',        // 20
+    'levels.lvl_1',
+    'levels.lvl_2',
+    'levels.lvl_3',
+    'levels.lvl_4',
+    'levels.lvl_5',
+    'levels.lvl_6',
+    'levels.lvl_7',
+    'levels.lvl_8',
+    'levels.lvl_9',
+    'levels.lvl_10',
+    'levels.lvl_11',
+    'levels.lvl_12',
+    'levels.lvl_13',
+    'levels.lvl_14',
+    'levels.lvl_15',
+    'levels.lvl_16',
+    'levels.lvl_17',
+    'levels.lvl_18',
+    'levels.lvl_19',
+    'levels.lvl_20',
 ];
 
 // --- XP KAZANIM TABLOSU ---

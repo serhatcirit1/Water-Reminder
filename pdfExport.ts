@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { Alert } from 'react-native';
+import i18n from './locales/i18n';
 
 // Storage Keys
 const GECMIS_KEY = '@su_gecmisi';
@@ -46,9 +47,17 @@ interface AylikOzet {
 
 // --- YARDIMCI FONKSİYONLAR ---
 
-const GUN_ADLARI = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
-const AY_ADLARI = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
-    'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+function getGunAdi(index: number, short: boolean = true): string {
+    const days = short ?
+        ['short_sun', 'short_mon', 'short_tue', 'short_wed', 'short_thu', 'short_fri', 'short_sat'] :
+        ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+    return i18n.t(`pdf.days.${days[index]}`);
+}
+
+function getAyAdi(index: number): string {
+    const months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+    return i18n.t(`pdf.months.${months[index]}`);
+}
 
 /**
  * AsyncStorage'dan su geçmişini al
@@ -120,7 +129,7 @@ export function detayliAylikIstatistikHesapla(
             gunlukVeriler.push({
                 tarih,
                 ml: kayit.ml,
-                gun: GUN_ADLARI[date.getDay()],
+                gun: getGunAdi(date.getDay()),
             });
 
             if (haftaIndeks < 5) {
@@ -171,10 +180,10 @@ export function detayliAylikIstatistikHesapla(
     });
 
     // En aktif zaman dilimi (varsayılan)
-    const enAktifZamanDilimi = 'Öğle (12:00-18:00)';
+    const enAktifZamanDilimi = i18n.t('pdf.active_time_val', { defaultValue: 'Öğle (12:00-18:00)' });
 
     return {
-        ay: AY_ADLARI[ay],
+        ay: getAyAdi(ay),
         yil,
         toplamMl,
         toplamGun,
@@ -211,7 +220,7 @@ function modernBarChartSvg(degerler: number[]): string {
             <g>
                 <rect x="${x}" y="0" width="${barWidth}" height="${height}" rx="${borderRadius}" fill="rgba(255,255,255,0.05)" />
                 <rect x="${x}" y="${y}" width="${barWidth}" height="${barHeight}" rx="${borderRadius}" fill="url(#barGradient)" />
-                <text x="${x + barWidth / 2}" y="${height + 20}" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="10" font-weight="600">HAFTA ${i + 1}</text>
+                <text x="${x + barWidth / 2}" y="${height + 20}" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="10" font-weight="600">${i18n.t('pdf.week')} ${i + 1}</text>
                 <text x="${x + barWidth / 2}" y="${y - 10}" text-anchor="middle" fill="#4FC3F7" font-size="10" font-weight="700">${deger}</text>
             </g>
         `;
@@ -479,18 +488,18 @@ function premiumHtmlRaporOlustur(ozet: AylikOzet): string {
                         <div class="brand-name">SU TAKİP</div>
                     </div>
                     <div class="report-title">
-                        <h1>Aylık Performans</h1>
+                        <h1>${i18n.t('pdf.monthly_report')}</h1>
                         <p>${ozet.ay} ${ozet.yil}</p>
                     </div>
                 </header>
 
                 <div class="hero-card">
                     <div class="hero-content">
-                        <p class="hero-label">Toplam Su Tüketimi</p>
-                        <div class="hero-value">${(ozet.toplamMl / 1000).toFixed(1)}<span class="hero-unit">Litre</span></div>
+                        <p class="hero-label">${i18n.t('pdf.total_consumption')}</p>
+                        <div class="hero-value">${(ozet.toplamMl / 1000).toFixed(1)}<span class="hero-unit">${i18n.t('pdf.liter')}</span></div>
                         ${ozet.oncekiAyKarsilastirma !== 0 ? `
                         <div class="comparison-badge">
-                            ${karsilastirmaIcon} %${Math.abs(ozet.oncekiAyKarsilastirma)} Gelişim
+                            ${karsilastirmaIcon} %${Math.abs(ozet.oncekiAyKarsilastirma)} ${i18n.t('pdf.development')}
                         </div>
                         ` : ''}
                     </div>
@@ -502,27 +511,27 @@ function premiumHtmlRaporOlustur(ozet: AylikOzet): string {
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-icon">📈</div>
-                        <p class="stat-label">Ortalama</p>
+                        <p class="stat-label">${i18n.t('pdf.avg')}</p>
                         <p class="stat-value">${ozet.ortalamaMl}</p>
-                        <p class="stat-sub">ml / gün</p>
+                        <p class="stat-sub">${i18n.t('pdf.daily_avg_ml')}</p>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon">🔥</div>
                         <p class="stat-label">Streak</p>
                         <p class="stat-value">${ozet.streak}</p>
-                        <p class="stat-sub">günlük seri</p>
+                        <p class="stat-sub">${i18n.t('pdf.streak_daily')}</p>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon">🎯</div>
-                        <p class="stat-label">Hedef</p>
+                        <p class="stat-label">${i18n.t('pdf.target')}</p>
                         <p class="stat-value">${ozet.gunlukHedef}</p>
-                        <p class="stat-sub">ml günlük hedef</p>
+                        <p class="stat-sub">${i18n.t('pdf.target_desc')}</p>
                     </div>
                 </div>
 
                 <div class="section">
                     <div class="section-header">
-                        <h2 class="section-title">Haftalık Trend</h2>
+                        <h2 class="section-title">${i18n.t('pdf.weekly_trend')}</h2>
                     </div>
                     <div class="chart-container">
                         ${modernBarChartSvg(ozet.haftalikOrtalamalar)}
@@ -531,13 +540,13 @@ function premiumHtmlRaporOlustur(ozet: AylikOzet): string {
 
                 <div class="section">
                     <div class="section-header">
-                        <h2 class="section-title">Ayın Öne Çıkanları</h2>
+                        <h2 class="section-title">${i18n.t('pdf.month_highlights')}</h2>
                     </div>
                     <div class="stats-grid" style="grid-template-columns: 1fr 1fr;">
                         <div class="stat-card" style="text-align: left; display: flex; align-items: center; gap: 20px;">
                             <div style="font-size: 32px;">🏆</div>
                             <div>
-                                <p class="stat-label">En İyi Gün</p>
+                                <p class="stat-label">${i18n.t('pdf.best_day')}</p>
                                 <p class="stat-value" style="font-size: 20px;">${ozet.enIyiGun ? ozet.enIyiGun.ml + ' ml' : '-'}</p>
                                 <p class="stat-sub">${ozet.enIyiGun ? ozet.enIyiGun.tarih : ''}</p>
                             </div>
@@ -545,18 +554,18 @@ function premiumHtmlRaporOlustur(ozet: AylikOzet): string {
                         <div class="stat-card" style="text-align: left; display: flex; align-items: center; gap: 20px;">
                             <div style="font-size: 32px;">🕒</div>
                             <div>
-                                <p class="stat-label">En Aktif Zaman</p>
+                                <p class="stat-label">${i18n.t('pdf.active_time')}</p>
                                 <p class="stat-value" style="font-size: 20px;">${ozet.enAktifZamanDilimi}</p>
-                                <p class="stat-sub">Ortalama bazlı</p>
+                                <p class="stat-sub">${i18n.t('pdf.based_on_avg')}</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <footer class="footer">
-                    <p>Bu rapor Serhat Cirit tarafından geliştirilen Su Takip Premium için oluşturulmuştur.</p>
-                    <div class="premium-shield">🛡️ Premium Certified Report</div>
-                    <p style="margin-top: 20px; opacity: 0.2; font-size: 10px;">Oluşturulma: ${new Date().toLocaleString('tr-TR')}</p>
+                    <p>${i18n.t('pdf.generated_by')}</p>
+                    <div class="premium-shield">${i18n.t('pdf.premium_certified')}</div>
+                    <p style="margin-top: 20px; opacity: 0.2; font-size: 10px;">${i18n.t('pdf.created_at')}: ${new Date().toLocaleString('tr-TR')}</p>
                 </footer>
             </div>
         </body>
@@ -573,8 +582,8 @@ export async function aylikPdfOlusturVePaylas(gunlukHedef: number = 2000): Promi
 
         if (Object.keys(gecmis).length === 0) {
             Alert.alert(
-                'Veri Bulunamadı',
-                'Rapor oluşturmak için yeterli veri yok. Önce biraz su içmeyi deneyin! 💧'
+                i18n.t('pdf.no_data_title'),
+                i18n.t('pdf.no_data_msg')
             );
             return false;
         }
@@ -584,8 +593,8 @@ export async function aylikPdfOlusturVePaylas(gunlukHedef: number = 2000): Promi
 
         if (ozet.toplamGun === 0) {
             Alert.alert(
-                'Veri Bulunamadı',
-                'Bu ay için kayıtlı veri yok.'
+                i18n.t('pdf.no_data_title'),
+                i18n.t('pdf.no_data_msg')
             );
             return false;
         }
@@ -597,15 +606,15 @@ export async function aylikPdfOlusturVePaylas(gunlukHedef: number = 2000): Promi
 
         if (!paylasilabilir) {
             Alert.alert(
-                'Paylaşım Desteklenmiyor',
-                'Bu cihazda dosya paylaşımı desteklenmiyor.'
+                i18n.t('pdf.share_unsupported'),
+                i18n.t('pdf.share_unsupported')
             );
             return false;
         }
 
         await Sharing.shareAsync(uri, {
             mimeType: 'application/pdf',
-            dialogTitle: 'Aylık Su Tüketim Raporu',
+            dialogTitle: i18n.t('pdf.monthly_report'),
             UTI: 'com.adobe.pdf',
         });
 
@@ -613,8 +622,8 @@ export async function aylikPdfOlusturVePaylas(gunlukHedef: number = 2000): Promi
     } catch (hata) {
         console.error('PDF oluşturma hatası:', hata);
         Alert.alert(
-            'Hata',
-            'PDF oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.'
+            i18n.t('pdf.error_title'),
+            i18n.t('pdf.error_msg')
         );
         return false;
     }
@@ -648,7 +657,7 @@ export async function haftalikPdfOlusturVePaylas(gunlukHedef: number = 2000): Pr
             gunler.push({
                 tarih: tarihStr,
                 ml,
-                gun: GUN_ADLARI[tarih.getDay()],
+                gun: getGunAdi(tarih.getDay(), true),
             });
 
             toplam += ml;
@@ -722,22 +731,22 @@ export async function haftalikPdfOlusturVePaylas(gunlukHedef: number = 2000): Pr
             </head>
             <body>
                 <div class="header">
-                    <h1>HAFTALIK SU ANALİZİ</h1>
+                    <h1>${i18n.t('pdf.weekly_report')}</h1>
                     <p style="opacity: 0.5; font-size: 14px;">${gunler[0].tarih} - ${gunler[6].tarih}</p>
                 </div>
 
                 <div class="hero-grid">
                     <div class="card">
                         <p class="stat-value">${(toplam / 1000).toFixed(1)}L</p>
-                        <p class="stat-label">Toplam Tüketim</p>
+                        <p class="stat-label">${i18n.t('pdf.total_consumption')}</p>
                     </div>
                     <div class="card">
                         <p class="stat-value">${ortalama}</p>
-                        <p class="stat-label">Günlük Ort (ml)</p>
+                        <p class="stat-label">${i18n.t('pdf.daily_avg_ml')}</p>
                     </div>
                     <div class="card">
                         <p class="stat-value">${basariOrani}%</p>
-                        <p class="stat-label">Hedef Başarısı</p>
+                        <p class="stat-label">${i18n.t('pdf.goal_success')}</p>
                     </div>
                 </div>
 
@@ -751,7 +760,7 @@ export async function haftalikPdfOlusturVePaylas(gunlukHedef: number = 2000): Pr
                             <div style="display: flex; align-items: center; gap: 16px;">
                                 <span class="day-ml">${g.ml} ml</span>
                                 <span class="status-tag ${g.ml >= gunlukHedef ? 'status-complete' : 'status-incomplete'}">
-                                    ${g.ml >= gunlukHedef ? 'Tamamlandı' : 'Eksik'}
+                                    ${g.ml >= gunlukHedef ? i18n.t('pdf.completed') : i18n.t('pdf.incomplete')}
                                 </span>
                             </div>
                         </div>
@@ -768,14 +777,14 @@ export async function haftalikPdfOlusturVePaylas(gunlukHedef: number = 2000): Pr
         const { uri } = await Print.printToFileAsync({ html });
         await Sharing.shareAsync(uri, {
             mimeType: 'application/pdf',
-            dialogTitle: 'Haftalık Rapor',
+            dialogTitle: i18n.t('pdf.weekly_report'),
             UTI: 'com.adobe.pdf',
         });
 
         return true;
     } catch (hata) {
         console.error('Haftalık PDF hatası:', hata);
-        Alert.alert('Hata', 'Rapor oluşturulamadı.');
+        Alert.alert(i18n.t('pdf.error_title'), i18n.t('pdf.error_msg'));
         return false;
     }
 }

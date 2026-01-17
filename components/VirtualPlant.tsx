@@ -6,6 +6,7 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Animated, Easing } from 'react-native';
 import Svg, { Path, Circle, Ellipse, G } from 'react-native-svg';
+import { useTranslation } from 'react-i18next';
 
 interface VirtualPlantProps {
     toplamMl: number; // Bugün içilen toplam ml
@@ -27,21 +28,22 @@ const getPlantStage = (percent: number): PlantStage => {
 const getPlantInfo = (stage: PlantStage) => {
     switch (stage) {
         case 'seed':
-            return { emoji: '🌱', name: 'Tohum', color: '#8D6E63' };
+            return { emoji: '🌱', name: 'plant.seed', color: '#8D6E63' };
         case 'sprout':
-            return { emoji: '🌿', name: 'Filiz', color: '#AED581' };
+            return { emoji: '🌿', name: 'plant.sprout', color: '#AED581' };
         case 'small':
-            return { emoji: '🪴', name: 'Küçük Bitki', color: '#81C784' };
+            return { emoji: '🪴', name: 'plant.small', color: '#81C784' };
         case 'medium':
-            return { emoji: '🌳', name: 'Büyüyen Bitki', color: '#66BB6A' };
+            return { emoji: '🌳', name: 'plant.medium', color: '#66BB6A' };
         case 'large':
-            return { emoji: '🌲', name: 'Olgun Bitki', color: '#4CAF50' };
+            return { emoji: '🌲', name: 'plant.large', color: '#4CAF50' };
         case 'flowering':
-            return { emoji: '🌸', name: 'Çiçek Açtı!', color: '#F48FB1' };
+            return { emoji: '🌸', name: 'plant.flowering', color: '#F48FB1' };
     }
 };
 
 export function VirtualPlant({ toplamMl, gunlukHedef }: VirtualPlantProps) {
+    const { t } = useTranslation();
     const percent = Math.min(100, (toplamMl / gunlukHedef) * 100);
     const stage = getPlantStage(percent);
     const info = getPlantInfo(stage);
@@ -245,8 +247,8 @@ export function VirtualPlant({ toplamMl, gunlukHedef }: VirtualPlantProps) {
 
             {/* Bilgi */}
             <View style={styles.infoContainer}>
-                <Text style={styles.stageName}>{info.name}</Text>
-                <Text style={styles.progress}>{Math.round(percent)}% Büyüme</Text>
+                <Text style={styles.stageName}>{t(info.name)}</Text>
+                <Text style={styles.progress}>{t('plant.growth', { percent: Math.round(percent) })}</Text>
             </View>
         </View>
     );

@@ -5,6 +5,7 @@
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { HavaDurumuVerisi } from './havaDurumu';
+import i18n from './locales/i18n';
 
 // --- SABİTLER ---
 const AI_AYAR_KEY = '@ai_ayarlari';
@@ -48,11 +49,11 @@ const VARSAYILAN_AI_AYAR: AIAyarlari = {
  */
 function sicaklikFaktoru(sicaklik: number): { ekstraMl: number; sebep: string | null } {
     if (sicaklik >= 35) {
-        return { ekstraMl: 750, sebep: `Çok sıcak hava (${sicaklik}°C) - +750ml` };
+        return { ekstraMl: 750, sebep: i18n.t('ai.reasons.hot', { temp: sicaklik, amount: 750 }) };
     } else if (sicaklik >= 30) {
-        return { ekstraMl: 500, sebep: `Sıcak hava (${sicaklik}°C) - +500ml` };
+        return { ekstraMl: 500, sebep: i18n.t('ai.reasons.warm', { temp: sicaklik, amount: 500 }) };
     } else if (sicaklik >= 25) {
-        return { ekstraMl: 250, sebep: `Ilık hava (${sicaklik}°C) - +250ml` };
+        return { ekstraMl: 250, sebep: i18n.t('ai.reasons.mild', { temp: sicaklik, amount: 250 }) };
     }
     return { ekstraMl: 0, sebep: null };
 }
@@ -63,11 +64,11 @@ function sicaklikFaktoru(sicaklik: number): { ekstraMl: number; sebep: string | 
  */
 function aktiviteFaktoru(adimSayisi: number): { ekstraMl: number; sebep: string | null } {
     if (adimSayisi >= 15000) {
-        return { ekstraMl: 600, sebep: `Çok aktif gün (${adimSayisi.toLocaleString()} adım) - +600ml` };
+        return { ekstraMl: 600, sebep: i18n.t('ai.reasons.active_very', { steps: adimSayisi.toLocaleString(), amount: 600 }) };
     } else if (adimSayisi >= 10000) {
-        return { ekstraMl: 400, sebep: `Aktif gün (${adimSayisi.toLocaleString()} adım) - +400ml` };
+        return { ekstraMl: 400, sebep: i18n.t('ai.reasons.active', { steps: adimSayisi.toLocaleString(), amount: 400 }) };
     } else if (adimSayisi >= 5000) {
-        return { ekstraMl: 200, sebep: `Orta aktivite (${adimSayisi.toLocaleString()} adım) - +200ml` };
+        return { ekstraMl: 200, sebep: i18n.t('ai.reasons.active_moderate', { steps: adimSayisi.toLocaleString(), amount: 200 }) };
     }
     return { ekstraMl: 0, sebep: null };
 }
@@ -116,7 +117,7 @@ function haftaGunuFaktoru(): { carpan: number; sebep: string | null } {
     const haftaSonu = gun === 0 || gun === 6;
 
     if (haftaSonu) {
-        return { carpan: 0.9, sebep: 'Hafta sonu (daha az hareket) - %10 azaltıldı' };
+        return { carpan: 0.9, sebep: i18n.t('ai.reasons.weekend') };
     }
     return { carpan: 1, sebep: null };
 }
@@ -158,7 +159,7 @@ export async function akilliHedefHesapla(
     const gecmis = await gecmisOrtalama();
     if (gecmis.gunSayisi >= 3 && gecmis.ortMl < tabanaHedef * 0.7) {
         // Kullanıcı hedefin %70'inden azını içiyorsa uyar
-        sebepler.push(`⚠️ Son ${gecmis.gunSayisi} günde ortalamanın (${gecmis.ortMl}ml) hedefe göre düşük`);
+        sebepler.push(i18n.t('ai.reasons.low_intake', { days: gecmis.gunSayisi, avg: gecmis.ortMl }));
     }
 
     // Hesaplamalar
@@ -175,18 +176,18 @@ export async function akilliHedefHesapla(
     let icon = '🤖';
 
     if (artisYuzdesi > 0) {
-        mesaj = `Bugün için hedefini ${tabanaHedef}ml'den ${onerilenHedef}ml'ye çıkardım (+%${artisYuzdesi}).`;
+        mesaj = i18n.t('ai.suggestion.increase', { old: tabanaHedef, new: onerilenHedef, percent: artisYuzdesi });
         icon = '📈';
     } else if (artisYuzdesi < 0) {
-        mesaj = `Bugün daha az su içebilirsin: ${onerilenHedef}ml (hafta sonu düzeltmesi).`;
+        mesaj = i18n.t('ai.suggestion.decrease', { new: onerilenHedef });
         icon = '📉';
     } else {
-        mesaj = `Hedefin bugün için uygun: ${tabanaHedef}ml.`;
+        mesaj = i18n.t('ai.suggestion.ok', { target: tabanaHedef });
         icon = '✅';
     }
 
     if (sebepler.length === 0) {
-        sebepler.push('Standart hedef kullanılıyor');
+        sebepler.push(i18n.t('ai.suggestion.standard'));
     }
 
     return {
@@ -248,15 +249,15 @@ export function trendHesapla(veriler: number[]): { egim: number; yorum: string }
 
     let yorum = '';
     if (egim > 50) {
-        yorum = '📈 Harika! Su tüketimin artıyor.';
+        yorum = i18n.t('ai.trend.up_great');
     } else if (egim > 0) {
-        yorum = '⬆️ Hafif yukarı trend.';
+        yorum = i18n.t('ai.trend.up');
     } else if (egim < -50) {
-        yorum = '📉 Dikkat! Su tüketimin düşüyor.';
+        yorum = i18n.t('ai.trend.down_warning');
     } else if (egim < 0) {
-        yorum = '⬇️ Hafif düşüş trendi.';
+        yorum = i18n.t('ai.trend.down');
     } else {
-        yorum = '➡️ Sabit gidiyorsun.';
+        yorum = i18n.t('ai.trend.steady');
     }
 
     return { egim: Math.round(egim), yorum };
@@ -482,7 +483,7 @@ export async function icgorulerUret(): Promise<AIIcgoru[]> {
     if (saatAnalizi) {
         icgoruler.push({
             id: 'saat_analizi',
-            mesaj: `${saatAnalizi.aralik} saatleri arasında %${saatAnalizi.yuzdeFark} daha az su içiyorsun. Bu saatlere hatırlatma eklemeni öneririm.`,
+            mesaj: i18n.t('ai.insights.time_analysis', { range: saatAnalizi.aralik, percent: saatAnalizi.yuzdeFark }),
             icon: '⏰',
             oncelik: 'yuksek',
             kategori: 'zaman'
@@ -494,7 +495,7 @@ export async function icgorulerUret(): Promise<AIIcgoru[]> {
     if (haftaSonu && haftaSonu.dusukMu) {
         icgoruler.push({
             id: 'hafta_sonu',
-            mesaj: `Hafta sonları %${haftaSonu.fark} daha az su içiyorsun. Hafta sonları için ekstra hatırlatma açabilirsin.`,
+            mesaj: i18n.t('ai.insights.weekend_analysis', { percent: haftaSonu.fark }),
             icon: '📅',
             oncelik: 'orta',
             kategori: 'gun'
@@ -506,7 +507,7 @@ export async function icgorulerUret(): Promise<AIIcgoru[]> {
     if (verimliGun) {
         icgoruler.push({
             id: 'verimli_gun',
-            mesaj: `En çok su içtiğin gün ${verimliGun.gun} (ort. ${verimliGun.ortalama}ml). Bu alışkanlığını diğer günlere de yaymaya çalış!`,
+            mesaj: i18n.t('ai.insights.productive_day', { day: verimliGun.gun, avg: verimliGun.ortalama }),
             icon: '🏆',
             oncelik: 'dusuk',
             kategori: 'performans'
@@ -638,7 +639,7 @@ export async function haftalikTahminHesapla(
     if (haftaBasiToplam >= haftalikHedef) {
         // Zaten tamamlandı
         tamamlanmaGunu = GUN_ADLARI[bugunGun];
-        mesaj = `🎉 Tebrikler! Haftalık hedefini zaten tamamladın!`;
+        mesaj = i18n.t('ai.forecast.complete_already');
         icon = '🏆';
     } else if (gunlukOrtalama > 0) {
         // Kaç gün sonra tamamlanacak hesapla
@@ -649,15 +650,15 @@ export async function haftalikTahminHesapla(
             // Bu hafta içinde tamamlanabilir
             const tamamlanmaGunIndex = (bugunGun + kalanGunTahmini) % 7;
             tamamlanmaGunu = GUN_ADLARI[tamamlanmaGunIndex];
-            mesaj = `Bu hızla gidersen, haftalık hedefini ${tamamlanmaGunu} günü tamamlayacaksın! 🚀`;
+            mesaj = i18n.t('ai.forecast.on_track', { day: tamamlanmaGunu });
             icon = '📈';
         } else {
             // Bu hafta tamamlanamayacak
-            mesaj = `Bu tempo ile haftalık hedefin zor görünüyor. Biraz daha hızlan! 💪`;
+            mesaj = i18n.t('ai.forecast.behind');
             icon = '⚠️';
         }
     } else {
-        mesaj = `Henüz yeterli veri yok. Su içmeye devam et!`;
+        mesaj = i18n.t('ai.forecast.insufficient');
         icon = '💧';
     }
 
@@ -679,7 +680,7 @@ export async function gelecekHaftaTahmini(gunlukHedef: number): Promise<string> 
     const gecmis = await gecmisOrtalama();
 
     if (gecmis.gunSayisi < 5) {
-        return "Gelecek hafta için yeterli veri yok.";
+        return i18n.t('ai.forecast.next_week_insufficient');
     }
 
     const haftalikHedef = gunlukHedef * 7;
@@ -688,11 +689,11 @@ export async function gelecekHaftaTahmini(gunlukHedef: number): Promise<string> 
     const basariOrani = Math.round((tahminiHaftalik / haftalikHedef) * 100);
 
     if (basariOrani >= 100) {
-        return `📈 Gelecek hafta hedefini rahatlıkla tamamlayabilirsin! (Tahmini: ${Math.round(tahminiHaftalik)}ml)`;
+        return i18n.t('ai.forecast.next_week_great', { amount: Math.round(tahminiHaftalik) });
     } else if (basariOrani >= 80) {
-        return `⬆️ Gelecek hafta hedefe yaklaşabilirsin. Biraz daha gayret! (Tahmini: %${basariOrani})`;
+        return i18n.t('ai.forecast.next_week_good', { percent: basariOrani });
     } else {
-        return `⚠️ Mevcut tempoda gelecek hafta zor olabilir. Günlük ${gunlukHedef - gecmis.ortMl}ml daha fazla içmelisin.`;
+        return i18n.t('ai.forecast.next_week_hard', { amount: gunlukHedef - gecmis.ortMl });
     }
 }
 

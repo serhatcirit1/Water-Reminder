@@ -6,6 +6,7 @@
 
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Switch, StyleSheet } from 'react-native';
+import i18n from '../locales/i18n';
 
 // --- ARALIK SEÇENEKLERİ ---
 const ARALIK_SECENEKLERI = [
@@ -43,7 +44,7 @@ export function AyarlarPaneli({
                 onPress={() => setAcik(!acik)}
             >
                 <Text style={styles.baslikYazi}>
-                    ⚙️ Bildirim Ayarları {acik ? '▼' : '▶'}
+                    ⚙️ {i18n.t('settings.notifications')} {acik ? '▼' : '▶'}
                 </Text>
             </TouchableOpacity>
 
@@ -52,7 +53,7 @@ export function AyarlarPaneli({
                 <View style={styles.icerik}>
                     {/* Bildirim Aç/Kapa */}
                     <View style={styles.satir}>
-                        <Text style={styles.satiriYazi}>🔔 Hatırlatmalar</Text>
+                        <Text style={styles.satiriYazi}>🔔 {i18n.t('settings.reminders')}</Text>
                         <Switch
                             value={bildirimAktif}
                             onValueChange={onBildirimDegistir}
@@ -64,7 +65,7 @@ export function AyarlarPaneli({
                     {/* Aralık Seçimi - Bildirim aktifse göster */}
                     {bildirimAktif && (
                         <>
-                            <Text style={styles.aralikBaslik}>⏰ Hatırlatma Aralığı</Text>
+                            <Text style={styles.aralikBaslik}>⏰ {i18n.t('settings.reminderFrequency')}</Text>
                             <View style={styles.aralikSecenekleri}>
                                 {ARALIK_SECENEKLERI.map((secenek) => (
                                     <TouchableOpacity
@@ -91,12 +92,12 @@ export function AyarlarPaneli({
 
                     {/* Test Butonu */}
                     <TouchableOpacity style={styles.testButonu} onPress={onTestGonder}>
-                        <Text style={styles.testButonuYazi}>📲 Test Bildirimi Gönder</Text>
+                        <Text style={styles.testButonuYazi}>📲 {i18n.t('settings.testNotification')}</Text>
                     </TouchableOpacity>
 
                     {/* Bilgi Notu */}
                     <Text style={styles.bilgiNotu}>
-                        💡 Bildirimler sabah 8 ile gece 10 arasında gönderilir.
+                        💡 {i18n.t('settings.notificationInfo')}
                     </Text>
                 </View>
             )}

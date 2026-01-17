@@ -157,8 +157,8 @@ export function AyarlarEkrani() {
             if (!izinVar) {
                 setBildirimAktif(false);
                 Alert.alert(
-                    'İzin Gerekli',
-                    'Bildirim göndermek için izin vermeniz gerekiyor.'
+                    t('alerts.permissionRequired'),
+                    t('alerts.notificationPermission')
                 );
                 return;
             }
@@ -179,9 +179,9 @@ export function AyarlarEkrani() {
         const izinVar = await bildirimIzniIste();
         if (izinVar) {
             await testBildirimiGonder();
-            Alert.alert('Bildirim Gönderildi', '3 saniye içinde bildirim alacaksın! 💧');
+            Alert.alert(t('alerts.notificationSent'), t('alerts.notificationSentMsg'));
         } else {
-            Alert.alert('İzin Gerekli', 'Önce bildirim izni vermeniz gerekiyor.');
+            Alert.alert(t('alerts.permissionRequired'), t('alerts.notificationPermission'));
         }
     };
 
@@ -221,7 +221,7 @@ export function AyarlarEkrani() {
         const onerilenMl = onerilenSuHesapla(profil, bardakBoyutu);
         setGunlukHedef(onerilenMl);
         await hedefKaydet(onerilenMl);
-        Alert.alert('Hedef Güncellendi', `Yeni hedefiniz: ${onerilenMl} ml 💧`);
+        Alert.alert(t('alerts.goalUpdated'), t('alerts.goalUpdatedMsg', { goal: onerilenMl }));
     };
 
     // AI özelliklerini aç/kapat
@@ -229,7 +229,7 @@ export function AyarlarEkrani() {
         setAiAktif(aktif);
         await aiAyarlariniKaydet({ aktif });
         if (aktif) {
-            Alert.alert('🧠 AI Aktif', 'Akıllı hedef ve içgörü özellikleri açıldı.');
+            Alert.alert(t('alerts.aiActive'), t('alerts.aiActiveMsg'));
         }
     };
 
@@ -342,7 +342,7 @@ export function AyarlarEkrani() {
                             >
                                 <Text style={styles.profilButonYazi}>-</Text>
                             </TouchableOpacity>
-                            <Text style={styles.profilDeger}>{profil.yas} yaş</Text>
+                            <Text style={styles.profilDeger}>{profil.yas} {t('alerts.age')}</Text>
                             <TouchableOpacity
                                 style={styles.profilButon}
                                 onPress={() => profilDegistir({ ...profil, yas: Math.min(100, profil.yas + 5) })}
@@ -355,7 +355,7 @@ export function AyarlarEkrani() {
                     {/* Aktif Yaşam */}
                     <View style={styles.modSatir}>
                         <Text style={styles.modEtiket}>
-                            {profil.aktifMi ? '🏃 Aktif Yaşam' : '🧘 Normal Yaşam'}
+                            {profil.aktifMi ? t('alerts.activeLifestyle') : t('alerts.normalLifestyle')}
                         </Text>
                         <Switch
                             value={profil.aktifMi}
@@ -368,10 +368,10 @@ export function AyarlarEkrani() {
                     {/* Önerilen */}
                     <View style={styles.oneriContainer}>
                         <Text style={styles.oneriYazi}>
-                            Önerilen: {Math.round((profil.kilo * 33 + (profil.aktifMi ? 500 : 0)) / 250) * 250} ml/gün
+                            {t('alerts.recommended')}: {Math.round((profil.kilo * 33 + (profil.aktifMi ? 500 : 0)) / 250) * 250} {t('alerts.perDay')}
                         </Text>
                         <TouchableOpacity style={styles.oneriButon} onPress={oneriUygula}>
-                            <Text style={styles.oneriButonYazi}>Uygula</Text>
+                            <Text style={styles.oneriButonYazi}>{t('alerts.apply')}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -656,22 +656,22 @@ export function AyarlarEkrani() {
                         <>
                             <View style={{ flexDirection: 'row', marginTop: 10, gap: 10 }}>
                                 <TouchableOpacity
-                                    style={[styles.pickerButton, { flex: 1 }]}
+                                    style={[styles.pickerButton, { flex: 1, flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', gap: 5 }]}
                                     onPress={() => setBioritimUyanmaModalGoster(true)}
                                 >
                                     <Text style={styles.pickerButtonLabel}>☀️ {t('settings.wakeUpTime')}</Text>
-                                    <Text style={styles.pickerButtonValue}>{bioritim.uyanmaSaati}</Text>
+                                    <Text style={[styles.pickerButtonValue, { marginLeft: 0 }]}>{bioritim.uyanmaSaati}</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
-                                    style={[styles.pickerButton, { flex: 1 }]}
+                                    style={[styles.pickerButton, { flex: 1, flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', gap: 5 }]}
                                     onPress={() => setBioritimUyumaModalGoster(true)}
                                 >
                                     <Text style={styles.pickerButtonLabel}>🌙 {t('settings.sleepTime')}</Text>
-                                    <Text style={styles.pickerButtonValue}>{bioritim.uyumaSaati}</Text>
+                                    <Text style={[styles.pickerButtonValue, { marginLeft: 0 }]}>{bioritim.uyumaSaati}</Text>
                                 </TouchableOpacity>
                             </View>
                             <Text style={styles.sessizAciklama}>
-                                Uyanış saatine göre su içme hatırlatması alacaksın
+                                {t('settings.biorhythmDesc')}
                             </Text>
                         </>
                     )}
@@ -679,11 +679,11 @@ export function AyarlarEkrani() {
 
                 {/* Detoks Modu */}
                 <View style={[styles.temaContainer, { backgroundColor: renkler.kartArkaplan }]}>
-                    <Text style={styles.temaBaslik}>🧪 Detoks Modu</Text>
+                    <Text style={styles.temaBaslik}>🧪 {t('settings.detoxMode')}</Text>
 
                     <View style={styles.modSatir}>
                         <Text style={styles.modEtiket}>
-                            {detoks.aktif ? '💪 Hedef +20% Artırıldı' : 'Kapalı'}
+                            {detoks.aktif ? `💪 ${t('settings.detoxActive')}` : t('settings.notificationsOff')}
                         </Text>
                         <Switch
                             value={detoks.aktif}
@@ -692,7 +692,7 @@ export function AyarlarEkrani() {
                                 setDetoks(yeniAyar);
                                 await detoksAyarKaydet(yeniAyar);
                                 if (value) {
-                                    Alert.alert('🧪 Detoks Modu Aktif', 'Günlük su hedefin %20 artırıldı!');
+                                    Alert.alert(t('settings.detoxMode'), t('settings.detoxActiveMsg'));
                                 }
                             }}
                             trackColor={{ false: '#ccc', true: '#4FC3F7' }}
@@ -713,7 +713,7 @@ export function AyarlarEkrani() {
 
                     {/* Otomatik Gece Modu */}
                     <View style={styles.modSatir}>
-                        <View>
+                        <View style={{ flex: 1 }}>
                             <Text style={styles.modEtiket}>🌙 {t('settings.autoNightMode')}</Text>
                             <Text style={styles.sessizAciklama}>{t('settings.autoNightModeDesc')}</Text>
                         </View>
@@ -819,11 +819,11 @@ export function AyarlarEkrani() {
                 {/* Apple Health Entegrasyonu (Sadece iOS) */}
                 {healthKitDestekleniyor() && (
                     <View style={[styles.temaContainer, { backgroundColor: renkler.kartArkaplan }]}>
-                        <Text style={styles.temaBaslik}>❤️ Apple Health</Text>
+                        <Text style={styles.temaBaslik}>❤️ {t('settings.appleHealth')}</Text>
 
                         <View style={styles.modSatir}>
                             <Text style={styles.modEtiket}>
-                                {healthKitAktif ? 'Senkronizasyon Aktif' : 'Senkronizasyon Kapalı'}
+                                {healthKitAktif ? t('settings.syncActive') : t('settings.syncOff')}
                             </Text>
                             <Switch
                                 value={healthKitAktif}
@@ -837,15 +837,15 @@ export function AyarlarEkrani() {
                         </View>
 
                         <Text style={styles.sessizAciklama}>
-                            Su tüketimin otomatik olarak Apple Health'e kaydedilir.
+                            {t('settings.appleHealthDesc')}
                         </Text>
                     </View>
                 )}
 
                 <View style={[styles.temaContainer, { backgroundColor: renkler.kartArkaplan }]}>
-                    <Text style={styles.temaBaslik}>📊 Premium Raporlar</Text>
+                    <Text style={styles.temaBaslik}>📊 {t('settings.dataExport')}</Text>
                     <Text style={styles.hedefAciklama}>
-                        Detaylı analiz ve performans raporları
+                        {t('settings.dataExportDesc')}
                     </Text>
 
                     {/* Rapor Kartları */}
@@ -1001,7 +1001,7 @@ export function AyarlarEkrani() {
                             onPress={() => setPremiumModalGoster(true)}
                         >
                             <Text style={{ color: '#4FC3F7', textAlign: 'center', fontWeight: '600' }}>
-                                ⭐ Premium'a Yükselt
+                                ⭐ {t('premium.upgrade')}
                             </Text>
                         </TouchableOpacity>
                     )}

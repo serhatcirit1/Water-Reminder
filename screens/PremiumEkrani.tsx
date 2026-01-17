@@ -26,20 +26,21 @@ import { useTranslation } from 'react-i18next';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
-const PREMIUM_OZELLIKLER = [
-    { id: 2, baslik: 'Gelişmiş AI İçgörüleri', detay: 'Derin öğrenme ile su içme alışkanlıklarınızı analiz edin.', emoji: '🧠' },
-    { id: 3, baslik: 'Apple Health & Sync', detay: 'Verilerinizi tüm cihazlarınızla senkronize edin.', emoji: '⌚' },
-    { id: 4, baslik: 'Ödüllü Rozetler', detay: 'Sadece Premium üyelere özel 12+ nadir rozet.', emoji: '💎' },
-    { id: 5, baslik: 'Akıllı Hatırlatmalar', detay: 'Hava durumu ve biyoritminize tam uyumlu bildirimler.', emoji: '🔔' },
-    { id: 6, baslik: 'Özel Temalar', detay: '5 yeni renk paleti ve özel uygulama ikonları.', emoji: '🎨' },
-    { id: 7, baslik: 'Premium Raporlar', detay: 'Haftalık, aylık PDF ve detaylı CSV raporları.', emoji: '📊' },
-    { id: 8, baslik: 'Sanal Bitki', detay: 'Su içtikçe büyüyen ve çiçek açan bitkini yetiştir.', emoji: '🌸' },
+// Feature and plan IDs - actual text will come from translations
+const FEATURE_KEYS = [
+    { id: 2, titleKey: 'premium.features.aiInsights', descKey: 'premium.features.aiInsightsDesc', emoji: '🧠' },
+    { id: 3, titleKey: 'premium.features.appleHealth', descKey: 'premium.features.appleHealthDesc', emoji: '⌚' },
+    { id: 4, titleKey: 'premium.features.badges', descKey: 'premium.features.badgesDesc', emoji: '💎' },
+    { id: 5, titleKey: 'premium.features.reminders', descKey: 'premium.features.remindersDesc', emoji: '🔔' },
+    { id: 6, titleKey: 'premium.features.themes', descKey: 'premium.features.themesDesc', emoji: '🎨' },
+    { id: 7, titleKey: 'premium.features.reports', descKey: 'premium.features.reportsDesc', emoji: '📊' },
+    { id: 8, titleKey: 'premium.features.plant', descKey: 'premium.features.plantDesc', emoji: '🌸' },
 ];
 
-const FIYAT_PLANLARI = [
-    { id: 'aylik', baslik: 'Aylık', fiyat: '49,99 TL', altMetin: 'Her ay öde', populer: false },
-    { id: 'yillik', baslik: 'Yıllık', fiyat: '299,99 TL', altMetin: 'En Popüler • %50 tasarruf', populer: true },
-    { id: 'omur_boyu', baslik: 'Ömür Boyu', fiyat: '799,99 TL', altMetin: 'Tek seferlik ödeme', populer: false },
+const PLAN_KEYS = [
+    { id: 'aylik', titleKey: 'premium.plans.monthly', price: '$4.99', subKey: 'premium.plans.payMonthly', populer: false },
+    { id: 'yillik', titleKey: 'premium.plans.yearly', price: '$29.99', subKey: 'premium.plans.mostPopular', populer: true },
+    { id: 'omur_boyu', titleKey: 'premium.plans.lifetime', price: '$79.99', subKey: 'premium.plans.oneTime', populer: false },
 ];
 
 interface PremiumEkraniProps {
@@ -123,11 +124,11 @@ export default function PremiumEkrani({ onClose }: PremiumEkraniProps) {
                 </View>
 
                 <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-                    {/* Özellikler Listesi */}
+                    {/* Features List */}
                     <View style={styles.featuresContainer}>
-                        {PREMIUM_OZELLIKLER.map((ozellik, index) => (
+                        {FEATURE_KEYS.map((feature, index) => (
                             <Animated.View
-                                key={ozellik.id}
+                                key={feature.id}
                                 style={[
                                     styles.featureItem,
                                     {
@@ -145,21 +146,21 @@ export default function PremiumEkrani({ onClose }: PremiumEkraniProps) {
                                     style={styles.featureIconContainer}
                                 >
                                     <View style={styles.featureIconInner}>
-                                        <Text style={styles.featureEmoji}>{ozellik.emoji}</Text>
+                                        <Text style={styles.featureEmoji}>{feature.emoji}</Text>
                                     </View>
                                 </LinearGradient>
                                 <View style={styles.featureTextContainer}>
-                                    <Text style={styles.featureTitle}>{ozellik.baslik}</Text>
-                                    <Text style={styles.featureDetail}>{ozellik.detay}</Text>
+                                    <Text style={styles.featureTitle}>{t(feature.titleKey)}</Text>
+                                    <Text style={styles.featureDetail}>{t(feature.descKey)}</Text>
                                 </View>
                             </Animated.View>
                         ))}
                     </View>
 
-                    {/* Fiyat Kartları */}
+                    {/* Pricing Cards */}
                     <Text style={styles.sectionTitle}>{t('premium.selectPlan')}</Text>
                     <View style={styles.pricingContainer}>
-                        {FIYAT_PLANLARI.map((plan) => (
+                        {PLAN_KEYS.map((plan) => (
                             <TouchableOpacity
                                 key={plan.id}
                                 style={[
@@ -180,17 +181,17 @@ export default function PremiumEkrani({ onClose }: PremiumEkraniProps) {
                                         <Text style={styles.populerBadgeText}>{t('premium.bestPrice')}</Text>
                                     </LinearGradient>
                                 )}
-                                <Text style={[styles.planTitle, (plan.populer || seciliPlan === plan.id) && { color: '#FFD700' }]}>{plan.baslik}</Text>
-                                <Text style={styles.planPrice}>{plan.fiyat}</Text>
-                                <Text style={styles.planSubtext}>{plan.altMetin}</Text>
+                                <Text style={[styles.planTitle, (plan.populer || seciliPlan === plan.id) && { color: '#FFD700' }]}>{t(plan.titleKey)}</Text>
+                                <Text style={styles.planPrice}>{plan.price}</Text>
+                                <Text style={styles.planSubtext}>{t(plan.subKey)}</Text>
                             </TouchableOpacity>
                         ))}
                     </View>
 
-                    {/* Alt Bilgi */}
+                    {/* Footer */}
                     <View style={styles.footer}>
                         <Text style={styles.footerText}>
-                            İstediğiniz zaman iptal edebilirsiniz. Ödemeler Google Play Store / App Store hesabınızdan tahsil edilir.
+                            {t('premium.footer')}
                         </Text>
                     </View>
                 </ScrollView>
@@ -205,18 +206,18 @@ export default function PremiumEkrani({ onClose }: PremiumEkraniProps) {
                             style={styles.buttonGradient}
                         >
                             <Text style={styles.buttonText}>
-                                {seciliPlan === 'aylik' ? 'ÜCRETSİZ DENEMEYİ BAŞLAT' : 'ŞİMDİ ABONE OL'}
+                                {seciliPlan === 'aylik' ? t('premium.buttons.startTrial') : t('premium.buttons.subscribe')}
                             </Text>
                         </LinearGradient>
                     </TouchableOpacity>
                     <Text style={styles.trialText}>
-                        {seciliPlan === 'aylik' ? 'İlk 7 gün ücretsiz, sonra aylık 49,99 TL' :
-                            seciliPlan === 'yillik' ? 'Yıllık 299,99 TL • İstediğin zaman iptal et' :
-                                'Tek seferlik ödeme • Sınırsız erişim'}
+                        {seciliPlan === 'aylik' ? t('premium.trialText.monthly') :
+                            seciliPlan === 'yillik' ? t('premium.trialText.yearly') :
+                                t('premium.trialText.lifetime')}
                     </Text>
                 </View>
             </SafeAreaView>
-        </View>
+        </View >
     );
 }
 

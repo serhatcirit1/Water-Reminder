@@ -234,7 +234,7 @@ export default function OnboardingEkrani({ onComplete }: OnboardingEkraniProps) 
                             style={[styles.startButton, { backgroundColor: renkler.vurguAcik }]}
                         >
                             <Text style={[styles.startButtonText, { color: renkler.arkaplan }]}>
-                                Başla 🚀
+                                {t('onboarding.start')} 🚀
                             </Text>
                         </TouchableOpacity>
                     ) : (
@@ -248,7 +248,7 @@ export default function OnboardingEkrani({ onComplete }: OnboardingEkraniProps) 
                             style={[styles.nextButton, { borderColor: renkler.vurguAcik }]}
                         >
                             <Text style={[styles.nextButtonText, { color: renkler.vurguAcik }]}>
-                                İleri →
+                                {t('common.next')} →
                             </Text>
                         </TouchableOpacity>
                     )}
