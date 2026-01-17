@@ -22,6 +22,7 @@ import { seviyeDurumuYukle, SeviyeDurumu } from '../seviyeSistemi';
 import { rozetleriYukle, Rozet } from '../rozetler';
 import { gunlukGorevleriYukle, GunlukGorevDurumu } from '../gunlukGorevler';
 import { usePremium } from '../PremiumContext';
+import { useTranslation } from 'react-i18next';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const GECMIS_KEY = '@su_gecmisi';
@@ -35,6 +36,7 @@ interface GunlukVeri {
 
 export function IstatistiklerEkrani() {
     const { renkler } = useTema();
+    const { t } = useTranslation();
 
     // State
     const [yukleniyor, setYukleniyor] = useState(true);
@@ -258,8 +260,8 @@ export function IstatistiklerEkrani() {
                 {/* Başlık */}
                 <View style={styles.header}>
                     <Text style={styles.headerEmoji}>📊</Text>
-                    <Text style={styles.headerTitle}>İstatistikler</Text>
-                    <Text style={styles.headerSubtitle}>Son 7 günlük su tüketimin</Text>
+                    <Text style={styles.headerTitle}>{t('stats.headerTitle')}</Text>
+                    <Text style={styles.headerSubtitle}>{t('stats.headerSubtitle')}</Text>
                 </View>
 
                 {/* Seviye Kartı */}
@@ -267,7 +269,7 @@ export function IstatistiklerEkrani() {
                     <View style={styles.levelCard}>
                         <View style={styles.levelHeader}>
                             <Text style={styles.levelTitle}>{seviye.unvan}</Text>
-                            <Text style={styles.levelNumber}>Seviye {seviye.seviye}</Text>
+                            <Text style={styles.levelNumber}>{t('home.level')} {seviye.seviye}</Text>
                         </View>
                         <View style={styles.xpBarBg}>
                             <View
@@ -280,7 +282,7 @@ export function IstatistiklerEkrani() {
                         <Text style={styles.xpText}>
                             {seviye.mevcutSeviyeXP} / {seviye.sonrakiSeviyeXP} XP
                         </Text>
-                        <Text style={styles.totalXp}>Toplam: {seviye.toplamXP} XP</Text>
+                        <Text style={styles.totalXp}>{t('stats.total')}: {seviye.toplamXP} XP</Text>
                     </View>
                 )}
 
@@ -288,7 +290,7 @@ export function IstatistiklerEkrani() {
                 <View style={styles.rekorCard}>
                     <Text style={styles.rekorEmoji}>🏆</Text>
                     <View style={styles.rekorInfo}>
-                        <Text style={styles.rekorLabel}>En İyi Gün (Rekor)</Text>
+                        <Text style={styles.rekorLabel}>{t('stats.record')}</Text>
                         <Text style={styles.rekorValue}>{rekor?.ml || 0} ml</Text>
                         <Text style={styles.rekorDate}>{rekor?.tarih || '-'}</Text>
                     </View>
@@ -298,15 +300,15 @@ export function IstatistiklerEkrani() {
                 <View style={styles.streakCard}>
                     <Text style={styles.streakEmoji}>🔥</Text>
                     <View style={styles.streakInfo}>
-                        <Text style={styles.streakLabel}>Mevcut Seri</Text>
+                        <Text style={styles.streakLabel}>{t('stats.currentStreak')}</Text>
                         <Text style={styles.streakValue}>
-                            {streak?.mevcutStreak === 0 ? 'Bugün başla!' : `${streak?.mevcutStreak} gün`}
+                            {streak?.mevcutStreak === 0 ? t('stats.startToday') : `${streak?.mevcutStreak} ${t('stats.days')}`}
                         </Text>
                     </View>
                     <View style={styles.streakDivider} />
                     <View style={styles.streakInfo}>
-                        <Text style={styles.streakLabel}>En Uzun Seri</Text>
-                        <Text style={styles.streakValueSecondary}>{streak?.enUzunStreak || 0} gün</Text>
+                        <Text style={styles.streakLabel}>{t('stats.longestStreak')}</Text>
+                        <Text style={styles.streakValueSecondary}>{streak?.enUzunStreak || 0} {t('stats.days')}</Text>
                     </View>
                 </View>
 
@@ -314,9 +316,9 @@ export function IstatistiklerEkrani() {
                 <View style={styles.favoriCard}>
                     <View style={styles.favoriHeader}>
                         <Text style={styles.favoriEmoji}>🕐</Text>
-                        <Text style={styles.favoriTitle}>Favori Saatler (24 Saat)</Text>
+                        <Text style={styles.favoriTitle}>{t('stats.favoriteHours')}</Text>
                     </View>
-                    <Text style={styles.favoriSubtitle}>Saatlere tıklayarak detay görebilirsin</Text>
+                    <Text style={styles.favoriSubtitle}>{t('stats.favoriteHoursSubtitle')}</Text>
 
                     <View style={styles.favoriInfoRow}>
                         {aktifDilim && (
@@ -403,29 +405,29 @@ export function IstatistiklerEkrani() {
                 <View style={styles.trendCard}>
                     <View style={styles.trendHeader}>
                         <Text style={styles.trendEmoji}>📈</Text>
-                        <Text style={styles.trendTitle}>Trend Analizi</Text>
+                        <Text style={styles.trendTitle}>{t('stats.trendAnalysis')}</Text>
                     </View>
-                    <Text style={styles.trendSubtitle}>Geçmiş dönemlerle karşılaştırma</Text>
+                    <Text style={styles.trendSubtitle}>{t('stats.trendSubtitle')}</Text>
 
                     <View style={styles.trendRow}>
                         <View style={styles.trendBox}>
-                            <Text style={styles.trendBoxTitle}>Bu Hafta vs Geçen Hafta</Text>
+                            <Text style={styles.trendBoxTitle}>{t('stats.thisWeekVsLast')}</Text>
                             <Text style={styles.trendIcon}>{haftalikTrend >= 0 ? '📈' : '📉'}</Text>
                             <Text style={[styles.trendPercent, { color: haftalikTrend >= 0 ? '#4CAF50' : '#F44336' }]}>
                                 {haftalikTrend >= 0 ? '+' : ''}{haftalikTrend}%
                             </Text>
                             <Text style={styles.trendDetail}>
-                                {Math.round(buHaftaToplam / 250)} vs {Math.round(gecenHaftaToplam / 250)} bardak
+                                {Math.round(buHaftaToplam / 250)} vs {Math.round(gecenHaftaToplam / 250)} {t('stats.glasses')}
                             </Text>
                         </View>
                         <View style={styles.trendBox}>
-                            <Text style={styles.trendBoxTitle}>Son 15 Gün vs Önceki 15 Gün</Text>
+                            <Text style={styles.trendBoxTitle}>{t('stats.last15VsPrev15')}</Text>
                             <Text style={styles.trendIcon}>{aylikTrend >= 0 ? '📈' : '📉'}</Text>
                             <Text style={[styles.trendPercent, { color: aylikTrend >= 0 ? '#4CAF50' : '#F44336' }]}>
                                 {aylikTrend >= 0 ? '+' : ''}{aylikTrend}%
                             </Text>
                             <Text style={styles.trendDetail}>
-                                {Math.round(son15GunToplam / 250)} vs {Math.round(onceki15GunToplam / 250)} bardak
+                                {Math.round(son15GunToplam / 250)} vs {Math.round(onceki15GunToplam / 250)} {t('stats.glasses')}
                             </Text>
                         </View>
                     </View>
@@ -441,7 +443,7 @@ export function IstatistiklerEkrani() {
                             setReferansTarih(yeniTarih);
                         }}
                     >
-                        <Text style={styles.navButtonText}>◀ Önceki {aktifTab === 'haftalik' ? 'Hafta' : '30 Gün'}</Text>
+                        <Text style={styles.navButtonText}>◀ {t('stats.previousWeek')}</Text>
                     </TouchableOpacity>
 
                     <View style={styles.dateBadge}>
@@ -466,7 +468,7 @@ export function IstatistiklerEkrani() {
                             }
                         }}
                     >
-                        <Text style={styles.navButtonText}>Sonraki ▶</Text>
+                        <Text style={styles.navButtonText}>{t('stats.nextWeek')} ▶</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -477,7 +479,7 @@ export function IstatistiklerEkrani() {
                         onPress={() => { setAktifTab('haftalik'); }}
                     >
                         <Text style={[styles.tabText, aktifTab === 'haftalik' && styles.tabTextActive]}>
-                            📊 Haftalık
+                            📊 {t('stats.weekly')}
                         </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
@@ -485,7 +487,7 @@ export function IstatistiklerEkrani() {
                         onPress={() => { setAktifTab('aylik'); }}
                     >
                         <Text style={[styles.tabText, aktifTab === 'aylik' && styles.tabTextActive]}>
-                            📅 Aylık
+                            📅 {t('stats.monthly')}
                         </Text>
                     </TouchableOpacity>
                 </View>
@@ -495,12 +497,12 @@ export function IstatistiklerEkrani() {
                     <View style={styles.chartCard}>
                         <View style={styles.chartHeader}>
                             <View>
-                                <Text style={styles.chartTitle}>Haftalık Görünüm</Text>
+                                <Text style={styles.chartTitle}>{t('stats.weekly')}</Text>
                                 <Text style={[styles.chartSubtitle, { fontSize: 11, marginTop: 2 }]}>
                                     {haftalikVeri[0]?.tarih} - {haftalikVeri[6]?.tarih}
                                 </Text>
                             </View>
-                            <Text style={styles.chartSubtitle}>Toplam: {(toplamHaftalik / 1000).toFixed(1)}L</Text>
+                            <Text style={styles.chartSubtitle}>{t('stats.total')}: {(toplamHaftalik / 1000).toFixed(1)}L</Text>
                         </View>
 
                         {/* Bar Chart */}
@@ -534,15 +536,15 @@ export function IstatistiklerEkrani() {
                         <View style={styles.summaryRow}>
                             <View style={styles.summaryItem}>
                                 <Text style={styles.summaryValue}>{ortalamaGunluk}</Text>
-                                <Text style={styles.summaryLabel}>Ort. ml/gün</Text>
+                                <Text style={styles.summaryLabel}>{t('stats.dailyAvg')}</Text>
                             </View>
                             <View style={styles.summaryItem}>
                                 <Text style={styles.summaryValue}>{hedefeUlasanGun}/7</Text>
-                                <Text style={styles.summaryLabel}>Başarılı Gün</Text>
+                                <Text style={styles.summaryLabel}>{t('stats.successDays')}</Text>
                             </View>
                             <View style={styles.summaryItem}>
                                 <Text style={styles.summaryValue}>{enYuksekGun?.gun || '-'}</Text>
-                                <Text style={styles.summaryLabel}>En İyi Gün</Text>
+                                <Text style={styles.summaryLabel}>{t('stats.bestDay')}</Text>
                             </View>
                         </View>
                     </View>
@@ -553,12 +555,12 @@ export function IstatistiklerEkrani() {
                     <View style={styles.chartCard}>
                         <View style={styles.chartHeader}>
                             <View>
-                                <Text style={styles.chartTitle}>Aylık Görünüm</Text>
+                                <Text style={styles.chartTitle}>{t('stats.monthly')}</Text>
                                 <Text style={[styles.chartSubtitle, { fontSize: 11, marginTop: 2 }]}>
                                     {aylikVeri[0]?.tarih} - {aylikVeri[29]?.tarih}
                                 </Text>
                             </View>
-                            <Text style={styles.chartSubtitle}>Toplam: {(toplamAylik / 1000).toFixed(1)}L</Text>
+                            <Text style={styles.chartSubtitle}>{t('stats.total')}: {(toplamAylik / 1000).toFixed(1)}L</Text>
                         </View>
 
                         {/* İnline Tooltip */}
@@ -614,11 +616,11 @@ export function IstatistiklerEkrani() {
                         <View style={styles.summaryRow}>
                             <View style={styles.summaryItem}>
                                 <Text style={styles.summaryValue}>{ortalamaAylik}</Text>
-                                <Text style={styles.summaryLabel}>Ort. ml/gün</Text>
+                                <Text style={styles.summaryLabel}>{t('stats.dailyAvg')}</Text>
                             </View>
                             <View style={styles.summaryItem}>
                                 <Text style={styles.summaryValue}>{aylikBasariGun}/30</Text>
-                                <Text style={styles.summaryLabel}>Başarılı Gün</Text>
+                                <Text style={styles.summaryLabel}>{t('stats.successDays')}</Text>
                             </View>
                         </View>
                     </View>
@@ -631,7 +633,7 @@ export function IstatistiklerEkrani() {
                     <View style={styles.basariHeader}>
                         <Text style={styles.basariEmoji}>🎯</Text>
                         <Text style={styles.basariTitle}>
-                            {aktifTab === 'haftalik' ? 'Haftalık Başarı' : 'Aylık Başarı'}
+                            {aktifTab === 'haftalik' ? t('stats.weeklySuccessRate') : t('stats.monthlySuccessRate')}
                         </Text>
                     </View>
                     <View style={styles.basariBarBg}>
@@ -651,8 +653,8 @@ export function IstatistiklerEkrani() {
                     </Text>
                     <Text style={styles.basariAciklama}>
                         {aktifTab === 'haftalik'
-                            ? `${hedefeUlasanGun}/7 gün hedefe ulaştın`
-                            : `${aylikBasariGun}/30 gün hedefe ulaştın`}
+                            ? `${hedefeUlasanGun}/7 ${t('stats.days')}`
+                            : `${aylikBasariGun}/30 ${t('stats.days')}`}
                     </Text>
                 </View>
 
@@ -663,10 +665,10 @@ export function IstatistiklerEkrani() {
                     </Text>
                     <Text style={styles.motivasyonMesaj}>
                         {hedefeUlasanGun >= 5
-                            ? 'Muhteşem performans! Bu hafta harikasın!'
+                            ? t('stats.motivationGreat')
                             : hedefeUlasanGun >= 3
-                                ? 'İyi gidiyorsun! Biraz daha gayret!'
-                                : 'Her gün yeni bir başlangıç! Devam et!'}
+                                ? t('stats.motivationGood')
+                                : t('stats.motivationStart')}
                     </Text>
                 </View>
 
@@ -675,7 +677,7 @@ export function IstatistiklerEkrani() {
                     <View style={styles.gorevCard}>
                         <View style={styles.gorevHeader}>
                             <Text style={styles.gorevEmoji}>✅</Text>
-                            <Text style={styles.gorevTitle}>Günlük Görevler</Text>
+                            <Text style={styles.gorevTitle}>{t('home.dailyTasks')}</Text>
                         </View>
                         <View style={styles.gorevProgress}>
                             <View style={styles.gorevBarBg}>
@@ -709,7 +711,7 @@ export function IstatistiklerEkrani() {
                 {/* Rozetler */}
                 <View style={styles.rozetCard}>
                     <Text style={styles.rozetTitle}>
-                        🏅 Rozetler ({rozetler.filter(r => r.kazanildi).length}/{rozetler.length})
+                        🏅 {t('stats.badges')} ({rozetler.filter(r => r.kazanildi).length}/{rozetler.length})
                     </Text>
 
                     {/* Seçili Rozet Bilgisi */}
@@ -725,7 +727,7 @@ export function IstatistiklerEkrani() {
                                 <Text style={styles.rozetTooltipTitle}>{seciliRozet.isim}</Text>
                                 <Text style={styles.rozetTooltipDesc}>{seciliRozet.aciklama}</Text>
                                 <Text style={styles.rozetTooltipStatus}>
-                                    {seciliRozet.kazanildi ? '✅ Kazanıldı!' : '🎯 ' + seciliRozet.kosul}
+                                    {seciliRozet.kazanildi ? `✅ ${t('stats.badgeEarned')}` : `🎯 ${seciliRozet.kosul}`}
                                 </Text>
                             </View>
                         </TouchableOpacity>

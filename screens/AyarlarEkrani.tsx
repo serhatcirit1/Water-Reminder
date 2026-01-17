@@ -44,6 +44,8 @@ import { usePremium } from '../PremiumContext';
 import { premiumDurumKaydet } from '../premiumUtils';
 import { csvOlusturVePaylas } from '../exportUtils';
 import { aylikPdfOlusturVePaylas, haftalikPdfOlusturVePaylas } from '../pdfExport';
+import { useTranslation } from 'react-i18next';
+import { LANGUAGES, changeLanguage, getCurrentLanguage } from '../locales/i18n';
 
 // --- COMPONENT ---
 export function AyarlarEkrani() {
@@ -90,6 +92,8 @@ export function AyarlarEkrani() {
 
     // Tema hook
     const { mod, renkler, modDegistir, otomatikMod, otomatikModDegistir } = useTema();
+    const { t } = useTranslation();
+    const [currentLang, setCurrentLang] = useState(getCurrentLanguage());
 
     useEffect(() => {
         ayarlariYukle();
@@ -264,7 +268,7 @@ export function AyarlarEkrani() {
         return (
             <SafeAreaView style={styles.safeArea} edges={['top']}>
                 <View style={styles.loadingContainer}>
-                    <Text style={styles.yukleniyorYazi}>⚙️ Yükleniyor...</Text>
+                    <Text style={styles.yukleniyorYazi}>⚙️ {t('common.loading')}</Text>
                 </View>
             </SafeAreaView>
         );
@@ -274,7 +278,7 @@ export function AyarlarEkrani() {
         <SafeAreaView style={[styles.safeArea, { backgroundColor: renkler.arkaplan }]} edges={['top']}>
             <ScrollView style={[styles.container, { backgroundColor: renkler.arkaplan }]}>
                 {/* Başlık */}
-                <Text style={styles.baslik}>⚙️ Ayarlar</Text>
+                <Text style={styles.baslik}>⚙️ {t('settings.title')}</Text>
 
                 {/* Premium Banner */}
                 {!premiumAktif && (
@@ -290,11 +294,11 @@ export function AyarlarEkrani() {
                         >
                             <View style={styles.premiumBannerContent}>
                                 <View style={styles.premiumBannerTextContainer}>
-                                    <Text style={styles.premiumBannerTitle}>WATER PREMIUM 💎</Text>
-                                    <Text style={styles.premiumBannerSubtitle}>AI analizler, özel temalar ve daha fazlası</Text>
+                                    <Text style={styles.premiumBannerTitle}>{t('home.premiumBannerTitle')}</Text>
+                                    <Text style={styles.premiumBannerSubtitle}>{t('home.premiumBannerSubtitle')}</Text>
                                 </View>
                                 <View style={styles.premiumBannerBadge}>
-                                    <Text style={styles.premiumBannerBadgeText}>KEŞFET</Text>
+                                    <Text style={styles.premiumBannerBadgeText}>{t('home.explore')}</Text>
                                 </View>
                             </View>
                         </LinearGradient>
@@ -303,14 +307,14 @@ export function AyarlarEkrani() {
 
                 {/* Kişiselleştirilmiş Hedef */}
                 <View style={[styles.hedefContainer, { backgroundColor: renkler.kartArkaplan }]}>
-                    <Text style={styles.hedefBaslik}>📐 Kişiselleştirilmiş Hedef</Text>
+                    <Text style={styles.hedefBaslik}>📐 {t('settings.personalizedGoal')}</Text>
                     <Text style={styles.hedefAciklama}>
-                        Bilgilerine göre önerilen su miktarı
+                        {t('settings.personalizedGoalDesc')}
                     </Text>
 
                     {/* Kilo */}
                     <View style={styles.profilSatir}>
-                        <Text style={styles.profilEtiket}>Kilo</Text>
+                        <Text style={styles.profilEtiket}>{t('settings.weight')}</Text>
                         <View style={styles.profilDegerler}>
                             <TouchableOpacity
                                 style={styles.profilButon}
@@ -330,7 +334,7 @@ export function AyarlarEkrani() {
 
                     {/* Yaş */}
                     <View style={styles.profilSatir}>
-                        <Text style={styles.profilEtiket}>Yaş</Text>
+                        <Text style={styles.profilEtiket}>{t('settings.age')}</Text>
                         <View style={styles.profilDegerler}>
                             <TouchableOpacity
                                 style={styles.profilButon}
@@ -374,32 +378,32 @@ export function AyarlarEkrani() {
 
                 {/* Günlük Hedef Ayarı */}
                 <View style={[styles.hedefContainer, { backgroundColor: renkler.kartArkaplan }]}>
-                    <Text style={styles.hedefBaslik}>🎯 Günlük Hedef</Text>
+                    <Text style={styles.hedefBaslik}>🎯 {t('settings.dailyGoal')}</Text>
                     <Text style={styles.hedefAciklama}>
-                        Günde ne kadar su içmeyi hedefliyorsun?
+                        {t('settings.dailyGoalDesc')}
                     </Text>
 
                     <TouchableOpacity
                         style={styles.pickerButton}
                         onPress={() => setHedefModalGoster(true)}
                     >
-                        <Text style={styles.pickerButtonLabel}>💧 Günlük Hedef</Text>
+                        <Text style={styles.pickerButtonLabel}>💧 {t('settings.dailyGoal')}</Text>
                         <Text style={styles.pickerButtonValue}>{gunlukHedef} ml ({(gunlukHedef / 1000).toFixed(1)} L)</Text>
                     </TouchableOpacity>
                 </View>
 
                 {/* 🧠 AI Özellikleri */}
                 <View style={[styles.temaContainer, { backgroundColor: renkler.kartArkaplan }]}>
-                    <Text style={styles.temaBaslik}>🧠 Yapay Zeka Özellikleri</Text>
+                    <Text style={styles.temaBaslik}>🧠 {t('settings.aiFeatures')}</Text>
                     <Text style={styles.hedefAciklama}>
-                        Kişiselleştirilmiş öneriler ve akıllı hatırlatmalar
+                        {t('settings.aiDesc')}
                     </Text>
 
                     <View style={styles.modSatir}>
                         <View style={{ flex: 1 }}>
-                            <Text style={styles.modEtiket}>Akıllı Hedef Motoru</Text>
+                            <Text style={styles.modEtiket}>{t('settings.smartGoalEngine')}</Text>
                             <Text style={[styles.hedefAciklama, { fontSize: 11, marginTop: 2 }]}>
-                                Hava durumu ve geçmişine göre günlük hedefini otomatik ayarlar
+                                {t('settings.smartGoalEngineDesc')}
                             </Text>
                         </View>
                         <Switch
@@ -413,7 +417,7 @@ export function AyarlarEkrani() {
                     {aiAktif && (
                         <View style={styles.oneriContainer}>
                             <Text style={styles.oneriYazi}>
-                                ✅ AI İçgörüleri ve Tahminler aktif
+                                ✅ {t('settings.aiActive')}
                             </Text>
                         </View>
                     )}
@@ -421,11 +425,11 @@ export function AyarlarEkrani() {
 
                 {/* Bildirim Ayarları */}
                 <View style={[styles.temaContainer, { backgroundColor: renkler.kartArkaplan }]}>
-                    <Text style={styles.temaBaslik}>🔔 Bildirim Ayarları</Text>
+                    <Text style={styles.temaBaslik}>🔔 {t('settings.notifications')}</Text>
 
                     <View style={styles.modSatir}>
                         <Text style={styles.modEtiket}>
-                            {bildirimAktif ? 'Açık' : 'Kapalı'}
+                            {bildirimAktif ? t('settings.notificationsOn') : t('settings.notificationsOff')}
                         </Text>
                         <Switch
                             value={bildirimAktif}
@@ -441,9 +445,9 @@ export function AyarlarEkrani() {
                                 style={[styles.pickerButton, { marginTop: 10 }]}
                                 onPress={() => setBildirimAralikModalGoster(true)}
                             >
-                                <Text style={styles.pickerButtonLabel}>⏰ Hatırlatma Aralığı</Text>
+                                <Text style={styles.pickerButtonLabel}>⏰ {t('settings.reminderInterval')}</Text>
                                 <Text style={styles.pickerButtonValue}>
-                                    {hatirlatmaAraligi >= 60 ? `${hatirlatmaAraligi / 60} saat` : `${hatirlatmaAraligi} dk`}
+                                    {hatirlatmaAraligi >= 60 ? `${hatirlatmaAraligi / 60} ${t('time.hours')}` : `${hatirlatmaAraligi} ${t('time.minutes')}`}
                                 </Text>
                             </TouchableOpacity>
 
@@ -451,7 +455,7 @@ export function AyarlarEkrani() {
                                 style={[styles.oneriButon, { marginTop: 15 }]}
                                 onPress={testGonder}
                             >
-                                <Text style={styles.oneriButonYazi}>📲 Test Gönder</Text>
+                                <Text style={styles.oneriButonYazi}>📲 {t('settings.testNotification')}</Text>
                             </TouchableOpacity>
                         </>
                     )}
@@ -459,13 +463,13 @@ export function AyarlarEkrani() {
 
                 {/* Sessiz Saatler */}
                 <View style={[styles.temaContainer, { backgroundColor: renkler.kartArkaplan }]}>
-                    <Text style={styles.temaBaslik}>🌙 Sessiz Saatler</Text>
+                    <Text style={styles.temaBaslik}>🌙 {t('settings.silentHours')}</Text>
 
                     <View style={styles.modSatir}>
                         <Text style={styles.modEtiket}>
                             {sessizSaatler.aktif
                                 ? `${sessizSaatler.baslangic}:00 - ${sessizSaatler.bitis}:00`
-                                : 'Kapalı'}
+                                : t('settings.notificationsOff')}
                         </Text>
                         <Switch
                             value={sessizSaatler.aktif}
@@ -482,19 +486,19 @@ export function AyarlarEkrani() {
                                     style={[styles.pickerButton, { flex: 1 }]}
                                     onPress={() => setSessizBaslangicModalGoster(true)}
                                 >
-                                    <Text style={styles.pickerButtonLabel}>Başlangıç</Text>
+                                    <Text style={styles.pickerButtonLabel}>{t('settings.startTime')}</Text>
                                     <Text style={styles.pickerButtonValue}>{sessizSaatler.baslangic}:00</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={[styles.pickerButton, { flex: 1 }]}
                                     onPress={() => setSessizBitisModalGoster(true)}
                                 >
-                                    <Text style={styles.pickerButtonLabel}>Bitiş</Text>
+                                    <Text style={styles.pickerButtonLabel}>{t('settings.endTime')}</Text>
                                     <Text style={styles.pickerButtonValue}>{sessizSaatler.bitis}:00</Text>
                                 </TouchableOpacity>
                             </View>
                             <Text style={styles.sessizAciklama}>
-                                Bu saatlerde bildirim gönderilmez
+                                {t('settings.silentHoursDesc')}
                             </Text>
                         </>
                     )}
@@ -502,11 +506,11 @@ export function AyarlarEkrani() {
 
                 {/* Ses Ayarları */}
                 <View style={[styles.temaContainer, { backgroundColor: renkler.kartArkaplan }]}>
-                    <Text style={styles.temaBaslik}>🔊 Ses Efektleri</Text>
+                    <Text style={styles.temaBaslik}>🔊 {t('settings.sound')}</Text>
 
                     <View style={styles.modSatir}>
                         <Text style={styles.modEtiket}>
-                            {sesAktif ? '🎵 Ses Açık' : '🔇 Ses Kapalı'}
+                            {sesAktif ? `🎵 ${t('settings.soundOn')}` : `🔇 ${t('settings.soundOff')}`}
                         </Text>
                         <Switch
                             value={sesAktif}
@@ -519,11 +523,11 @@ export function AyarlarEkrani() {
 
                 {/* Akıllı Hatırlatma */}
                 <View style={[styles.temaContainer, { backgroundColor: renkler.kartArkaplan }]}>
-                    <Text style={styles.temaBaslik}>🧠 Akıllı Hatırlatma</Text>
+                    <Text style={styles.temaBaslik}>🧠 {t('settings.smartReminder')}</Text>
 
                     <View style={styles.modSatir}>
                         <Text style={styles.modEtiket}>
-                            {akilliHatirlatma.aktif ? `${akilliHatirlatma.aralikDakika} dk su içmezsen hatırlat` : 'Kapalı'}
+                            {akilliHatirlatma.aktif ? `${akilliHatirlatma.aralikDakika} ${t('time.minutes')}` : t('settings.notificationsOff')}
                         </Text>
                         <Switch
                             value={akilliHatirlatma.aktif}
@@ -539,16 +543,16 @@ export function AyarlarEkrani() {
                                 style={[styles.pickerButton, { marginTop: 10 }]}
                                 onPress={() => setAkilliAralikModalGoster(true)}
                             >
-                                <Text style={styles.pickerButtonLabel}>⏱️ Hatırlatma Süresi</Text>
+                                <Text style={styles.pickerButtonLabel}>⏱️ {t('settings.reminderInterval')}</Text>
                                 <Text style={styles.pickerButtonValue}>
                                     {akilliHatirlatma.aralikDakika >= 60
-                                        ? `${akilliHatirlatma.aralikDakika / 60} saat`
-                                        : `${akilliHatirlatma.aralikDakika} dk`}
+                                        ? `${akilliHatirlatma.aralikDakika / 60} ${t('time.hours')}`
+                                        : `${akilliHatirlatma.aralikDakika} ${t('time.minutes')}`}
                                 </Text>
                             </TouchableOpacity>
 
                             <Text style={styles.sessizAciklama}>
-                                Son su içtiğin zamandan itibaren süre başlar
+                                {t('settings.smartReminderDesc')}
                             </Text>
                             <TouchableOpacity
                                 style={[styles.oneriButon, { marginTop: 10 }]}
@@ -556,7 +560,7 @@ export function AyarlarEkrani() {
                                     await akilliHatirlatmaTestBildirimi();
                                 }}
                             >
-                                <Text style={styles.oneriButonYazi}>📲 Akıllı Test</Text>
+                                <Text style={styles.oneriButonYazi}>📲 {t('settings.smartTestNotification')}</Text>
                             </TouchableOpacity>
                         </>
                     )}
@@ -564,11 +568,11 @@ export function AyarlarEkrani() {
 
                 {/* Günlük Özet */}
                 <View style={[styles.temaContainer, { backgroundColor: renkler.kartArkaplan }]}>
-                    <Text style={styles.temaBaslik}>📊 Günlük Özet Bildirimi</Text>
+                    <Text style={styles.temaBaslik}>📊 {t('settings.dailySummary')}</Text>
 
                     <View style={styles.modSatir}>
                         <Text style={styles.modEtiket}>
-                            {gunlukOzet.aktif ? `Her gün ${gunlukOzet.saat}:00'da` : 'Kapalı'}
+                            {gunlukOzet.aktif ? `${gunlukOzet.saat}:00` : t('settings.notificationsOff')}
                         </Text>
                         <Switch
                             value={gunlukOzet.aktif}
@@ -581,7 +585,7 @@ export function AyarlarEkrani() {
                     {gunlukOzet.aktif && (
                         <>
                             <Text style={styles.sessizAciklama}>
-                                Gün sonunda performans özeti alacaksın
+                                {t('settings.dailySummaryDesc')}
                             </Text>
                             <TouchableOpacity
                                 style={[styles.oneriButon, { marginTop: 10 }]}
@@ -589,7 +593,7 @@ export function AyarlarEkrani() {
                                     await gunlukOzetTestBildirimi();
                                 }}
                             >
-                                <Text style={styles.oneriButonYazi}>📲 Günlük Test</Text>
+                                <Text style={styles.oneriButonYazi}>📲 {t('settings.dailySummaryTest')}</Text>
                             </TouchableOpacity>
                         </>
                     )}
@@ -597,11 +601,11 @@ export function AyarlarEkrani() {
 
                 {/* Haftalık Rapor */}
                 <View style={[styles.temaContainer, { backgroundColor: renkler.kartArkaplan }]}>
-                    <Text style={styles.temaBaslik}>📊 Haftalık Rapor</Text>
+                    <Text style={styles.temaBaslik}>📊 {t('settings.weeklyReport')}</Text>
 
                     <View style={styles.modSatir}>
                         <Text style={styles.modEtiket}>
-                            {haftalikRapor.aktif ? 'Her Pazar 20:00' : 'Kapalı'}
+                            {haftalikRapor.aktif ? t('settings.notificationsOn') : t('settings.notificationsOff')}
                         </Text>
                         <Switch
                             value={haftalikRapor.aktif}
@@ -614,7 +618,7 @@ export function AyarlarEkrani() {
                     {haftalikRapor.aktif && (
                         <>
                             <Text style={styles.sessizAciklama}>
-                                Haftalık su tüketiminle ilgili özet bildirim alacaksın
+                                {t('settings.weeklyReportDesc')}
                             </Text>
                             <TouchableOpacity
                                 style={[styles.oneriButon, { marginTop: 10 }]}
@@ -622,7 +626,7 @@ export function AyarlarEkrani() {
                                     await haftalikRaporTestBildirimi();
                                 }}
                             >
-                                <Text style={styles.oneriButonYazi}>📲 Haftalık Test</Text>
+                                <Text style={styles.oneriButonYazi}>📲 {t('settings.weeklyReportTest')}</Text>
                             </TouchableOpacity>
                         </>
                     )}
@@ -630,11 +634,11 @@ export function AyarlarEkrani() {
 
                 {/* Bioritim Ayarları */}
                 <View style={[styles.temaContainer, { backgroundColor: renkler.kartArkaplan }]}>
-                    <Text style={styles.temaBaslik}>🌅 Bioritim Entegrasyonu</Text>
+                    <Text style={styles.temaBaslik}>🌅 {t('settings.biorhythm')}</Text>
 
                     <View style={styles.modSatir}>
                         <Text style={styles.modEtiket}>
-                            {bioritim.aktif ? `Uyanış: ${bioritim.uyanmaSaati}` : 'Kapalı'}
+                            {bioritim.aktif ? `${t('settings.wakeUpTime')}: ${bioritim.uyanmaSaati}` : t('settings.notificationsOff')}
                         </Text>
                         <Switch
                             value={bioritim.aktif}
@@ -655,14 +659,14 @@ export function AyarlarEkrani() {
                                     style={[styles.pickerButton, { flex: 1 }]}
                                     onPress={() => setBioritimUyanmaModalGoster(true)}
                                 >
-                                    <Text style={styles.pickerButtonLabel}>☀️ Uyanış</Text>
+                                    <Text style={styles.pickerButtonLabel}>☀️ {t('settings.wakeUpTime')}</Text>
                                     <Text style={styles.pickerButtonValue}>{bioritim.uyanmaSaati}</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={[styles.pickerButton, { flex: 1 }]}
                                     onPress={() => setBioritimUyumaModalGoster(true)}
                                 >
-                                    <Text style={styles.pickerButtonLabel}>🌙 Uyku</Text>
+                                    <Text style={styles.pickerButtonLabel}>🌙 {t('settings.sleepTime')}</Text>
                                     <Text style={styles.pickerButtonValue}>{bioritim.uyumaSaati}</Text>
                                 </TouchableOpacity>
                             </View>
@@ -698,20 +702,20 @@ export function AyarlarEkrani() {
 
                     {detoks.aktif && (
                         <Text style={styles.sessizAciklama}>
-                            Detoks modunda hedefin %20 fazlası önerilir
+                            {t('settings.detoxDesc')}
                         </Text>
                     )}
                 </View>
 
                 {/* Tema Ayarları */}
                 <View style={[styles.temaContainer, { backgroundColor: renkler.kartArkaplan }]}>
-                    <Text style={styles.temaBaslik}>🎨 Tema Ayarları</Text>
+                    <Text style={styles.temaBaslik}>🎨 {t('settings.theme')}</Text>
 
                     {/* Otomatik Gece Modu */}
                     <View style={styles.modSatir}>
                         <View>
-                            <Text style={styles.modEtiket}>🌙 Otomatik Gece Modu</Text>
-                            <Text style={styles.sessizAciklama}>06:00-19:00 açık, sonrası koyu</Text>
+                            <Text style={styles.modEtiket}>🌙 {t('settings.autoNightMode')}</Text>
+                            <Text style={styles.sessizAciklama}>{t('settings.autoNightModeDesc')}</Text>
                         </View>
                         <Switch
                             value={otomatikMod}
@@ -725,7 +729,7 @@ export function AyarlarEkrani() {
                     {!otomatikMod && (
                         <View style={[styles.modSatir, { marginTop: 10 }]}>
                             <Text style={styles.modEtiket}>
-                                {mod === 'koyu' ? '🌑 Koyu Mod' : '☀️ Açık Mod'}
+                                {mod === 'koyu' ? `🌑 ${t('settings.darkMode')}` : `☀️ ${t('settings.lightMode')}`}
                             </Text>
                             <Switch
                                 value={mod === 'koyu'}
@@ -738,7 +742,7 @@ export function AyarlarEkrani() {
 
                     {/* Premium Temalar */}
                     <View style={{ marginTop: 15 }}>
-                        <Text style={[styles.modEtiket, { marginBottom: 12 }]}>🎭 Özel Temalar (Premium)</Text>
+                        <Text style={[styles.modEtiket, { marginBottom: 12 }]}>🎭 {t('settings.specialThemes')}</Text>
                         <View style={styles.renkSecenekleri}>
                             {[
                                 { id: 'altin', renk: '#FFD700', ikon: '👑' },
@@ -780,6 +784,35 @@ export function AyarlarEkrani() {
                                 </TouchableOpacity>
                             ))}
                         </View>
+                    </View>
+                </View>
+
+                {/* Dil Seçimi / Language */}
+                <View style={[styles.temaContainer, { backgroundColor: renkler.kartArkaplan }]}>
+                    <Text style={styles.temaBaslik}>🌐 {t('settings.language')}</Text>
+
+                    <View style={{ flexDirection: 'row', gap: 10, marginTop: 10 }}>
+                        {LANGUAGES.map((lang) => (
+                            <TouchableOpacity
+                                key={lang.code}
+                                style={[
+                                    styles.dilButon,
+                                    currentLang === lang.code && styles.dilButonSecili
+                                ]}
+                                onPress={async () => {
+                                    await changeLanguage(lang.code);
+                                    setCurrentLang(lang.code);
+                                }}
+                            >
+                                <Text style={{ fontSize: 24 }}>{lang.flag}</Text>
+                                <Text style={[
+                                    styles.dilButonYazi,
+                                    currentLang === lang.code && styles.dilButonYaziSecili
+                                ]}>
+                                    {lang.name}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
                     </View>
                 </View>
 
@@ -854,10 +887,10 @@ export function AyarlarEkrani() {
                             </View>
                             <View style={{ flex: 1 }}>
                                 <Text style={{ color: '#fff', fontSize: 16, fontWeight: '700' }}>
-                                    CSV Detaylı Rapor
+                                    {t('settings.csvData')}
                                 </Text>
                                 <Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: 12, marginTop: 2 }}>
-                                    Excel uyumlu, tüm veriler + istatistikler
+                                    {t('settings.csvDataDesc')}
                                 </Text>
                             </View>
                             {!premiumAktif && <Text style={{ fontSize: 20 }}>🔒</Text>}
@@ -899,10 +932,10 @@ export function AyarlarEkrani() {
                             </View>
                             <View style={{ flex: 1 }}>
                                 <Text style={{ color: '#fff', fontSize: 16, fontWeight: '700' }}>
-                                    Haftalık PDF Rapor
+                                    {t('settings.pdfWeekly')}
                                 </Text>
                                 <Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: 12, marginTop: 2 }}>
-                                    Son 7 günün detaylı analizi
+                                    {t('settings.pdfWeeklyDesc')}
                                 </Text>
                             </View>
                             {!premiumAktif && <Text style={{ fontSize: 20 }}>🔒</Text>}
@@ -944,10 +977,10 @@ export function AyarlarEkrani() {
                             </View>
                             <View style={{ flex: 1 }}>
                                 <Text style={{ color: '#fff', fontSize: 16, fontWeight: '700' }}>
-                                    Aylık PDF Rapor
+                                    {t('settings.pdfMonthly')}
                                 </Text>
                                 <Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: 12, marginTop: 2 }}>
-                                    Trend grafikleri, karşılaştırma, streak
+                                    {t('settings.pdfMonthlyDesc')}
                                 </Text>
                             </View>
                             {!premiumAktif && <Text style={{ fontSize: 20 }}>🔒</Text>}
@@ -976,48 +1009,48 @@ export function AyarlarEkrani() {
 
                 {/* Uygulama Bilgileri */}
                 <View style={[styles.bilgiContainer, { backgroundColor: renkler.kartArkaplan }]}>
-                    <Text style={styles.bilgiBaslik}>Uygulama Hakkında</Text>
+                    <Text style={styles.bilgiBaslik}>{t('settings.appInfo')}</Text>
 
                     <View style={styles.bilgiSatir}>
-                        <Text style={styles.bilgiEtiket}>Versiyon</Text>
+                        <Text style={styles.bilgiEtiket}>{t('settings.version')}</Text>
                         <Text style={styles.bilgiDeger}>1.0.0</Text>
                     </View>
 
                     <View style={styles.bilgiSatir}>
-                        <Text style={styles.bilgiEtiket}>Geliştirici</Text>
+                        <Text style={styles.bilgiEtiket}>{t('settings.developer')}</Text>
                         <Text style={styles.bilgiDeger}>Serhat Cirit</Text>
                     </View>
 
                     <View style={styles.bilgiSatir}>
-                        <Text style={styles.bilgiEtiket}>Gizlilik Politikası</Text>
-                        <Text style={styles.bilgiDeger}>📄 Mevcut</Text>
+                        <Text style={styles.bilgiEtiket}>{t('settings.privacyPolicy')}</Text>
+                        <Text style={styles.bilgiDeger}>📄 {t('settings.available')}</Text>
                     </View>
 
                     <TouchableOpacity
                         style={[styles.oneriButon, { marginTop: 15 }]}
                         onPress={async () => {
                             await AsyncStorage.removeItem('@onboarding_tamamlandi');
-                            Alert.alert('✅ Sıfırlandı', 'Uygulamayı yeniden başlattığınızda onboarding görünecek.');
+                            Alert.alert(t('settings.resetComplete'), t('settings.resetCompleteMessage'));
                         }}
                     >
-                        <Text style={styles.oneriButonYazi}>🔄 Onboarding'i Sıfırla</Text>
+                        <Text style={styles.oneriButonYazi}>🔄 {t('settings.resetOnboarding')}</Text>
                     </TouchableOpacity>
                 </View>
 
                 {/* 🔧 Geliştirici Test Modu */}
                 <View style={[styles.temaContainer, { backgroundColor: '#1a1a2e', borderWidth: 1, borderColor: '#FF6B6B' }]}>
-                    <Text style={[styles.temaBaslik, { color: '#FF6B6B' }]}>🔧 Geliştirici Test Modu</Text>
+                    <Text style={[styles.temaBaslik, { color: '#FF6B6B' }]}>🔧 {t('settings.devTestMode')}</Text>
                     <Text style={[styles.sessizAciklama, { color: '#888', marginBottom: 10 }]}>
-                        ⚠️ Sadece test amaçlı - Premium özelliklerini test et
+                        {t('settings.devTestModeWarning')}
                     </Text>
 
                     <View style={styles.modSatir}>
                         <View style={{ flex: 1 }}>
                             <Text style={[styles.modEtiket, { color: '#fff' }]}>
-                                {premiumAktif ? '💎 Premium Aktif' : '🔒 Premium Kapalı'}
+                                {premiumAktif ? t('settings.premiumActive') : t('settings.premiumOff')}
                             </Text>
                             <Text style={[styles.sessizAciklama, { fontSize: 11, marginTop: 2, color: '#666' }]}>
-                                Premium durumunu aç/kapat
+                                {t('settings.premiumToggleDesc')}
                             </Text>
                         </View>
                         <Switch
@@ -1032,10 +1065,10 @@ export function AyarlarEkrani() {
                                 // Context'i güncelle
                                 setPremium(yeniDurum);
                                 Alert.alert(
-                                    value ? '💎 Premium Aktif' : '🔒 Premium Kapalı',
+                                    value ? t('settings.premiumActive') : t('settings.premiumOff'),
                                     value
-                                        ? 'Premium özellikler şimdi aktif!'
-                                        : 'Premium özellikler kapatıldı.'
+                                        ? t('settings.premiumActivated')
+                                        : t('settings.premiumDeactivated')
                                 );
                             }}
                             trackColor={{ false: '#333', true: '#FF6B6B' }}
@@ -1046,13 +1079,12 @@ export function AyarlarEkrani() {
 
                 {/* İpuçları */}
                 <View style={[styles.ipucuContainer, { backgroundColor: renkler.kartArkaplan }]}>
-                    <Text style={styles.ipucuBaslik}>💡 Su İçme İpuçları</Text>
+                    <Text style={styles.ipucuBaslik}>💡 {t('settings.tips')}</Text>
                     <Text style={styles.ipucuMetin}>
-                        • Sabah kalktığında bir bardak su iç{'\n'}
-                        • Her yemekten önce su iç{'\n'}
-                        • Yanında su şişesi taşı{'\n'}
-                        • Kahve/çay yerine bazen su tercih et{'\n'}
-                        • Susama hissetmeden önce iç
+                        • {t('settings.tip1')}{'\n'}
+                        • {t('settings.tip2')}{'\n'}
+                        • {t('settings.tip3')}{'\n'}
+                        • {t('settings.tip4')}
                     </Text>
                 </View>
 
@@ -1525,5 +1557,31 @@ const styles = StyleSheet.create({
         color: '#01579B',
         fontSize: 12,
         fontWeight: '900',
+    },
+    // Language Selector
+    dilButon: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#1565C0',
+        borderRadius: 12,
+        padding: 15,
+        gap: 10,
+        borderWidth: 2,
+        borderColor: 'transparent',
+    },
+    dilButonSecili: {
+        borderColor: '#4FC3F7',
+        backgroundColor: '#0D47A1',
+    },
+    dilButonYazi: {
+        color: '#90CAF9',
+        fontSize: 14,
+        fontWeight: '600',
+    },
+    dilButonYaziSecili: {
+        color: '#4FC3F7',
+        fontWeight: 'bold',
     },
 });

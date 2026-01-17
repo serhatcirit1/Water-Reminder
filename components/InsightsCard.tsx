@@ -6,6 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, ScrollView, Animated } from 'react-native';
 import { icgorulerUret, AIIcgoru } from '../aiUtils';
+import { useTranslation } from 'react-i18next';
 
 interface InsightsCardProps {
     onRefresh?: () => void;
@@ -15,6 +16,7 @@ export function InsightsCard({ onRefresh }: InsightsCardProps) {
     const [icgoruler, setIcgoruler] = useState<AIIcgoru[]>([]);
     const [modalGoster, setModalGoster] = useState(false);
     const [yukleniyor, setYukleniyor] = useState(true);
+    const { t } = useTranslation();
 
     useEffect(() => {
         icgoruleriYukle();
@@ -45,11 +47,10 @@ export function InsightsCard({ onRefresh }: InsightsCardProps) {
             <View style={styles.container}>
                 <View style={styles.header}>
                     <Text style={styles.headerIcon}>💡</Text>
-                    <Text style={styles.headerText}>AI İçgörüleri</Text>
+                    <Text style={styles.headerText}>{t('insights.title')}</Text>
                 </View>
                 <Text style={styles.bosAciklama}>
-                    🎯 AI henüz seni tanımaya çalışıyor. Birkaç gün su içmeye devam et,
-                    kişiselleştirilmiş öneriler burada görünecek!
+                    🎯 {t('insights.noData')}
                 </Text>
             </View>
         );
@@ -66,7 +67,7 @@ export function InsightsCard({ onRefresh }: InsightsCardProps) {
             >
                 <View style={styles.header}>
                     <Text style={styles.headerIcon}>💡</Text>
-                    <Text style={styles.headerText}>AI İçgörüleri</Text>
+                    <Text style={styles.headerText}>{t('insights.title')}</Text>
                     {icgoruler.length > 1 && (
                         <View style={styles.badge}>
                             <Text style={styles.badgeText}>{icgoruler.length}</Text>
@@ -81,7 +82,7 @@ export function InsightsCard({ onRefresh }: InsightsCardProps) {
                     </Text>
                 </View>
 
-                <Text style={styles.devamText}>Tümünü gör ›</Text>
+                <Text style={styles.devamText}>{t('insights.seeAll')} ›</Text>
             </TouchableOpacity>
 
             <Modal
@@ -93,7 +94,7 @@ export function InsightsCard({ onRefresh }: InsightsCardProps) {
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContent}>
                         <View style={styles.modalHeader}>
-                            <Text style={styles.modalBaslik}>💡 AI İçgörüleri</Text>
+                            <Text style={styles.modalBaslik}>💡 {t('insights.title')}</Text>
                             <TouchableOpacity onPress={() => setModalGoster(false)}>
                                 <Text style={styles.kapatButon}>✕</Text>
                             </TouchableOpacity>
@@ -115,8 +116,8 @@ export function InsightsCard({ onRefresh }: InsightsCardProps) {
                                             { backgroundColor: oncelikRengi(icgoru.oncelik) }
                                         ]}>
                                             <Text style={styles.oncelikText}>
-                                                {icgoru.oncelik === 'yuksek' ? 'Önemli' :
-                                                    icgoru.oncelik === 'orta' ? 'Orta' : 'Bilgi'}
+                                                {icgoru.oncelik === 'yuksek' ? t('insights.important') :
+                                                    icgoru.oncelik === 'orta' ? t('insights.medium') : t('insights.info')}
                                             </Text>
                                         </View>
                                     </View>
@@ -131,7 +132,7 @@ export function InsightsCard({ onRefresh }: InsightsCardProps) {
                                     onRefresh?.();
                                 }}
                             >
-                                <Text style={styles.yenileText}>🔄 Yenile</Text>
+                                <Text style={styles.yenileText}>🔄 {t('insights.refresh')}</Text>
                             </TouchableOpacity>
                         </ScrollView>
                     </View>

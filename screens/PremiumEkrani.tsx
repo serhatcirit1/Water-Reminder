@@ -22,6 +22,7 @@ import * as Haptics from 'expo-haptics';
 import { useTema } from '../TemaContext';
 import { premiumDurumKaydet } from '../premiumUtils';
 import { usePremium } from '../PremiumContext';
+import { useTranslation } from 'react-i18next';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -48,6 +49,7 @@ interface PremiumEkraniProps {
 export default function PremiumEkrani({ onClose }: PremiumEkraniProps) {
     const { renkler } = useTema();
     const { setPremium } = usePremium();
+    const { t } = useTranslation();
     const [seciliPlan, setSeciliPlan] = useState<string>('yillik');
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const slideAnim = useRef(new Animated.Value(50)).current;
@@ -67,12 +69,12 @@ export default function PremiumEkrani({ onClose }: PremiumEkraniProps) {
             setPremium(yeniDurum);
 
             Alert.alert(
-                'Tebrikler! 🎉',
-                'Artık bir Premium üyesiniz. Tüm özelliklere sınırsız erişim sağlayabilirsiniz.',
-                [{ text: 'Harika!', onPress: onClose }]
+                t('premium.congratulations'),
+                t('premium.purchaseSuccess'),
+                [{ text: t('common.great'), onPress: onClose }]
             );
         } catch (error) {
-            Alert.alert('Hata', 'İşlem sırasında bir hata oluştu.');
+            Alert.alert(t('common.error'), t('common.errorOccurred'));
         }
     };
 
@@ -116,7 +118,7 @@ export default function PremiumEkrani({ onClose }: PremiumEkraniProps) {
                             </LinearGradient>
                         </View>
                         <Text style={styles.headerTitle}>WATER PREMIUM</Text>
-                        <Text style={styles.headerSubtitle}>Sağlık yolculuğunu bir üst seviyeye taşı</Text>
+                        <Text style={styles.headerSubtitle}>{t('premium.subtitle')}</Text>
                     </Animated.View>
                 </View>
 
@@ -155,7 +157,7 @@ export default function PremiumEkrani({ onClose }: PremiumEkraniProps) {
                     </View>
 
                     {/* Fiyat Kartları */}
-                    <Text style={styles.sectionTitle}>Planını Seç</Text>
+                    <Text style={styles.sectionTitle}>{t('premium.selectPlan')}</Text>
                     <View style={styles.pricingContainer}>
                         {FIYAT_PLANLARI.map((plan) => (
                             <TouchableOpacity
@@ -175,7 +177,7 @@ export default function PremiumEkrani({ onClose }: PremiumEkraniProps) {
                                         colors={['#FFD700', '#FFA000']}
                                         style={styles.populerBadge}
                                     >
-                                        <Text style={styles.populerBadgeText}>EN İYİ FİYAT</Text>
+                                        <Text style={styles.populerBadgeText}>{t('premium.bestPrice')}</Text>
                                     </LinearGradient>
                                 )}
                                 <Text style={[styles.planTitle, (plan.populer || seciliPlan === plan.id) && { color: '#FFD700' }]}>{plan.baslik}</Text>

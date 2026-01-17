@@ -17,6 +17,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTema } from '../TemaContext';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useTranslation } from 'react-i18next';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -62,9 +63,38 @@ interface OnboardingEkraniProps {
 
 export default function OnboardingEkrani({ onComplete }: OnboardingEkraniProps) {
     const { renkler } = useTema();
+    const { t } = useTranslation();
     const scrollViewRef = useRef<ScrollView>(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const scrollX = useRef(new Animated.Value(0)).current;
+
+    // Localized slides
+    const SLIDES: Slide[] = [
+        {
+            id: 1,
+            emoji: '💧',
+            title: t('onboarding.welcome'),
+            description: t('onboarding.welcomeDesc'),
+        },
+        {
+            id: 2,
+            emoji: '🎯',
+            title: t('onboarding.goals'),
+            description: t('onboarding.goalsDesc'),
+        },
+        {
+            id: 3,
+            emoji: '🔔',
+            title: t('onboarding.reminders'),
+            description: t('onboarding.remindersDesc'),
+        },
+        {
+            id: 4,
+            emoji: '🤖',
+            title: t('onboarding.ai'),
+            description: t('onboarding.aiDesc'),
+        },
+    ];
 
     // Onboarding tamamlandı
     const handleComplete = async () => {
@@ -175,7 +205,7 @@ export default function OnboardingEkrani({ onComplete }: OnboardingEkraniProps) 
                 {/* Skip Button */}
                 <View style={styles.header}>
                     <TouchableOpacity onPress={handleSkip} style={styles.skipButton}>
-                        <Text style={[styles.skipText, { color: renkler.metinSoluk }]}>Geç</Text>
+                        <Text style={[styles.skipText, { color: renkler.metinSoluk }]}>{t('onboarding.skip')}</Text>
                     </TouchableOpacity>
                 </View>
 

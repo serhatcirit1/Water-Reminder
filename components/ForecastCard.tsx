@@ -6,6 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { haftalikTahminHesapla, AITahmin } from '../aiUtils';
+import { useTranslation } from 'react-i18next';
 
 interface ForecastCardProps {
     gunlukHedef: number;
@@ -14,6 +15,7 @@ interface ForecastCardProps {
 
 export function ForecastCard({ gunlukHedef, bugunIcilen }: ForecastCardProps) {
     const [tahmin, setTahmin] = useState<AITahmin | null>(null);
+    const { t } = useTranslation();
 
     useEffect(() => {
         const tahminHesapla = async () => {
@@ -37,7 +39,7 @@ export function ForecastCard({ gunlukHedef, bugunIcilen }: ForecastCardProps) {
         <View style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.icon}>{tahmin.icon}</Text>
-                <Text style={styles.baslik}>Haftalık Tahmin</Text>
+                <Text style={styles.baslik}>{t('forecast.title')}</Text>
             </View>
 
             <Text style={styles.mesaj}>{tahmin.mesaj}</Text>
@@ -62,17 +64,17 @@ export function ForecastCard({ gunlukHedef, bugunIcilen }: ForecastCardProps) {
             {/* Detaylar */}
             <View style={styles.detaylar}>
                 <View style={styles.detayItem}>
-                    <Text style={styles.detayLabel}>Haftalık Hedef</Text>
+                    <Text style={styles.detayLabel}>{t('forecast.weeklyTotal')}</Text>
                     <Text style={styles.detayDeger}>{tahmin.haftalikHedef} ml</Text>
                 </View>
                 <View style={styles.detayDivider} />
                 <View style={styles.detayItem}>
-                    <Text style={styles.detayLabel}>Bu Hafta</Text>
+                    <Text style={styles.detayLabel}>{t('stats.weekly')}</Text>
                     <Text style={styles.detayDeger}>{tahmin.mevcutToplam} ml</Text>
                 </View>
                 <View style={styles.detayDivider} />
                 <View style={styles.detayItem}>
-                    <Text style={styles.detayLabel}>Günlük Ort.</Text>
+                    <Text style={styles.detayLabel}>{t('stats.dailyAvg')}</Text>
                     <Text style={styles.detayDeger}>{tahmin.gunlukOrtalama} ml</Text>
                 </View>
             </View>
@@ -81,7 +83,7 @@ export function ForecastCard({ gunlukHedef, bugunIcilen }: ForecastCardProps) {
                 <View style={styles.tamamlanmaKart}>
                     <Text style={styles.tamamlanmaEmoji}>🎯</Text>
                     <Text style={styles.tamamlanmaText}>
-                        Tahmini tamamlanma: <Text style={styles.tamamlanmaGun}>{tahmin.tamamlanmaGunu}</Text>
+                        {t('forecast.suggestion')}: <Text style={styles.tamamlanmaGun}>{tahmin.tamamlanmaGunu}</Text>
                     </Text>
                 </View>
             )}

@@ -37,6 +37,7 @@ import {
 import { usePremium } from '../PremiumContext';
 import { tumRozetleriKontrolEt } from '../rozetler';
 import { suSesiCal } from '../sesUtils';
+import { useTranslation } from 'react-i18next';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -55,6 +56,7 @@ const AnimatedSvg = Animated.createAnimatedComponent(Svg);
 
 export function AnaSayfaEkrani() {
     const { renkler } = useTema();
+    const { t } = useTranslation();
 
     // State
     const [suMiktari, setSuMiktari] = useState(0);
@@ -241,13 +243,13 @@ export function AnaSayfaEkrani() {
 
         const yeniRekor = await rekorKontrolEt(yeniMiktar, yeniToplamMl);
         if (yeniRekor) {
-            Alert.alert('🏆 Yeni Rekor!', `${yeniToplamMl} ml ile yeni rekor kırdın!`);
+            Alert.alert(t('home.goalReached'), `${yeniToplamMl} ml!`);
         }
 
         if (!hedefeTamamlandi && yeniToplamMl >= gunlukHedef) {
             setHedefeTamamlandi(true);
             await hedefTamamlamaXP();
-            Alert.alert('🎉 Tebrikler!', 'Günlük hedefe ulaştın!');
+            Alert.alert(t('home.goalReached'), t('home.goalReachedMessage', { goal: gunlukHedef }));
         }
 
         // Streak ve Rozet Güncelleme
@@ -261,7 +263,7 @@ export function AnaSayfaEkrani() {
         );
 
         kazanilanRozetler.forEach(rozet => {
-            Alert.alert('🏅 Rozet Kazandın!', `${rozet.isim}: ${rozet.aciklama}`);
+            Alert.alert(t('stats.badgeEarned') + ' 🏅', `${rozet.isim}: ${rozet.aciklama}`);
         });
     };
 
@@ -336,7 +338,7 @@ export function AnaSayfaEkrani() {
                 {/* Header */}
                 <View style={styles.header}>
                     <Text style={styles.waterDrop}>💧</Text>
-                    <Text style={styles.title}>Su Takibi</Text>
+                    <Text style={styles.title}>{t('home.title')}</Text>
                     <Text style={styles.date}>{tarihStr}</Text>
                 </View>
 
@@ -366,7 +368,7 @@ export function AnaSayfaEkrani() {
                             <View style={styles.premiumBannerContent}>
                                 <View style={styles.premiumBannerTextContainer}>
                                     <Text style={styles.premiumBannerTitle}>WATER PREMIUM 💎</Text>
-                                    <Text style={styles.premiumBannerSubtitle}>AI Analizler & Özel Temalar</Text>
+                                    <Text style={styles.premiumBannerSubtitle}>{t('home.premiumBannerSubtitle')}</Text>
                                 </View>
                                 <Text style={styles.premiumBannerEmoji}>✨</Text>
                             </View>
@@ -431,9 +433,10 @@ export function AnaSayfaEkrani() {
                                 },
                                 {
                                     // Progress animasyonu: yüzde arttıkça dalga yukarı çıkar
+                                    // 0%'de dalga tamamen aşağıda (200), 100%'de tamamen yukarıda (0)
                                     translateY: progressAnim.interpolate({
                                         inputRange: [0, 100],
-                                        outputRange: [180, 0], // 0%'de en aşağıda, 100%'de en yukarıda
+                                        outputRange: [200, 0],
                                         extrapolate: 'clamp'
                                     })
                                 }
@@ -489,12 +492,12 @@ export function AnaSayfaEkrani() {
                 {/* Yüzde */}
                 <View style={styles.percentContainer}>
                     <Text style={styles.percentValue}>%{Math.round(yuzde)}</Text>
-                    <Text style={styles.percentLabel}>Tamamlandı</Text>
+                    <Text style={styles.percentLabel}>{t('home.completed')}</Text>
                 </View>
 
                 {/* Bardak Boyutu Seçici - Yukarıda */}
                 <View style={styles.sizeSelector}>
-                    <Text style={styles.sizeLabel}>Bardak Boyutu:</Text>
+                    <Text style={styles.sizeLabel}>{t('home.glassSize')}:</Text>
                     <View style={styles.sizeOptions}>
                         {BARDAK_SECENEKLERI.map((secenek) => (
                             <TouchableOpacity
@@ -527,7 +530,7 @@ export function AnaSayfaEkrani() {
                 >
                     <Text style={styles.suIcEmoji}>💧</Text>
                     <View>
-                        <Text style={styles.suIcText}>Su İç</Text>
+                        <Text style={styles.suIcText}>{t('home.drinkWater')}</Text>
                         <Text style={styles.suIcAmount}>+{bardakBoyutu} ml</Text>
                     </View>
                 </TouchableOpacity>
@@ -543,7 +546,7 @@ export function AnaSayfaEkrani() {
                     <View style={styles.statItem}>
                         <Text style={styles.statEmoji}>🎯</Text>
                         <Text style={styles.statValue}>{kalanMl} ml</Text>
-                        <Text style={styles.statLabel}>Kalan</Text>
+                        <Text style={styles.statLabel}>{t('home.target')}</Text>
                     </View>
                 </View>
 
@@ -552,7 +555,7 @@ export function AnaSayfaEkrani() {
                     <View style={styles.miniKart}>
                         <Text style={styles.miniKartEmoji}>🔥</Text>
                         <Text style={styles.miniKartDeger}>{streak?.mevcutStreak || 0}</Text>
-                        <Text style={styles.miniKartLabel}>Gün Seri</Text>
+                        <Text style={styles.miniKartLabel}>{t('home.streak')}</Text>
                     </View>
                     <View style={styles.miniKart}>
                         <Text style={styles.miniKartEmoji}>⭐</Text>
@@ -566,7 +569,7 @@ export function AnaSayfaEkrani() {
                                 ? `${Math.floor((Date.now() - sonIcmeZamani.getTime()) / 60000)} dk`
                                 : '-'}
                         </Text>
-                        <Text style={styles.miniKartLabel}>Son İçme</Text>
+                        <Text style={styles.miniKartLabel}>{t('home.lastDrink')}</Text>
                     </View>
                 </View>
 
@@ -574,8 +577,8 @@ export function AnaSayfaEkrani() {
                 {premiumAktif && (
                     <View style={styles.bitkiKart}>
                         <View style={styles.bitkiHeader}>
-                            <Text style={styles.bitkiBaslik}>🌱 Bahçem</Text>
-                            <Text style={styles.bitkiAciklama}>Su içtikçe bitkini büyüt!</Text>
+                            <Text style={styles.bitkiBaslik}>🌱 {t('plant.title')}</Text>
+                            <Text style={styles.bitkiAciklama}>{t('plant.subtitle')}</Text>
                         </View>
                         <VirtualPlant toplamMl={toplamMl} gunlukHedef={gunlukHedef} />
                     </View>
@@ -587,11 +590,11 @@ export function AnaSayfaEkrani() {
                         {yuzde >= 100 ? '🏆' : yuzde >= 75 ? '💪' : yuzde >= 50 ? '👍' : yuzde >= 25 ? '🌱' : '💧'}
                     </Text>
                     <Text style={styles.motivasyonMesaj}>
-                        {yuzde >= 100 ? 'Harikasın! Bugünkü hedefi tamamladın!'
-                            : yuzde >= 75 ? 'Neredeyse tamam! Son bir hamle!'
-                                : yuzde >= 50 ? 'Yarıyı geçtin! Devam et!'
-                                    : yuzde >= 25 ? 'İyi başlangıç! Daha fazla iç!'
-                                        : 'Haydi, bugün de hedefine ulaş!'}
+                        {yuzde >= 100 ? t('home.motivation100')
+                            : yuzde >= 75 ? t('home.motivation75')
+                                : yuzde >= 50 ? t('home.motivation50')
+                                    : yuzde >= 25 ? t('home.motivation25')
+                                        : t('home.motivation0')}
                     </Text>
                 </View>
 
@@ -609,7 +612,7 @@ export function AnaSayfaEkrani() {
                     <View style={styles.gorevMiniKart}>
                         <View style={styles.gorevMiniHeader}>
                             <Text style={styles.gorevMiniEmoji}>✅</Text>
-                            <Text style={styles.gorevMiniTitle}>Günlük Görevler</Text>
+                            <Text style={styles.gorevMiniTitle}>{t('home.dailyTasks')}</Text>
                             <Text style={styles.gorevMiniSayi}>
                                 {gorevDurumu.toplamTamamlanan}/{gorevDurumu.gorevler.length}
                             </Text>
@@ -631,7 +634,7 @@ export function AnaSayfaEkrani() {
                         activeOpacity={0.7}
                     >
                         <Text style={styles.geriAlEmoji}>↩️</Text>
-                        <Text style={styles.geriAlText}>Son Bardağı Geri Al</Text>
+                        <Text style={styles.geriAlText}>{t('home.undoLast')}</Text>
                     </TouchableOpacity>
                 )}
 

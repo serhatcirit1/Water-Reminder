@@ -5,6 +5,8 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { Text, View, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslation } from 'react-i18next';
+import './locales/i18n';
 
 // Ekranlar ve Context
 import { TemaProvider, useTema } from './TemaContext';
@@ -22,6 +24,7 @@ const TabBarIcon = ({ label, focused }: { label: string; focused: boolean }) => 
 
 function NavigationContent() {
   const { renkler } = useTema();
+  const { t } = useTranslation();
 
   return (
     <Tab.Navigator
@@ -47,7 +50,7 @@ function NavigationContent() {
         name="AnaSayfa"
         component={AnaSayfaEkrani}
         options={{
-          tabBarLabel: 'Ana Sayfa',
+          tabBarLabel: t('home.title'),
           tabBarIcon: ({ focused }) => <TabBarIcon label="💧" focused={focused} />
         }}
       />
@@ -55,7 +58,7 @@ function NavigationContent() {
         name="Istatistikler"
         component={IstatistiklerEkrani}
         options={{
-          tabBarLabel: 'İstatistikler',
+          tabBarLabel: t('stats.title'),
           tabBarIcon: ({ focused }) => <TabBarIcon label="📊" focused={focused} />
         }}
       />
@@ -63,7 +66,7 @@ function NavigationContent() {
         name="Ayarlar"
         component={AyarlarEkrani}
         options={{
-          tabBarLabel: 'Ayarlar',
+          tabBarLabel: t('settings.title'),
           tabBarIcon: ({ focused }) => <TabBarIcon label="⚙️" focused={focused} />
         }}
       />
