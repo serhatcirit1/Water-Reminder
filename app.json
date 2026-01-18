@@ -1,0 +1,40 @@
+{
+    "expo": {
+        "name": "Water Reminder",
+        "slug": "water-reminder",
+        "version": "1.0.0",
+        "orientation": "portrait",
+        "icon": "./assets/icon.jpeg",
+        "userInterfaceStyle": "automatic",
+        "newArchEnabled": true,
+        "splash": {
+            "image": "./assets/splash.png",
+            "resizeMode": "contain",
+            "backgroundColor": "#0A2A3A"
+        },
+        "ios": {
+            "supportsTablet": true,
+            "bundleIdentifier": "com.water.reminder",
+            "icon": "./assets/icon.jpeg"
+        },
+        "android": {
+            "adaptiveIcon": {
+                "foregroundImage": "./assets/icon.jpeg",
+                "backgroundColor": "#0A2A3A"
+            },
+            "package": "com.water.reminder"
+        },
+        "web": {
+            "favicon": "./assets/favicon.png"
+        },
+        "plugins": [
+            "expo-notifications",
+            "expo-location"
+        ],
+        "extra": {
+            "eas": {
+                "projectId": "water-reminder-app"
+            }
+        }
+    }
+}
