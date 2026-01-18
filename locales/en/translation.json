@@ -597,5 +597,40 @@
         "error_msg": "An error occurred while preparing the report.",
         "share_title": "Professional Water Consumption Analysis",
         "share_unsupported": "Sharing is not supported on this device."
+    },
+    "notif": {
+        "channel_name": "Water Reminder",
+        "water_time_title": "💧 Time to Drink Water!",
+        "test_title": "💧 Test Notification",
+        "test_body": "Notifications are working! Don't forget to drink water 💪",
+        "daily_summary_title": "📊 Daily Summary",
+        "daily_summary_test": "📊 Daily Summary (Test)",
+        "weekly_report_title": "📊 Weekly Report",
+        "weekly_report_test": "📊 Weekly Report (Test)",
+        "smart_reminder_title": "🧠 Smart Reminder",
+        "smart_reminder_test": "🧠 Smart Reminder (Test)",
+        "goal_reached": "🎉 You reached your goal today! {{current}}/{{goal}} ml. Amazing!",
+        "goal_almost": "💪 Today you drank {{current}}/{{goal}} ml ({{percent}}%). Almost there!",
+        "goal_half": "💧 Today you drank {{current}}/{{goal}} ml ({{percent}}%). You can do better tomorrow!",
+        "goal_low": "🌊 Today you drank {{current}}/{{goal}} ml. Remember to drink more tomorrow!",
+        "weekly_amazing": "Amazing! You reached your goal {{success}}/7 days. Total {{total}}L water.",
+        "weekly_good": "Good job! {{success}}/7 days on target. Average {{avg}} ml/day.",
+        "weekly_growing": "{{success}}/7 days on target. Next week will be better!",
+        "weekly_low": "This week you drank {{total}}L. Try enabling reminders!",
+        "time_passed": "⏰ It's been {{minutes}} minutes since you drank water! Have a glass now 💧",
+        "water_time_general": "💧 Time to drink water! Have a glass for your health 💪",
+        "no_record_today": "💧 No water intake recorded today. Let's start! 💪",
+        "messages": {
+            "msg1": "Drink a glass of water to stay healthy! 💪",
+            "msg2": "Your body is waiting for water, drink up! 🌊",
+            "msg3": "Drinking water beautifies your skin ✨",
+            "msg4": "Water is essential for energy! ⚡",
+            "msg5": "Your brain wants water, boost your focus! 🧠",
+            "msg6": "Speed up your metabolism, drink water! 🏃",
+            "msg7": "No water means no energy! 💧",
+            "msg8": "Get closer to your daily goal, one more glass! 🎯",
+            "msg9": "Drinking water prevents headaches 🩺",
+            "msg10": "Drink water now for your health! ❤️"
+        }
     }
 }

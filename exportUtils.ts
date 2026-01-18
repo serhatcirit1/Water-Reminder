@@ -208,7 +208,8 @@ export async function csvOlusturVePaylas(hedef: number = 2000): Promise<boolean>
 
         const csvIcerigi = premiumCsvOlustur(gecmis, hedef);
         const simdi = new Date();
-        const dosyaAdi = `SuTakip_Rapor_${simdi.getFullYear()}${String(simdi.getMonth() + 1).padStart(2, '0')}${String(simdi.getDate()).padStart(2, '0')}.csv`;
+        const filePrefix = i18n.language === 'en' ? 'WaterTracker_Report' : 'SuTakip_Rapor';
+        const dosyaAdi = `${filePrefix}_${simdi.getFullYear()}${String(simdi.getMonth() + 1).padStart(2, '0')}${String(simdi.getDate()).padStart(2, '0')}.csv`;
 
         const dosyaYolu = `${FileSystem.cacheDirectory}${dosyaAdi}`;
         await FileSystem.writeAsStringAsync(dosyaYolu, csvIcerigi);

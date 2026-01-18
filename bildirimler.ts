@@ -11,6 +11,7 @@ import * as Device from 'expo-device';
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { bildirimGonderildiKaydet } from './aiUtils';
+import i18n from './locales/i18n';
 
 // --- SABİTLER ---
 const BILDIRIM_AYAR_KEY = '@bildirim_ayarlari';
@@ -58,7 +59,7 @@ export async function bildirimIzniIste(): Promise<boolean> {
     // (Android 8+ için gerekli)
     if (Platform.OS === 'android') {
         await Notifications.setNotificationChannelAsync('su-hatirlatma', {
-            name: 'Su Hatırlatma',
+            name: i18n.t('notif.channel_name'),
             importance: Notifications.AndroidImportance.HIGH,
             vibrationPattern: [0, 250, 250, 250], // Titreşim paterni
             lightColor: '#4FC3F7', // LED rengi
@@ -86,7 +87,7 @@ export async function hatirlatmalariPlanla(aralikDakika: number = 120): Promise<
 
         await Notifications.scheduleNotificationAsync({
             content: {
-                title: '💧 Su İçme Zamanı!',
+                title: i18n.t('notif.water_time_title'),
                 body: getRandomMesaj(), // Her seferinde farklı mesaj
                 sound: true,
                 priority: Notifications.AndroidNotificationPriority.HIGH,
@@ -112,8 +113,8 @@ export async function tumBildirimleriIptalEt(): Promise<void> {
 export async function testBildirimiGonder(): Promise<void> {
     await Notifications.scheduleNotificationAsync({
         content: {
-            title: '💧 Test Bildirimi',
-            body: 'Bildirimler çalışıyor! Su içmeyi unutma 💪',
+            title: i18n.t('notif.test_title'),
+            body: i18n.t('notif.test_body'),
             sound: true,
         },
         trigger: {
@@ -131,7 +132,7 @@ export async function gunlukOzetTestBildirimi(): Promise<void> {
         let toplamMl = 0;
         let hedef = 2000;
 
-        const suVerisi = await AsyncStorage.getItem('@su_sayaci');
+        const suVerisi = await AsyncStorage.getItem('@gunluk_su');
         if (suVerisi) {
             const veri = JSON.parse(suVerisi);
             const bugun = new Date().toDateString();
@@ -149,18 +150,18 @@ export async function gunlukOzetTestBildirimi(): Promise<void> {
         let mesaj = '';
 
         if (yuzde >= 100) {
-            mesaj = `🎉 Bugün hedefine ulaştın! ${toplamMl}/${hedef} ml içtin. Harikasın!`;
+            mesaj = i18n.t('notif.goal_reached', { current: toplamMl, goal: hedef });
         } else if (yuzde >= 75) {
-            mesaj = `💪 Bugün ${toplamMl}/${hedef} ml içtin (%${yuzde}). Neredeyse hedefe ulaştın!`;
+            mesaj = i18n.t('notif.goal_almost', { current: toplamMl, goal: hedef, percent: yuzde });
         } else if (yuzde >= 50) {
-            mesaj = `💧 Bugün ${toplamMl}/${hedef} ml içtin (%${yuzde}). Devam et!`;
+            mesaj = i18n.t('notif.goal_half', { current: toplamMl, goal: hedef, percent: yuzde });
         } else {
-            mesaj = `🌊 Bugün ${toplamMl}/${hedef} ml içtin (%${yuzde}). Daha fazla su iç!`;
+            mesaj = i18n.t('notif.goal_low', { current: toplamMl, goal: hedef });
         }
 
         await Notifications.scheduleNotificationAsync({
             content: {
-                title: '📊 Günlük Özet (Test)',
+                title: i18n.t('notif.daily_summary_test'),
                 body: mesaj,
                 sound: true,
             },
@@ -229,21 +230,21 @@ export async function haftalikRaporTestBildirimi(): Promise<void> {
 
         if (basari >= 6) {
             emoji = '🏆';
-            mesaj = `Muhteşem! ${basari}/7 gün hedefe ulaştın. Toplam ${(toplamMl / 1000).toFixed(1)}L su içtin.`;
+            mesaj = i18n.t('notif.weekly_amazing', { success: basari, total: (toplamMl / 1000).toFixed(1) });
         } else if (basari >= 4) {
             emoji = '💪';
-            mesaj = `İyi iş! ${basari}/7 gün hedefe ulaştın. Ortalama ${ortMl} ml/gün.`;
+            mesaj = i18n.t('notif.weekly_good', { success: basari, avg: ortMl });
         } else if (basari >= 2) {
             emoji = '🌱';
-            mesaj = `${basari}/7 gün hedefe ulaştın. Gelecek hafta daha iyi!`;
+            mesaj = i18n.t('notif.weekly_growing', { success: basari });
         } else {
             emoji = '💧';
-            mesaj = `Bu hafta toplam ${(toplamMl / 1000).toFixed(1)}L içtin. Düzenli içmeye çalış!`;
+            mesaj = i18n.t('notif.weekly_low', { total: (toplamMl / 1000).toFixed(1) });
         }
 
         await Notifications.scheduleNotificationAsync({
             content: {
-                title: `${emoji} Haftalık Rapor (Test)`,
+                title: `${emoji} ${i18n.t('notif.weekly_report_test')}`,
                 body: mesaj,
                 sound: true,
             },
@@ -278,9 +279,9 @@ export async function akilliHatirlatmaPlanla(
         // Dinamik mesaj oluştur
         let mesaj = '';
         if (sonIcmeDakika >= aralikDakika) {
-            mesaj = `⏰ ${sonIcmeDakika} dakikadır su içmedin! Şimdi bir bardak su iç 💧`;
+            mesaj = i18n.t('notif.time_passed', { minutes: sonIcmeDakika });
         } else {
-            mesaj = `💧 Su içme zamanı geldi! Sağlığın için bir bardak su iç 💪`;
+            mesaj = i18n.t('notif.water_time_general');
         }
 
         // Bildirimin gönderileceği saati hesapla
@@ -294,7 +295,7 @@ export async function akilliHatirlatmaPlanla(
         await Notifications.scheduleNotificationAsync({
             identifier: 'akilli-hatirlatma',
             content: {
-                title: '🧠 Akıllı Hatırlatma',
+                title: i18n.t('notif.smart_reminder_title'),
                 body: mesaj,
                 sound: true,
             },
@@ -326,14 +327,14 @@ export async function akilliHatirlatmaTestBildirimi(): Promise<void> {
 
         let mesaj = '';
         if (gecenDakika > 0) {
-            mesaj = `⏰ ${gecenDakika} dakikadır su içmedin! Şimdi bir bardak su iç 💧`;
+            mesaj = i18n.t('notif.time_passed', { minutes: gecenDakika });
         } else {
-            mesaj = `💧 Henüz bugün su içme kaydın yok. Hadi başla! 💪`;
+            mesaj = i18n.t('notif.no_record_today');
         }
 
         await Notifications.scheduleNotificationAsync({
             content: {
-                title: '🧠 Akıllı Hatırlatma (Test)',
+                title: i18n.t('notif.smart_reminder_test'),
                 body: mesaj,
                 sound: true,
             },
@@ -350,21 +351,9 @@ export async function akilliHatirlatmaTestBildirimi(): Promise<void> {
 // --- RASTGELE MOTİVASYON MESAJI ---
 // Her bildirimde farklı mesaj göster
 function getRandomMesaj(): string {
-    const mesajlar = [
-        'Sağlıklı kalmak için bir bardak su iç! 💪',
-        'Vücudun su bekliyor, haydi iç! 🌊',
-        'Su içmek cildini güzelleştirir ✨',
-        'Enerji için su şart! ⚡',
-        'Beynin su istiyor, konsantrasyonunu artır! 🧠',
-        'Metabolizmanı hızlandır, su iç! 🏃',
-        'Suyun yoksa enerjin de yok! 💧',
-        'Günlük hedefe yaklaş, bir bardak daha! 🎯',
-        'Su içmek baş ağrısını önler 🩺',
-        'Sağlığın için şimdi su iç! ❤️',
-    ];
-
-    const rastgeleIndex = Math.floor(Math.random() * mesajlar.length);
-    return mesajlar[rastgeleIndex];
+    const mesajKeys = ['msg1', 'msg2', 'msg3', 'msg4', 'msg5', 'msg6', 'msg7', 'msg8', 'msg9', 'msg10'];
+    const rastgeleIndex = Math.floor(Math.random() * mesajKeys.length);
+    return i18n.t(`notif.messages.${mesajKeys[rastgeleIndex]}`);
 }
 
 // --- BİLDİRİM AYARLARINI KAYDET ---
@@ -455,7 +444,7 @@ export async function gunlukOzetPlanla(suMl?: number, hedefMl?: number, saat?: n
 
         try {
             // Su sayacı verisini al
-            const suVerisi = await AsyncStorage.getItem('@su_sayaci');
+            const suVerisi = await AsyncStorage.getItem('@gunluk_su');
             if (suVerisi) {
                 const veri = JSON.parse(suVerisi);
                 const bugun = new Date().toDateString();
@@ -477,13 +466,13 @@ export async function gunlukOzetPlanla(suMl?: number, hedefMl?: number, saat?: n
         let mesaj = '';
 
         if (yuzde >= 100) {
-            mesaj = `🎉 Bugün hedefine ulaştın! ${toplamMl}/${hedef} ml içtin. Harikasın!`;
+            mesaj = i18n.t('notif.goal_reached', { current: toplamMl, goal: hedef });
         } else if (yuzde >= 75) {
-            mesaj = `💪 Bugün ${toplamMl}/${hedef} ml içtin (%${yuzde}). Neredeyse hedefe ulaştın!`;
+            mesaj = i18n.t('notif.goal_almost', { current: toplamMl, goal: hedef, percent: yuzde });
         } else if (yuzde >= 50) {
-            mesaj = `💧 Bugün ${toplamMl}/${hedef} ml içtin (%${yuzde}). Yarın daha iyisini yapabilirsin!`;
+            mesaj = i18n.t('notif.goal_half', { current: toplamMl, goal: hedef, percent: yuzde });
         } else {
-            mesaj = `🌊 Bugün ${toplamMl}/${hedef} ml içtin. Yarın daha fazla su içmeyi unutma!`;
+            mesaj = i18n.t('notif.goal_low', { current: toplamMl, goal: hedef });
         }
 
         // Bugün belirlenen saatte bildirim planla
@@ -499,7 +488,7 @@ export async function gunlukOzetPlanla(suMl?: number, hedefMl?: number, saat?: n
         await Notifications.scheduleNotificationAsync({
             identifier: 'gunluk-ozet',
             content: {
-                title: '📊 Günlük Özet',
+                title: i18n.t('notif.daily_summary_title'),
                 body: mesaj,
                 sound: true,
             },
@@ -617,16 +606,16 @@ export async function haftalikRaporPlanla(
 
         if (basari >= 6) {
             emoji = '🏆';
-            mesaj = `Muhteşem bir hafta! ${basari}/7 gün hedefe ulaştın. Toplam ${toplam} bardak su içtin.`;
+            mesaj = i18n.t('notif.weekly_amazing', { success: basari, total: toplam });
         } else if (basari >= 4) {
             emoji = '💪';
-            mesaj = `İyi iş! ${basari}/7 gün hedefe ulaştın. Ortalama günlük ${ort} bardak.`;
+            mesaj = i18n.t('notif.weekly_good', { success: basari, avg: ort });
         } else if (basari >= 2) {
             emoji = '🌱';
-            mesaj = `${basari}/7 gün hedefe ulaştın. Gelecek hafta daha iyi olabilir!`;
+            mesaj = i18n.t('notif.weekly_growing', { success: basari });
         } else {
             emoji = '💧';
-            mesaj = `Bu hafta ${toplam} bardak su içtin. Hatırlatmaları açmayı dene!`;
+            mesaj = i18n.t('notif.weekly_low', { total: toplam });
         }
 
         // Bir sonraki belirlenen güne planla
@@ -651,7 +640,7 @@ export async function haftalikRaporPlanla(
         await Notifications.scheduleNotificationAsync({
             identifier: 'haftalik-rapor',
             content: {
-                title: `${emoji} Haftalık Rapor`,
+                title: `${emoji} ${i18n.t('notif.weekly_report_title')}`,
                 body: mesaj,
                 sound: true,
             },

@@ -597,5 +597,40 @@
         "error_msg": "Rapor hazırlanırken bir hata oluştu.",
         "share_title": "Profesyonel Su Tüketim Analizi",
         "share_unsupported": "Paylaşım bu cihazda desteklenmiyor."
+    },
+    "notif": {
+        "channel_name": "Su Hatırlatma",
+        "water_time_title": "💧 Su İçme Zamanı!",
+        "test_title": "💧 Test Bildirimi",
+        "test_body": "Bildirimler çalışıyor! Su içmeyi unutma 💪",
+        "daily_summary_title": "📊 Günlük Özet",
+        "daily_summary_test": "📊 Günlük Özet (Test)",
+        "weekly_report_title": "📊 Haftalık Rapor",
+        "weekly_report_test": "📊 Haftalık Rapor (Test)",
+        "smart_reminder_title": "🧠 Akıllı Hatırlatma",
+        "smart_reminder_test": "🧠 Akıllı Hatırlatma (Test)",
+        "goal_reached": "🎉 Bugün hedefine ulaştın! {{current}}/{{goal}} ml içtin. Harikasın!",
+        "goal_almost": "💪 Bugün {{current}}/{{goal}} ml içtin (%{{percent}}). Neredeyse hedefe ulaştın!",
+        "goal_half": "💧 Bugün {{current}}/{{goal}} ml içtin (%{{percent}}). Yarın daha iyisini yapabilirsin!",
+        "goal_low": "🌊 Bugün {{current}}/{{goal}} ml içtin. Yarın daha fazla su içmeyi unutma!",
+        "weekly_amazing": "Muhteşem! {{success}}/7 gün hedefe ulaştın. Toplam {{total}}L su içtin.",
+        "weekly_good": "İyi iş! {{success}}/7 gün hedefe ulaştın. Ortalama {{avg}} ml/gün.",
+        "weekly_growing": "{{success}}/7 gün hedefe ulaştın. Gelecek hafta daha iyi olabilir!",
+        "weekly_low": "Bu hafta {{total}}L su içtin. Hatırlatmaları açmayı dene!",
+        "time_passed": "⏰ {{minutes}} dakikadır su içmedin! Şimdi bir bardak su iç 💧",
+        "water_time_general": "💧 Su içme zamanı geldi! Sağlığın için bir bardak su iç 💪",
+        "no_record_today": "💧 Henüz bugün su içme kaydın yok. Hadi başla! 💪",
+        "messages": {
+            "msg1": "Sağlıklı kalmak için bir bardak su iç! 💪",
+            "msg2": "Vücudun su bekliyor, haydi iç! 🌊",
+            "msg3": "Su içmek cildini güzelleştirir ✨",
+            "msg4": "Enerji için su şart! ⚡",
+            "msg5": "Beynin su istiyor, konsantrasyonunu artır! 🧠",
+            "msg6": "Metabolizmanı hızlandır, su iç! 🏃",
+            "msg7": "Suyun yoksa enerjin de yok! 💧",
+            "msg8": "Günlük hedefe yaklaş, bir bardak daha! 🎯",
+            "msg9": "Su içmek baş ağrısını önler 🩺",
+            "msg10": "Sağlığın için şimdi su iç! ❤️"
+        }
     }
 }
