@@ -138,7 +138,7 @@ export function premiumCsvOlustur(gecmis: GecmisVeri, hedef: number = 2000): str
         '--------------------------------------------------------------------------------',
         `| ${i18n.t('csv.title')}                                |`,
         '--------------------------------------------------------------------------------',
-        `| ${i18n.t('csv.report_date')} : ${new Date().toLocaleString(i18n.language === 'en' ? 'en-US' : 'tr-TR')}                   |`,
+        `| ${i18n.t('csv.report_date')} : ${new Date().toLocaleString(i18n.t('common.locale'))}                   |`,
         `| ${i18n.t('csv.total_tracked_days')}     : ${ozet.toplamGun} ${i18n.t('csv.days')}                                     |`,
         `| ${i18n.t('csv.total_consumption')}     : ${(ozet.toplamMl / 1000).toFixed(2)} ${i18n.t('csv.liters')}                            |`,
         `| ${i18n.t('csv.daily_average')}        : ${ozet.ortalamaMl} ml                                     |`,
@@ -208,7 +208,15 @@ export async function csvOlusturVePaylas(hedef: number = 2000): Promise<boolean>
 
         const csvIcerigi = premiumCsvOlustur(gecmis, hedef);
         const simdi = new Date();
-        const filePrefix = i18n.language === 'en' ? 'WaterTracker_Report' : 'SuTakip_Rapor';
+
+        // Localized file prefix
+        const filePrefixes: { [key: string]: string } = {
+            'tr': 'SuTakip_Rapor',
+            'en': 'WaterTracker_Report',
+            'es': 'AguaTracker_Informe',
+            'de': 'WasserTracker_Bericht'
+        };
+        const filePrefix = filePrefixes[i18n.language] || filePrefixes['en'];
         const dosyaAdi = `${filePrefix}_${simdi.getFullYear()}${String(simdi.getMonth() + 1).padStart(2, '0')}${String(simdi.getDate()).padStart(2, '0')}.csv`;
 
         const dosyaYolu = `${FileSystem.cacheDirectory}${dosyaAdi}`;

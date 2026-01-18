@@ -89,6 +89,7 @@ export function AyarlarEkrani() {
     const [bioritimUyanmaModalGoster, setBioritimUyanmaModalGoster] = useState(false);
     const [bioritimUyumaModalGoster, setBioritimUyumaModalGoster] = useState(false);
     const [premiumModalGoster, setPremiumModalGoster] = useState(false);
+    const [dilModalGoster, setDilModalGoster] = useState(false);
 
     // Tema hook
     const { mod, renkler, modDegistir, otomatikMod, otomatikModDegistir } = useTema();
@@ -791,30 +792,64 @@ export function AyarlarEkrani() {
                 <View style={[styles.temaContainer, { backgroundColor: renkler.kartArkaplan }]}>
                     <Text style={styles.temaBaslik}>🌐 {t('settings.language')}</Text>
 
-                    <View style={{ flexDirection: 'row', gap: 10, marginTop: 10 }}>
-                        {LANGUAGES.map((lang) => (
-                            <TouchableOpacity
-                                key={lang.code}
-                                style={[
-                                    styles.dilButon,
-                                    currentLang === lang.code && styles.dilButonSecili
-                                ]}
-                                onPress={async () => {
-                                    await changeLanguage(lang.code);
-                                    setCurrentLang(lang.code);
-                                }}
-                            >
-                                <Text style={{ fontSize: 24 }}>{lang.flag}</Text>
-                                <Text style={[
-                                    styles.dilButonYazi,
-                                    currentLang === lang.code && styles.dilButonYaziSecili
-                                ]}>
-                                    {lang.name}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
+                    <TouchableOpacity
+                        style={styles.dilSeciciButon}
+                        onPress={() => setDilModalGoster(true)}
+                    >
+                        <View style={styles.dilSeciciIcerik}>
+                            <Text style={styles.dilSeciciFlag}>
+                                {LANGUAGES.find(l => l.code === currentLang)?.flag || '🌐'}
+                            </Text>
+                            <Text style={styles.dilSeciciText}>
+                                {LANGUAGES.find(l => l.code === currentLang)?.name || 'Select Language'}
+                            </Text>
+                        </View>
+                        <Text style={styles.dilSeciciOk}>▼</Text>
+                    </TouchableOpacity>
                 </View>
+
+                {/* Dil Seçim Modal */}
+                <Modal
+                    visible={dilModalGoster}
+                    transparent={true}
+                    animationType="fade"
+                    onRequestClose={() => setDilModalGoster(false)}
+                >
+                    <TouchableOpacity
+                        style={styles.dilModalOverlay}
+                        activeOpacity={1}
+                        onPress={() => setDilModalGoster(false)}
+                    >
+                        <View style={styles.dilModalContainer}>
+                            <Text style={styles.dilModalBaslik}>🌐 {t('settings.language')}</Text>
+                            {LANGUAGES.map((lang) => (
+                                <TouchableOpacity
+                                    key={lang.code}
+                                    style={[
+                                        styles.dilModalItem,
+                                        currentLang === lang.code && styles.dilModalItemSecili
+                                    ]}
+                                    onPress={async () => {
+                                        await changeLanguage(lang.code);
+                                        setCurrentLang(lang.code);
+                                        setDilModalGoster(false);
+                                    }}
+                                >
+                                    <Text style={styles.dilModalFlag}>{lang.flag}</Text>
+                                    <Text style={[
+                                        styles.dilModalText,
+                                        currentLang === lang.code && styles.dilModalTextSecili
+                                    ]}>
+                                        {lang.name}
+                                    </Text>
+                                    {currentLang === lang.code && (
+                                        <Text style={styles.dilModalCheck}>✓</Text>
+                                    )}
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                    </TouchableOpacity>
+                </Modal>
 
                 {/* Apple Health Entegrasyonu (Sadece iOS) */}
                 {healthKitDestekleniyor() && (
@@ -1582,6 +1617,94 @@ const styles = StyleSheet.create({
     },
     dilButonYaziSecili: {
         color: '#4FC3F7',
+        fontWeight: 'bold',
+    },
+    // Dil Seçici Dropdown
+    dilSeciciButon: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        backgroundColor: '#0D47A1',
+        borderRadius: 12,
+        padding: 16,
+        borderWidth: 2,
+        borderColor: '#4FC3F7',
+        marginTop: 10,
+    },
+    dilSeciciIcerik: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+    },
+    dilSeciciFlag: {
+        fontSize: 28,
+    },
+    dilSeciciText: {
+        color: '#FFFFFF',
+        fontSize: 16,
+        fontWeight: '600',
+    },
+    dilSeciciOk: {
+        color: '#4FC3F7',
+        fontSize: 14,
+    },
+    // Dil Modal
+    dilModalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 30,
+    },
+    dilModalContainer: {
+        backgroundColor: '#1565C0',
+        borderRadius: 20,
+        padding: 20,
+        width: '100%',
+        maxWidth: 320,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 10,
+    },
+    dilModalBaslik: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#FFFFFF',
+        marginBottom: 20,
+        textAlign: 'center',
+    },
+    dilModalItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 16,
+        borderRadius: 12,
+        marginBottom: 8,
+        backgroundColor: '#0D47A1',
+    },
+    dilModalItemSecili: {
+        backgroundColor: '#1976D2',
+        borderWidth: 2,
+        borderColor: '#4FC3F7',
+    },
+    dilModalFlag: {
+        fontSize: 28,
+        marginRight: 15,
+    },
+    dilModalText: {
+        flex: 1,
+        color: '#90CAF9',
+        fontSize: 16,
+        fontWeight: '600',
+    },
+    dilModalTextSecili: {
+        color: '#FFFFFF',
+        fontWeight: 'bold',
+    },
+    dilModalCheck: {
+        color: '#4FC3F7',
+        fontSize: 20,
         fontWeight: 'bold',
     },
 });

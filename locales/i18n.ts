@@ -1,7 +1,7 @@
 // ============================================
 // i18n CONFIGURATION - Internationalization
 // ============================================
-// Multi-language support for Turkish and English
+// Multi-language support for Turkish, English, Spanish, and German
 
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
@@ -10,6 +10,8 @@ import * as Localization from 'expo-localization';
 
 import tr from './tr/translation.json';
 import en from './en/translation.json';
+import es from './es/translation.json';
+import de from './de/translation.json';
 
 const LANGUAGE_KEY = '@app_language';
 
@@ -17,12 +19,16 @@ const LANGUAGE_KEY = '@app_language';
 export const LANGUAGES = [
     { code: 'tr', name: 'Türkçe', flag: '🇹🇷' },
     { code: 'en', name: 'English', flag: '🇬🇧' },
+    { code: 'es', name: 'Español', flag: '🇪🇸' },
+    { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
 ];
 
 // Resources
 const resources = {
     tr: { translation: tr },
     en: { translation: en },
+    es: { translation: es },
+    de: { translation: de },
 };
 
 // Initialize i18n
@@ -35,19 +41,23 @@ i18n
         interpolation: {
             escapeValue: false,
         },
-        compatibilityJSON: 'v3',
+        compatibilityJSON: 'v4',
     });
 
 // Load saved language preference
 export async function loadSavedLanguage(): Promise<void> {
     try {
         const savedLang = await AsyncStorage.getItem(LANGUAGE_KEY);
-        if (savedLang && (savedLang === 'tr' || savedLang === 'en')) {
+        if (savedLang && (savedLang === 'tr' || savedLang === 'en' || savedLang === 'es' || savedLang === 'de')) {
             await i18n.changeLanguage(savedLang);
         } else {
             // Use device language if available, fallback to Turkish
-            const deviceLang = Localization.locale.split('-')[0];
-            const langToUse = deviceLang === 'en' ? 'en' : 'tr';
+            const deviceLocales = Localization.getLocales();
+            const deviceLang = deviceLocales?.[0]?.languageCode || 'tr';
+            let langToUse = 'tr';
+            if (deviceLang === 'en') langToUse = 'en';
+            else if (deviceLang === 'es') langToUse = 'es';
+            else if (deviceLang === 'de') langToUse = 'de';
             await i18n.changeLanguage(langToUse);
         }
     } catch (error) {
