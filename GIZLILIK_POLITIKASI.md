@@ -1,52 +1,65 @@
 # Gizlilik Politikası
 
-**Su İçme Hatırlatıcısı Uygulaması**
+**Son Güncelleme:** 19 Ocak 2026
 
-Son Güncelleme: 18 Aralık 2025
+Bu Gizlilik Politikası, **Water Reminder & Tracker** ("Uygulama") uygulamasını kullandığınızda bilgilerinizin nasıl toplandığını, kullanıldığını ve paylaşıldığını açıklar. Gizliliğiniz bizim için önemlidir ve kişisel verilerinizi korumayı taahhüt ediyoruz.
 
----
+## 1. Toplanan Bilgiler ve Kullanım
 
-## 1. Giriş
+Uygulamamız, temel işlevlerini yerine getirmek için minimum düzeyde veri toplar. Verilerinizin büyük çoğunluğu **yalnızca cihazınızda yerel olarak** saklanır.
 
-Bu gizlilik politikası, Su İçme Hatırlatıcısı uygulamasının (bundan sonra "Uygulama" olarak anılacaktır) kullanıcı verilerini nasıl topladığını, kullandığını ve koruduğunu açıklamaktadır.
+### 1.1. Kişisel Olmayan Veriler
+Uygulamayı kullanımınız sırasında sağladığınız, kimliğinizi doğrudan doğrulamayan bilgilerdir:
+*   Günlük su tüketim miktarı
+*   Belirlediğiniz günlük hedefler
+*   Hatırlatma tercihleri (saatler, aralıklar)
+*   Uygulama ayarları (tema, bildirim sesi vb.)
+*   Kullanıcı profili verileri (Kilo, aktivite seviyesi - **Sadece su ihtiyacını hesaplamak için kullanılır, sunuculara gönderilmez**)
 
-## 2. Toplanan Veriler
+### 1.2. Sağlık Verileri (Apple Health / HealthKit)
+Uygulamamız, su tüketim verilerinizi **Apple Health (Sağlık)** uygulaması ile senkronize etme seçeneği sunar.
+*   **İzin:** Bu özellik yalnızca siz açıkça izin verirseniz çalışır.
+*   **Veri Yazma:** Su tüketim verileriniz Apple Health'e "Su" (Dietary Water) kategorisi altına yazılır.
+*   **Veri Okuma:** Uygulamamız Apple Health'ten herhangi bir veri okumaz veya toplamaz.
+*   **Gizlilik:** Apple Health verileri asla üçüncü taraflarla paylaşılmaz veya reklam amaçlı kullanılmaz.
 
-Uygulamamız aşağıdaki verileri toplar ve **yalnızca cihazınızda** saklar:
+## 2. Verilerin Saklanması
 
-- **Su tüketimi verileri**: Günlük içilen su miktarı
-- **Tercihler**: Günlük hedef, bildirim ayarları
-- **İstatistikler**: Haftalık su tüketim geçmişi
+*   **Yerel Depolama:** Su tüketim geçmişiniz, istatistikleriniz ve tercihleriniz cihazınızın yerel depolama alanında (AsyncStorage) saklanır.
+*   **Silme:** Uygulamayı cihazınızdan kaldırdığınızda, yerel olarak saklanan tüm veriler silinir (Apple Health'e yazılmış veriler Apple Health uygulamasında kalabilir).
 
-## 3. Verilerin Saklanması
+## 3. Üçüncü Taraf Hizmetler
 
-- Tüm veriler **yalnızca cihazınızda** (yerel depolama) saklanır
-- **Sunucuya veri gönderilmez**
-- **Üçüncü taraflarla veri paylaşılmaz**
-- Uygulamayı sildiğinizde tüm veriler silinir
+Uygulamanın geliştirilmesi ve sürdürülmesi için güvenilir üçüncü taraf hizmet sağlayıcıları ile çalışabiliriz.
 
-## 4. Bildirimler
+### 3.1. Uygulama İçi Satın Almalar (RevenueCat)
+Premium özelliklere erişim sağlamak için yaptığınız satın alma işlemleri, **RevenueCat** altyapısı üzerinden yönetilebilir.
+*   Ödeme işlemleri doğrudan Apple App Store veya Google Play Store tarafından işlenir.
+*   Kredi kartı bilgileriniz uygulamamız tarafından **görülmez ve saklanmaz**.
+*   Sadece abonelik durumu (aktif/pasif) bilgisi işlenir.
 
-Uygulama, hatırlatma bildirimleri göndermek için bildirim iznini kullanır. Bu izin yalnızca:
-- Su içme hatırlatmaları göndermek için kullanılır
-- İstediğiniz zaman ayarlardan kapatılabilir
+## 4. İzinler
+
+Uygulama, size en iyi deneyimi sunmak için aşağıdaki izinleri isteyebilir:
+*   **Bildirimler:** Size su içmenizi hatırlatmak için.
+*   **Apple Health:** Su tüketim verilerinizi Sağlık uygulamasına kaydetmek için (iOS).
+
+Bu izinleri istediğiniz zaman cihaz ayarlarından kapatabilirsiniz.
 
 ## 5. Çocukların Gizliliği
 
-Uygulamamız kişisel veri toplamadığı için tüm yaş grupları tarafından güvenle kullanılabilir.
+Uygulamamız özellikle 13 yaş altı çocuklara yönelik değildir. Bilerek 13 yaşından küçük çocuklardan kişisel veri toplamıyoruz.
 
 ## 6. Veri Güvenliği
 
-Tüm veriler cihazınızın güvenli depolama alanında saklanır ve şifreleme koruması altındadır.
+Verilerinizi korumak için endüstri standardı güvenlik önlemleri uyguluyoruz. Ancak, internet üzerinden hiçbir iletimin veya elektronik depolama yönteminin %100 güvenli olmadığını lütfen unutmayın.
 
-## 7. Değişiklikler
+## 7. Bu Politikadaki Değişiklikler
 
-Bu gizlilik politikası zaman zaman güncellenebilir. Değişiklikler uygulama içinde duyurulacaktır.
+Gizlilik politikamızı zaman zaman güncelleyebiliriz. Herhangi bir değişiklik olduğunda, bu sayfada yeni gizlilik politikasını yayınlayarak sizi bilgilendireceğiz. Değişiklikler yayınlandığı andan itibaren geçerlidir.
 
 ## 8. İletişim
 
-Sorularınız için: serhat@example.com
+Gizlilik politikamızla ilgili sorularınız veya önerileriniz varsa, lütfen bizimle iletişime geçmekten çekinmeyin:
 
----
-
-**© 2025 Su İçme Hatırlatıcısı. Tüm hakları saklıdır.**
+**E-posta:** [destek@email-adresiniz.com]
