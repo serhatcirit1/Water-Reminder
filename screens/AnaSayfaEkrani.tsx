@@ -282,9 +282,17 @@ export function AnaSayfaEkrani() {
 
         const yeniMiktar = Math.max(suMiktari - 1, 0);
         const yeniToplamMl = Math.max(toplamMl - bardakBoyutu, 0);
+        const yeniYuzde = Math.min((yeniToplamMl / gunlukHedef) * 100, 100);
 
         setSuMiktari(yeniMiktar);
         setToplamMl(yeniToplamMl);
+
+        // Progress bar animasyonu - anlık güncelleme
+        Animated.timing(progressAnim, {
+            toValue: yeniYuzde,
+            duration: 400,
+            useNativeDriver: false,
+        }).start();
 
         if (yeniToplamMl < gunlukHedef) {
             setHedefeTamamlandi(false);
@@ -437,26 +445,38 @@ export function AnaSayfaEkrani() {
                                 extrapolate: 'clamp'
                             })
                         }]}>
-                            {/* Dalga Animasyonu */}
+                            {/* Dalga Animasyonu - Büyük ve Belirgin */}
                             <Animated.View style={[styles.waveWrapper, {
                                 transform: [{
                                     translateX: waveAnim.interpolate({
                                         inputRange: [0, 1],
-                                        outputRange: [0, -50]
+                                        outputRange: [0, -100]
                                     })
                                 }]
                             }]}>
-                                <Svg width={500} height={40} viewBox="0 0 500 40">
+                                <Svg width={600} height={80} viewBox="0 0 600 80">
                                     <Defs>
-                                        <SvgLinearGradient id="waveGrad" x1="0" y1="0" x2="0" y2="1">
-                                            <Stop offset="0" stopColor="#B3E5FC" stopOpacity="0.9" />
-                                            <Stop offset="0.5" stopColor="#81D4FA" stopOpacity="0.6" />
-                                            <Stop offset="1" stopColor="#4FC3F7" stopOpacity="0.3" />
+                                        <SvgLinearGradient id="waveGrad1" x1="0" y1="0" x2="0" y2="1">
+                                            <Stop offset="0" stopColor="#E1F5FE" stopOpacity="0.95" />
+                                            <Stop offset="0.3" stopColor="#B3E5FC" stopOpacity="0.8" />
+                                            <Stop offset="0.7" stopColor="#81D4FA" stopOpacity="0.6" />
+                                            <Stop offset="1" stopColor="#4FC3F7" stopOpacity="0.4" />
+                                        </SvgLinearGradient>
+                                        <SvgLinearGradient id="waveGrad2" x1="0" y1="0" x2="0" y2="1">
+                                            <Stop offset="0" stopColor="#B3E5FC" stopOpacity="0.7" />
+                                            <Stop offset="0.5" stopColor="#81D4FA" stopOpacity="0.5" />
+                                            <Stop offset="1" stopColor="#29B6F6" stopOpacity="0.3" />
                                         </SvgLinearGradient>
                                     </Defs>
+                                    {/* Arka dalga */}
                                     <Path
-                                        d="M0 20 C30 8 60 32 100 20 C140 8 170 32 200 20 C240 8 270 32 300 20 C340 8 370 32 400 20 C440 8 470 32 500 20 L500 40 L0 40 Z"
-                                        fill="url(#waveGrad)"
+                                        d="M0 40 C50 15 100 65 150 40 C200 15 250 65 300 40 C350 15 400 65 450 40 C500 15 550 65 600 40 L600 80 L0 80 Z"
+                                        fill="url(#waveGrad2)"
+                                    />
+                                    {/* Ön dalga */}
+                                    <Path
+                                        d="M0 50 C40 25 80 75 120 50 C160 25 200 75 240 50 C280 25 320 75 360 50 C400 25 440 75 480 50 C520 25 560 75 600 50 L600 80 L0 80 Z"
+                                        fill="url(#waveGrad1)"
                                     />
                                 </Svg>
                             </Animated.View>
@@ -678,10 +698,10 @@ const styles = StyleSheet.create({
     },
     waveWrapper: {
         position: 'absolute',
-        top: -20,
-        left: -150,
-        width: 500,
-        height: 40,
+        top: -40,
+        left: -200,
+        width: 600,
+        height: 80,
     },
     circleMask: {
         position: 'absolute',

@@ -64,6 +64,7 @@ export function IstatistiklerEkrani() {
     // Tooltip ve seçili öğeler
     const [seciliRozet, setSeciliRozet] = useState<Rozet | null>(null);
     const [tooltipVeri, setTooltipVeri] = useState<{ tarih: string; ml: number } | null>(null);
+    const [seciliSaat, setSeciliSaat] = useState<{ saat: number; toplam: number } | null>(null);
 
     // Animasyonlar
     const barAnimasyonlari = useRef<Animated.Value[]>([]).current;
@@ -337,10 +338,20 @@ export function IstatistiklerEkrani() {
                             </View>
                         )}
                     </View>
+                    {/* Seçili Saat Tooltip */}
+                    {seciliSaat && (
+                        <View style={styles.saatTooltip}>
+                            <Text style={styles.saatTooltipSaat}>{seciliSaat.saat < 10 ? `0${seciliSaat.saat}` : seciliSaat.saat}:00</Text>
+                            <Text style={styles.saatTooltipValue}>{seciliSaat.toplam} {t('stats.glasses')}</Text>
+                            <TouchableOpacity onPress={() => setSeciliSaat(null)} style={styles.saatTooltipClose}>
+                                <Text style={styles.saatTooltipCloseText}>✕</Text>
+                            </TouchableOpacity>
+                        </View>
+                    )}
 
                     {/* 24 Saatlik Çizgi Grafik */}
                     <View style={styles.lineChartContainer}>
-                        <Svg width={SCREEN_WIDTH - 100} height={160}>
+                        <Svg width={SCREEN_WIDTH - 100} height={140}>
                             {/* Arka plan çizgileri */}
                             <Line x1={0} y1={30} x2={SCREEN_WIDTH - 100} y2={30} stroke="#1E5166" strokeWidth={0.5} />
                             <Line x1={0} y1={60} x2={SCREEN_WIDTH - 100} y2={60} stroke="#1E5166" strokeWidth={0.5} />
@@ -376,29 +387,63 @@ export function IstatistiklerEkrani() {
                                 const x = (i / 23) * (SCREEN_WIDTH - 100);
                                 const y = 90 - (s.toplam / maxToplam) * 60;
                                 const isTop = s.toplam === maxToplam && s.toplam > 0;
+                                const isSelected = seciliSaat?.saat === i;
                                 return (
                                     <Circle
                                         key={i}
                                         cx={x}
                                         cy={y}
-                                        r={isTop ? 5 : 3}
-                                        fill={isTop ? '#FFD700' : s.toplam > 0 ? '#4FC3F7' : '#1E5166'}
+                                        r={isSelected ? 7 : isTop ? 5 : 3}
+                                        fill={isSelected ? '#FFD700' : isTop ? '#FFD700' : s.toplam > 0 ? '#4FC3F7' : '#1E5166'}
+                                        stroke={isSelected ? '#FFFFFF' : 'none'}
+                                        strokeWidth={isSelected ? 2 : 0}
                                     />
                                 );
                             })}
 
-                            {/* Saat etiketleri - Düzeltildi */}
+                            {/* Saat etiketleri */}
                             {[0, 6, 12, 18, 23].map((hour) => {
                                 const x = (hour / 23) * (SCREEN_WIDTH - 100);
                                 // İlk ve son etiketleri içeri al
-                                const adjustedX = hour === 0 ? x + 15 : hour === 23 ? x - 15 : x;
+                                const adjustedX = hour === 0 ? x + 12 : hour === 23 ? x - 12 : x;
+                                const hourLabel = hour < 10 ? `0${hour}` : `${hour}`;
                                 return (
-                                    <SvgText key={hour} x={adjustedX} y={145} fontSize="11" fill="#4FC3F7" textAnchor="middle" fontWeight="600">
-                                        {hour}:00
+                                    <SvgText
+                                        key={hour}
+                                        x={adjustedX}
+                                        y={110}
+                                        fontSize={10}
+                                        fill="#4FC3F7"
+                                        textAnchor="middle"
+                                        fontWeight="500"
+                                    >
+                                        {hourLabel}
                                     </SvgText>
                                 );
                             })}
                         </Svg>
+
+                        {/* Touch areas for interaction */}
+                        <View style={styles.chartTouchLayer}>
+                            {saatIstatistikleri.map((s, i) => {
+                                const x = (i / 23) * (SCREEN_WIDTH - 100);
+                                return (
+                                    <TouchableOpacity
+                                        key={i}
+                                        style={[
+                                            styles.chartTouchArea,
+                                            { left: x - 8 }
+                                        ]}
+                                        onPress={() => {
+                                            if (s.toplam > 0) {
+                                                setSeciliSaat({ saat: i, toplam: s.toplam });
+                                            }
+                                        }}
+                                        activeOpacity={0.7}
+                                    />
+                                );
+                            })}
+                        </View>
                     </View>
                 </View>
 
@@ -847,11 +892,13 @@ const styles = StyleSheet.create({
         borderColor: 'rgba(79, 195, 247, 0.1)',
     },
     saatTooltip: {
+        flexDirection: 'row',
         backgroundColor: '#1565C0',
         borderRadius: 16,
         padding: 14,
         marginTop: 16,
         alignItems: 'center',
+        justifyContent: 'center',
         borderWidth: 1,
         borderColor: '#4FC3F7',
         shadowColor: '#4FC3F7',
@@ -859,7 +906,47 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.3,
         shadowRadius: 6,
     },
+    saatTooltipSaat: {
+        fontSize: 18,
+        color: '#FFFFFF',
+        fontWeight: 'bold',
+        marginRight: 12,
+    },
+    saatTooltipValue: {
+        fontSize: 14,
+        color: '#90CAF9',
+        fontWeight: '600',
+        flex: 1,
+    },
+    saatTooltipClose: {
+        width: 24,
+        height: 24,
+        borderRadius: 12,
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginLeft: 10,
+    },
+    saatTooltipCloseText: {
+        fontSize: 12,
+        color: '#FFFFFF',
+        fontWeight: 'bold',
+    },
     saatTooltipText: { fontSize: 13, color: '#FFFFFF', fontWeight: '600' },
+    chartTouchLayer: {
+        position: 'absolute',
+        top: 20,
+        left: 20,
+        right: 20,
+        height: 100,
+        flexDirection: 'row',
+    },
+    chartTouchArea: {
+        position: 'absolute',
+        width: 16,
+        height: 100,
+    },
+
 
     trendCard: { backgroundColor: '#134156', borderRadius: 20, padding: 20, marginBottom: 20 },
     trendHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 5 },
