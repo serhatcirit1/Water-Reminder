@@ -430,7 +430,17 @@
         "remindersDesc": "Vergiss nie, Wasser zu trinken, mit intelligenten Erinnerungen basierend auf Wetter und Biorhythmus.",
         "ai": "KI-Unterstützung",
         "aiDesc": "Optimiere deine Trinkgewohnheiten mit KI-gestützten Analysen, Vorhersagen und Empfehlungen.",
-        "start": "Starten"
+        "start": "Starten",
+        "profileSetup": "Erstelle dein Profil",
+        "profileSetupDesc": "Gib deine Daten ein, um personalisierte Trinkzielempfehlungen zu erhalten.",
+        "gender": "Geschlecht",
+        "male": "Männlich",
+        "female": "Weiblich",
+        "height": "Größe",
+        "weight": "Gewicht",
+        "dailyGoal": "Tagesziel",
+        "recommended": "Empfohlen",
+        "startJourney": "Starte deine Reise"
     },
     "tasks": {
         "sabah_su_title": "Starte den Tag",
@@ -637,6 +647,26 @@
             "msg8": "Komm deinem Tagesziel näher, noch ein Glas! 🎯",
             "msg9": "Wasser trinken verhindert Kopfschmerzen 🩺",
             "msg10": "Trink jetzt Wasser für deine Gesundheit! ❤️"
+        }
+    },
+    "share": {
+        "title": "Meine Trink-Serie!",
+        "dayStreak": "Tage Serie",
+        "level": "Level",
+        "badges": "Abzeichen",
+        "downloadApp": "Bleib gesund mit Water Reminder!",
+        "createStory": "Story Erstellen",
+        "shareAsImage": "Als Bild Teilen",
+        "shareAsText": "Als Text Teilen",
+        "todayProgress": "Heute",
+        "instagramTip": "Speichere das Bild und füge es zu deiner Instagram Story hinzu",
+        "messages": {
+            "legendary": "Legendär! 100+ Tage Serie! 🏆",
+            "monthly": "Ein Monat Hydration! 💪",
+            "twoWeeks": "Zwei Wochen stark! 🌟",
+            "weekly": "Eine Woche Serie komplett! 🎯",
+            "started": "Meine Trinkgewohnheit bildet sich! 🌱",
+            "beginning": "Erster Schritt zu gesundem Leben! 💧"
         }
     }
 }

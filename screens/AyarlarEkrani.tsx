@@ -316,6 +316,55 @@ export function AyarlarEkrani() {
                         {t('settings.personalizedGoalDesc')}
                     </Text>
 
+                    {/* Cinsiyet */}
+                    <View style={styles.profilSatir}>
+                        <Text style={styles.profilEtiket}>{t('onboarding.gender')}</Text>
+                        <View style={{ flexDirection: 'row', gap: 10 }}>
+                            <TouchableOpacity
+                                style={[
+                                    styles.profilButon,
+                                    { paddingHorizontal: 12, backgroundColor: profil.cinsiyet === 'erkek' ? '#4FC3F7' : 'transparent' }
+                                ]}
+                                onPress={() => profilDegistir({ ...profil, cinsiyet: 'erkek' })}
+                            >
+                                <Text style={[styles.profilButonYazi, { color: profil.cinsiyet === 'erkek' ? '#fff' : '#4FC3F7' }]}>
+                                    👨 {t('onboarding.male')}
+                                </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[
+                                    styles.profilButon,
+                                    { paddingHorizontal: 12, backgroundColor: profil.cinsiyet === 'kadin' ? '#4FC3F7' : 'transparent' }
+                                ]}
+                                onPress={() => profilDegistir({ ...profil, cinsiyet: 'kadin' })}
+                            >
+                                <Text style={[styles.profilButonYazi, { color: profil.cinsiyet === 'kadin' ? '#fff' : '#4FC3F7' }]}>
+                                    👩 {t('onboarding.female')}
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+
+                    {/* Boy */}
+                    <View style={styles.profilSatir}>
+                        <Text style={styles.profilEtiket}>{t('onboarding.height')}</Text>
+                        <View style={styles.profilDegerler}>
+                            <TouchableOpacity
+                                style={styles.profilButon}
+                                onPress={() => profilDegistir({ ...profil, boy: Math.max(100, (profil.boy || 170) - 5) })}
+                            >
+                                <Text style={styles.profilButonYazi}>-</Text>
+                            </TouchableOpacity>
+                            <Text style={styles.profilDeger}>{profil.boy || 170} cm</Text>
+                            <TouchableOpacity
+                                style={styles.profilButon}
+                                onPress={() => profilDegistir({ ...profil, boy: Math.min(220, (profil.boy || 170) + 5) })}
+                            >
+                                <Text style={styles.profilButonYazi}>+</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+
                     {/* Kilo */}
                     <View style={styles.profilSatir}>
                         <Text style={styles.profilEtiket}>{t('settings.weight')}</Text>

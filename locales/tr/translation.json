@@ -430,7 +430,17 @@
         "remindersDesc": "AI destekli akıllı hatırlatmalarla hava durumuna ve bioritmize göre su içmeyi asla unutmayın.",
         "ai": "Yapay Zeka Desteği",
         "aiDesc": "AI destekli kişiselleştirilmiş içgörüler, tahminler ve önerilerle su içme alışkanlıklarınızı optimize edin.",
-        "start": "Başla"
+        "start": "Başla",
+        "profileSetup": "Profilini Oluştur",
+        "profileSetupDesc": "Kişiselleştirilmiş su hedefi önerisi için bilgilerini gir.",
+        "gender": "Cinsiyet",
+        "male": "Erkek",
+        "female": "Kadın",
+        "height": "Boy",
+        "weight": "Kilo",
+        "dailyGoal": "Günlük Hedef",
+        "recommended": "Önerilen",
+        "startJourney": "Yolculuğa Başla"
     },
     "tasks": {
         "sabah_su_title": "Güne Başlangıç",
@@ -637,6 +647,26 @@
             "msg8": "Günlük hedefe yaklaş, bir bardak daha! 🎯",
             "msg9": "Su içmek baş ağrısını önler 🩺",
             "msg10": "Sağlığın için şimdi su iç! ❤️"
+        }
+    },
+    "share": {
+        "title": "Su İçme Serim!",
+        "dayStreak": "Gün Seri",
+        "level": "Seviye",
+        "badges": "Rozet",
+        "downloadApp": "Water Reminder ile sağlıklı kalın!",
+        "createStory": "Hikaye Oluştur",
+        "shareAsImage": "Görsel Olarak Paylaş",
+        "shareAsText": "Metin Olarak Paylaş",
+        "todayProgress": "Bugün",
+        "instagramTip": "Görseli kaydedip Instagram Hikayenize ekleyebilirsiniz",
+        "messages": {
+            "legendary": "Efsane! 100+ günlük seri! 🏆",
+            "monthly": "Bir ay boyunca su içtim! 💪",
+            "twoWeeks": "İki hafta geçti, devam! 🌟",
+            "weekly": "Bir haftalık seri tamamlandı! 🎯",
+            "started": "Su içme alışkanlığım başladı! 🌱",
+            "beginning": "Sağlıklı yaşama ilk adım! 💧"
         }
     }
 }

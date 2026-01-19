@@ -430,7 +430,17 @@
         "remindersDesc": "Nunca olvides beber agua con recordatorios inteligentes basados en el clima y tu biorritmo.",
         "ai": "Soporte de IA",
         "aiDesc": "Optimiza tus hábitos de hidratación con análisis personalizados, predicciones y recomendaciones.",
-        "start": "Comenzar"
+        "start": "Comenzar",
+        "profileSetup": "Crea Tu Perfil",
+        "profileSetupDesc": "Ingresa tu información para obtener recomendaciones personalizadas de hidratación.",
+        "gender": "Género",
+        "male": "Hombre",
+        "female": "Mujer",
+        "height": "Altura",
+        "weight": "Peso",
+        "dailyGoal": "Objetivo Diario",
+        "recommended": "Recomendado",
+        "startJourney": "Comienza Tu Viaje"
     },
     "tasks": {
         "sabah_su_title": "Empieza el Día",
@@ -637,6 +647,26 @@
             "msg8": "Acércate a tu objetivo diario, ¡un vaso más! 🎯",
             "msg9": "Beber agua previene dolores de cabeza 🩺",
             "msg10": "¡Bebe agua ahora por tu salud! ❤️"
+        }
+    },
+    "share": {
+        "title": "¡Mi Racha de Hidratación!",
+        "dayStreak": "Días de Racha",
+        "level": "Nivel",
+        "badges": "Insignias",
+        "downloadApp": "¡Mantente saludable con Water Reminder!",
+        "createStory": "Crear Historia",
+        "shareAsImage": "Compartir como Imagen",
+        "shareAsText": "Compartir como Texto",
+        "todayProgress": "Hoy",
+        "instagramTip": "Guarda la imagen y añádela a tu Historia de Instagram",
+        "messages": {
+            "legendary": "¡Legendario! ¡Más de 100 días de racha! 🏆",
+            "monthly": "¡Un mes de hidratación! 💪",
+            "twoWeeks": "¡Dos semanas fuertes! 🌟",
+            "weekly": "¡Una semana de racha completa! 🎯",
+            "started": "¡Mi hábito de hidratación está formándose! 🌱",
+            "beginning": "¡Primer paso hacia una vida saludable! 💧"
         }
     }
 }

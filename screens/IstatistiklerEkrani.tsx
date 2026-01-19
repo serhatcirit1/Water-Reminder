@@ -12,6 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Svg, { Path, Line, Circle, Text as SvgText } from 'react-native-svg';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useTema } from '../TemaContext';
 import {
     rekorYukle, RekorBilgisi, streakHesapla, StreakBilgisi,
@@ -23,6 +24,7 @@ import { rozetleriYukle, Rozet } from '../rozetler';
 import { gunlukGorevleriYukle, GunlukGorevDurumu } from '../gunlukGorevler';
 import { usePremium } from '../PremiumContext';
 import { useTranslation } from 'react-i18next';
+import { StreakShareCard } from '../components';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const GECMIS_KEY = '@su_gecmisi';
@@ -65,6 +67,9 @@ export function IstatistiklerEkrani() {
     const [seciliRozet, setSeciliRozet] = useState<Rozet | null>(null);
     const [tooltipVeri, setTooltipVeri] = useState<{ tarih: string; ml: number } | null>(null);
     const [seciliSaat, setSeciliSaat] = useState<{ saat: number; toplam: number } | null>(null);
+
+    // Paylaşım Modal
+    const [paylasModalGoster, setPaylasModalGoster] = useState(false);
 
     // Animasyonlar
     const barAnimasyonlari = useRef<Animated.Value[]>([]).current;
@@ -313,6 +318,17 @@ export function IstatistiklerEkrani() {
                         <Text style={styles.streakValueSecondary}>{streak?.enUzunStreak || 0} {t('stats.days')}</Text>
                     </View>
                 </View>
+
+                {/* Paylaşım Modal */}
+                <StreakShareCard
+                    visible={paylasModalGoster}
+                    onClose={() => setPaylasModalGoster(false)}
+                    streak={streak?.mevcutStreak || 0}
+                    gunlukHedef={gunlukHedef}
+                    bugunIcilen={haftalikVeri[6]?.ml || 0} // Bugünün verisi
+                    seviye={seviye?.seviye || 1}
+                    rozetSayisi={rozetler.filter(r => r.kazanildi).length}
+                />
 
                 {/* Favori Saatler */}
                 <View style={styles.favoriCard}>
@@ -806,6 +822,22 @@ export function IstatistiklerEkrani() {
                     </View>
                 </View>
 
+                {/* Hikaye Paylaş Butonu */}
+                <TouchableOpacity
+                    style={styles.storyButton}
+                    onPress={() => setPaylasModalGoster(true)}
+                >
+                    <LinearGradient
+                        colors={['#4FC3F7', '#29B6F6']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 0 }}
+                        style={styles.storyButtonGradient}
+                    >
+                        <Text style={styles.storyButtonEmoji}>📸</Text>
+                        <Text style={styles.storyButtonText}>{t('share.createStory')}</Text>
+                    </LinearGradient>
+                </TouchableOpacity>
+
             </ScrollView>
         </SafeAreaView>
     );
@@ -1073,6 +1105,47 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderWidth: 1,
         borderColor: 'rgba(79, 195, 247, 0.2)',
+    },
+    shareButton: {
+        backgroundColor: 'rgba(79, 195, 247, 0.15)',
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: '#4FC3F7',
+    },
+    shareButtonText: {
+        color: '#4FC3F7',
+        fontSize: 12,
+        fontWeight: 'bold',
+    },
+    storyButton: {
+        marginHorizontal: 20,
+        marginBottom: 30,
+        borderRadius: 25,
+        overflow: 'hidden',
+        elevation: 5,
+        shadowColor: '#4FC3F7',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 10,
+    },
+    storyButtonGradient: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 18,
+        paddingHorizontal: 30,
+    },
+    storyButtonEmoji: {
+        fontSize: 24,
+        marginRight: 10,
+    },
+    storyButtonText: {
+        color: '#FFFFFF',
+        fontSize: 18,
+        fontWeight: 'bold',
+        letterSpacing: 0.5,
     },
     navButtonText: {
         color: '#4FC3F7',

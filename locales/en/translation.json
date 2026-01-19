@@ -430,7 +430,17 @@
         "remindersDesc": "Never forget to drink water with AI-powered smart reminders based on weather and your biorhythm.",
         "ai": "AI Support",
         "aiDesc": "Optimize your water drinking habits with AI-powered personalized insights, predictions, and recommendations.",
-        "start": "Start"
+        "start": "Start",
+        "profileSetup": "Create Your Profile",
+        "profileSetupDesc": "Enter your info to get personalized water goal recommendations.",
+        "gender": "Gender",
+        "male": "Male",
+        "female": "Female",
+        "height": "Height",
+        "weight": "Weight",
+        "dailyGoal": "Daily Goal",
+        "recommended": "Recommended",
+        "startJourney": "Start Your Journey"
     },
     "tasks": {
         "sabah_su_title": "Start the Day",
@@ -637,6 +647,26 @@
             "msg8": "Get closer to your daily goal, one more glass! 🎯",
             "msg9": "Drinking water prevents headaches 🩺",
             "msg10": "Drink water now for your health! ❤️"
+        }
+    },
+    "share": {
+        "title": "My Hydration Streak!",
+        "dayStreak": "Day Streak",
+        "level": "Level",
+        "badges": "Badges",
+        "downloadApp": "Stay healthy with Water Reminder!",
+        "createStory": "Create Story",
+        "shareAsImage": "Share as Image",
+        "shareAsText": "Share as Text",
+        "todayProgress": "Today",
+        "instagramTip": "Save the image and add it to your Instagram Story",
+        "messages": {
+            "legendary": "Legendary! 100+ day streak! 🏆",
+            "monthly": "One month of hydration! 💪",
+            "twoWeeks": "Two weeks strong! 🌟",
+            "weekly": "One week streak complete! 🎯",
+            "started": "My hydration habit is forming! 🌱",
+            "beginning": "First step to healthy living! 💧"
         }
     }
 }

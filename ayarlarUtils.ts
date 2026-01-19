@@ -133,7 +133,6 @@ export async function siseBoyutuYukle(): Promise<number> {
     }
 }
 
-
 // --- KİŞİSELLEŞTİRİLMİŞ HEDEF SİSTEMİ ---
 const PROFIL_KEY = '@kullanici_profil';
 
@@ -141,17 +140,25 @@ export interface KullaniciProfil {
     kilo: number;      // kg
     yas: number;       // yıl
     aktifMi: boolean;  // aktif yaşam tarzı mı
+    boy?: number;      // cm (onboarding'den)
+    cinsiyet?: 'erkek' | 'kadin';  // onboarding'den
 }
 
 const VARSAYILAN_PROFIL: KullaniciProfil = {
     kilo: 70,
     yas: 30,
     aktifMi: false,
+    boy: 170,
+    cinsiyet: 'erkek',
 };
 
 export async function profilKaydet(profil: KullaniciProfil): Promise<void> {
     try {
         await AsyncStorage.setItem(PROFIL_KEY, JSON.stringify(profil));
+        // Onboarding key'leri de senkronize et
+        if (profil.boy) await AsyncStorage.setItem('@kullanici_boy', profil.boy.toString());
+        if (profil.kilo) await AsyncStorage.setItem('@kullanici_kilo', profil.kilo.toString());
+        if (profil.cinsiyet) await AsyncStorage.setItem('@kullanici_cinsiyet', profil.cinsiyet);
     } catch (hata) {
         console.error('Profil kaydedilemedi:', hata);
     }
@@ -159,11 +166,20 @@ export async function profilKaydet(profil: KullaniciProfil): Promise<void> {
 
 export async function profilYukle(): Promise<KullaniciProfil> {
     try {
+        // Önce profil key'inden yükle
         const kayitli = await AsyncStorage.getItem(PROFIL_KEY);
-        if (kayitli) {
-            return JSON.parse(kayitli);
-        }
-        return VARSAYILAN_PROFIL;
+        let profil: KullaniciProfil = kayitli ? JSON.parse(kayitli) : { ...VARSAYILAN_PROFIL };
+
+        // Onboarding verilerini de kontrol et ve merge et
+        const onboardingBoy = await AsyncStorage.getItem('@kullanici_boy');
+        const onboardingKilo = await AsyncStorage.getItem('@kullanici_kilo');
+        const onboardingCinsiyet = await AsyncStorage.getItem('@kullanici_cinsiyet');
+
+        if (onboardingBoy) profil.boy = parseInt(onboardingBoy, 10);
+        if (onboardingKilo) profil.kilo = parseInt(onboardingKilo, 10);
+        if (onboardingCinsiyet) profil.cinsiyet = onboardingCinsiyet as 'erkek' | 'kadin';
+
+        return profil;
     } catch (hata) {
         console.error('Profil yüklenemedi:', hata);
         return VARSAYILAN_PROFIL;

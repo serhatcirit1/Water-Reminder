@@ -30,8 +30,8 @@ export interface HealthKitDurumu {
 // --- İZİN OPSİYONLARI ---
 const healthKitOptions = {
     permissions: {
-        read: ['StepCount'],
-        write: ['Water'],
+        read: ['StepCount', 'Water'],  // Adım sayısı ve Su okuma
+        write: ['Water'],              // Su yazma
     },
 };
 
@@ -207,4 +207,64 @@ export async function adimSayisiAl(): Promise<number> {
             }
         });
     });
+}
+
+/**
+ * Bugünkü su tüketimini Apple Health'ten al (çift yönlü senkronizasyon)
+ * Diğer uygulamalardan kaydedilen su verisini de içerir
+ */
+export async function suTuketimiOku(): Promise<number> {
+    // HealthKit aktif mi kontrol et
+    const aktif = await healthKitAyarYukle();
+    if (!aktif) {
+        return 0;
+    }
+
+    if (!healthKitDestekleniyor()) {
+        return 0;
+    }
+
+    return new Promise((resolve) => {
+        const bugun = new Date();
+        bugun.setHours(0, 0, 0, 0);
+
+        const options = {
+            startDate: bugun.toISOString(),
+            endDate: new Date().toISOString(),
+            ascending: false,
+        };
+
+        AppleHealthKit.getWaterSamples(options, (error: string, results: Array<{ value: number }>) => {
+            if (error) {
+                console.log('Su tüketimi okunamadı:', error);
+                resolve(0);
+            } else {
+                // Tüm kayıtları topla (litre cinsinden)
+                const toplamLitre = results?.reduce((toplam, kayit) => toplam + (kayit.value || 0), 0) || 0;
+                const toplamMl = Math.round(toplamLitre * 1000);
+                console.log('Bugünkü Apple Health su tüketimi:', toplamMl, 'ml');
+                resolve(toplamMl);
+            }
+        });
+    });
+}
+
+/**
+ * Apple Health'teki su verisini uygulama ile karşılaştır
+ * Bu fonksiyon, hem uygulamadan hem de diğer kaynaklardan gelen verileri raporlar
+ */
+export interface HealthKitSuRapor {
+    uygulamadanMl: number;      // Bu uygulamadan kaydedilen
+    toplamHealthKitMl: number;  // Apple Health'teki toplam
+    digerKaynaklarMl: number;   // Diğer uygulamalardan gelen
+}
+
+export async function suTuketimiKarsilastir(uygulamaMl: number): Promise<HealthKitSuRapor> {
+    const healthKitMl = await suTuketimiOku();
+
+    return {
+        uygulamadanMl: uygulamaMl,
+        toplamHealthKitMl: healthKitMl,
+        digerKaynaklarMl: Math.max(0, healthKitMl - uygulamaMl),
+    };
 }

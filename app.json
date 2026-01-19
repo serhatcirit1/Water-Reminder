@@ -4,7 +4,7 @@
         "slug": "water-reminder",
         "version": "1.0.0",
         "orientation": "portrait",
-        "icon": "./assets/icon.jpeg",
+        "icon": "./assets/icon.png",
         "userInterfaceStyle": "automatic",
         "newArchEnabled": true,
         "splash": {
@@ -15,7 +15,7 @@
         "ios": {
             "supportsTablet": true,
             "bundleIdentifier": "com.water.reminder",
-            "icon": "./assets/icon.jpeg",
+            "icon": "./assets/icon.png",
             "infoPlist": {
                 "NSHealthShareUsageDescription": "Water Reminder needs access to Apple Health to sync your water intake data and provide you with accurate hydration insights.",
                 "NSHealthUpdateUsageDescription": "Water Reminder writes your water intake to Apple Health so you can track all your health data in one place."
@@ -23,7 +23,7 @@
         },
         "android": {
             "adaptiveIcon": {
-                "foregroundImage": "./assets/icon.jpeg",
+                "foregroundImage": "./assets/icon-foreground.png",
                 "backgroundColor": "#0A2A3A"
             },
             "package": "com.water.reminder",
@@ -40,7 +40,7 @@
             [
                 "expo-notifications",
                 {
-                    "icon": "./assets/icon.jpeg",
+                    "icon": "./assets/icon.png",
                     "color": "#4FC3F7",
                     "sounds": [],
                     "androidMode": "default",

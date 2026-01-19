@@ -14,3 +14,4 @@
 export { SuSayac } from './SuSayac';
 export { AyarlarPaneli } from './AyarlarPaneli';
 export { IlerlemeCubugu } from './IlerlemeCubugu';
+export { default as StreakShareCard } from './StreakShareCard';
