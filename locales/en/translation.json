@@ -255,7 +255,13 @@
         "newGoalMessage": "Your new goal: {goal} ml",
         "selectGoal": "Daily Water Goal",
         "selectInterval": "Select Reminder Interval",
-        "smartInterval": "Smart Reminder Interval"
+        "smartInterval": "Smart Reminder Interval",
+        "legal": {
+            "title": "Legal",
+            "privacyPolicy": "Privacy Policy",
+            "termsOfUse": "Terms of Use",
+            "close": "Close"
+        }
     },
     "alerts": {
         "permissionRequired": "Permission Required",

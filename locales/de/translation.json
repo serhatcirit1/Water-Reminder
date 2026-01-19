@@ -255,7 +255,13 @@
         "newGoalMessage": "Dein neues Ziel: {goal} ml",
         "selectGoal": "Tägliches Wasserziel",
         "selectInterval": "Erinnerungsintervall wählen",
-        "smartInterval": "Intelligentes Erinnerungsintervall"
+        "smartInterval": "Intelligentes Erinnerungsintervall",
+        "legal": {
+            "title": "Rechtliches",
+            "privacyPolicy": "Datenschutzrichtlinie",
+            "termsOfUse": "Nutzungsbedingungen",
+            "close": "Schließen"
+        }
     },
     "alerts": {
         "permissionRequired": "Berechtigung erforderlich",

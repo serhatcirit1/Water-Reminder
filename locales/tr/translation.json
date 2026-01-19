@@ -250,12 +250,18 @@
         "permissionRequired": "İzin Gerekli",
         "permissionMessage": "Bildirim göndermek için izne ihtiyacımız var.",
         "notificationSent": "Bildirim Gönderildi",
-        "testNotificationSuccess": "Test bildirimi başarıyla gönderildi.",
+        "testNotificationSuccess": "Bildirim başarıyla gönderildi.",
         "goalUpdated": "Hedef Güncellendi",
         "newGoalMessage": "Yeni hedefiniz: {goal} ml",
         "selectGoal": "Günlük Su Hedefi",
-        "selectInterval": "Hatırlatma Aralığı Seçin",
-        "smartInterval": "Akıllı Hatırlatma Aralığı"
+        "selectInterval": "Hatırlatma Aralığı Seç",
+        "smartInterval": "Akıllı Hatırlatma Aralığı",
+        "legal": {
+            "title": "Yasal",
+            "privacyPolicy": "Gizlilik Politikası",
+            "termsOfUse": "Kullanım Koşulları",
+            "close": "Kapat"
+        }
     },
     "alerts": {
         "permissionRequired": "İzin Gerekli",

@@ -1,6 +1,6 @@
 # 💧 Su İçme Uygulaması - Özellik Listesi
 
-> Son Güncelleme: 20 Aralık 2025
+> Son Güncelleme: 19 Ocak 2026
 
 ---
 
@@ -83,19 +83,22 @@
 - [x] Splash screen
 - [x] App icon
 - [x] Gizlilik politikası
+- [x] Kullanım Koşulları (EULA)
+- [x] Çoklu dil desteği (TR, EN, ES, DE)
 
 ---
 
 ## 📋 KALAN ÖZELLİKLER (Zorluk Seviyesine Göre)
 
 ### ⭐⭐ Orta (2-4 saat)
-- [ ] **Export (CSV)** - Verileri dışa aktarma
+- [x] **Export (CSV/PDF)** - Verileri dışa aktarma (Premium)
 - [ ] **Özel Renkler** - Kullanıcının tema rengini seçmesi
 - [x] **Screenshots** - Store ekran görüntüleri hazırlama
+- [x] **İzin Açıklamaları** - app.json içinde izin açıklamaları (HealthKit, Konum, Bildirim)
 
 ### ⭐⭐⭐ Zor (4-8 saat)
 - [ ] **Siri/Shortcuts** - "Hey Siri, su içtim"
-- [ ] **Localization** - Çoklu dil desteği (EN, TR)
+- [x] **Localization** - Çoklu dil desteği (TR, EN, ES, DE) ✅
 - [ ] **Yedekleme** - iCloud/Google Drive'a kaydetme
 
 ### ⭐⭐⭐⭐ Çok Zor (1-2 gün)
@@ -184,10 +187,10 @@
 ## 📈 İLERLEME
 
 ```
-Tamamlanan: 50 özellik ✅
-Kalan (Mevcut): 12 özellik
+Tamamlanan: 55+ özellik ✅
+Kalan (Mevcut): 8 özellik
 Yeni Öneriler: 30+ özellik
-İlerleme: %81
+İlerleme: %87
 ```
 
 ---

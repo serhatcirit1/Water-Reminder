@@ -46,6 +46,7 @@ import { csvOlusturVePaylas } from '../exportUtils';
 import { aylikPdfOlusturVePaylas, haftalikPdfOlusturVePaylas } from '../pdfExport';
 import { useTranslation } from 'react-i18next';
 import { LANGUAGES, changeLanguage, getCurrentLanguage } from '../locales/i18n';
+import { getPrivacyPolicy, getTermsOfUse } from '../constants/LegalTexts';
 
 // --- COMPONENT ---
 export function AyarlarEkrani() {
@@ -90,6 +91,8 @@ export function AyarlarEkrani() {
     const [bioritimUyumaModalGoster, setBioritimUyumaModalGoster] = useState(false);
     const [premiumModalGoster, setPremiumModalGoster] = useState(false);
     const [dilModalGoster, setDilModalGoster] = useState(false);
+    const [gizlilikModalGoster, setGizlilikModalGoster] = useState(false);
+    const [kullanimModalGoster, setKullanimModalGoster] = useState(false);
 
     // Tema hook
     const { mod, renkler, modDegistir, otomatikMod, otomatikModDegistir } = useTema();
@@ -1056,10 +1059,21 @@ export function AyarlarEkrani() {
                         <Text style={styles.bilgiDeger}>Serhat Cirit</Text>
                     </View>
 
-                    <View style={styles.bilgiSatir}>
-                        <Text style={styles.bilgiEtiket}>{t('settings.privacyPolicy')}</Text>
-                        <Text style={styles.bilgiDeger}>📄 {t('settings.available')}</Text>
-                    </View>
+                    <TouchableOpacity
+                        style={[styles.bilgiSatir, { marginTop: 10 }]}
+                        onPress={() => setGizlilikModalGoster(true)}
+                    >
+                        <Text style={[styles.bilgiEtiket, { color: '#4FC3F7', textDecorationLine: 'underline' }]}>{t('settings.legal.privacyPolicy')}</Text>
+                        <Text style={styles.bilgiDeger}>📄</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={styles.bilgiSatir}
+                        onPress={() => setKullanimModalGoster(true)}
+                    >
+                        <Text style={[styles.bilgiEtiket, { color: '#4FC3F7', textDecorationLine: 'underline' }]}>{t('settings.legal.termsOfUse')}</Text>
+                        <Text style={styles.bilgiDeger}>⚖️</Text>
+                    </TouchableOpacity>
 
                     <TouchableOpacity
                         style={[styles.oneriButon, { marginTop: 15 }]}
@@ -1246,6 +1260,52 @@ export function AyarlarEkrani() {
                 }}
                 onClose={() => setBioritimUyumaModalGoster(false)}
             />
+
+            {/* Gizlilik Politikası Modal */}
+            <Modal
+                visible={gizlilikModalGoster}
+                animationType="slide"
+                presentationStyle="pageSheet"
+                onRequestClose={() => setGizlilikModalGoster(false)}
+            >
+                <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 16, borderBottomWidth: 1, borderBottomColor: '#eee', backgroundColor: '#f8f9fa' }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{t('settings.legal.privacyPolicy')}</Text>
+                        <TouchableOpacity onPress={() => setGizlilikModalGoster(false)}>
+                            <Text style={{ color: '#007AFF', fontSize: 16, fontWeight: '600' }}>{t('settings.legal.close')}</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <ScrollView style={{ flex: 1, padding: 16 }}>
+                        <Text style={{ fontSize: 14, lineHeight: 22, color: '#333' }}>
+                            {getPrivacyPolicy(currentLang)}
+                        </Text>
+                        <View style={{ height: 40 }} />
+                    </ScrollView>
+                </SafeAreaView>
+            </Modal>
+
+            {/* Kullanım Koşulları Modal */}
+            <Modal
+                visible={kullanimModalGoster}
+                animationType="slide"
+                presentationStyle="pageSheet"
+                onRequestClose={() => setKullanimModalGoster(false)}
+            >
+                <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 16, borderBottomWidth: 1, borderBottomColor: '#eee', backgroundColor: '#f8f9fa' }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{t('settings.legal.termsOfUse')}</Text>
+                        <TouchableOpacity onPress={() => setKullanimModalGoster(false)}>
+                            <Text style={{ color: '#007AFF', fontSize: 16, fontWeight: '600' }}>{t('settings.legal.close')}</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <ScrollView style={{ flex: 1, padding: 16 }}>
+                        <Text style={{ fontSize: 14, lineHeight: 22, color: '#333' }}>
+                            {getTermsOfUse(currentLang)}
+                        </Text>
+                        <View style={{ height: 40 }} />
+                    </ScrollView>
+                </SafeAreaView>
+            </Modal>
         </SafeAreaView >
     );
 }

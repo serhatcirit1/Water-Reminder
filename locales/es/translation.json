@@ -255,7 +255,13 @@
         "newGoalMessage": "Tu nuevo objetivo: {goal} ml",
         "selectGoal": "Objetivo Diario de Agua",
         "selectInterval": "Seleccionar Intervalo de Recordatorio",
-        "smartInterval": "Intervalo de Recordatorio Inteligente"
+        "smartInterval": "Intervalo de Recordatorio Inteligente",
+        "legal": {
+            "title": "Legal",
+            "privacyPolicy": "Política de Privacidad",
+            "termsOfUse": "Términos de Uso",
+            "close": "Cerrar"
+        }
     },
     "alerts": {
         "permissionRequired": "Permiso Requerido",
