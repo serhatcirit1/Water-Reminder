@@ -32,7 +32,8 @@ import {
     AIHedefOnerisi,
     aiAyarlariniYukle,
     suIcmeSaatiKaydet as aiSuIcmeSaatiKaydet,
-    bildirimTepkisiKaydet
+    bildirimTepkisiKaydet,
+    notifyInsightListeners
 } from '../aiUtils';
 import { usePremium } from '../PremiumContext';
 import { tumRozetleriKontrolEt } from '../rozetler';
@@ -272,6 +273,9 @@ export function AnaSayfaEkrani() {
         kazanilanRozetler.forEach(rozet => {
             Alert.alert(t('stats.badgeEarned') + ' 🏅', `${t(rozet.isim)}: ${t(rozet.aciklama)}`);
         });
+
+        // AI İçgörü kartını güncelle
+        notifyInsightListeners();
     };
 
     // Bugünü geri al fonksiyonu
@@ -310,6 +314,9 @@ export function AnaSayfaEkrani() {
         const gecmis = gecmisStr ? JSON.parse(gecmisStr) : {};
         gecmis[bugunKey] = { ml: yeniToplamMl, miktar: yeniMiktar };
         await AsyncStorage.setItem(GECMIS_KEY, JSON.stringify(gecmis));
+
+        // AI İçgörü kartını güncelle
+        notifyInsightListeners();
     };
 
     const yuzde = (toplamMl / gunlukHedef) * 100; // Sınırsız yüzde
@@ -604,7 +611,11 @@ export function AnaSayfaEkrani() {
                 </View>
 
                 {/* 💡 AI İçgörü Kartı */}
-                <InsightsCard />
+                <InsightsCard
+                    bugunIcilen={toplamMl}
+                    gunlukHedef={gunlukHedef}
+                    onPremiumPress={() => setPremiumModalGoster(true)}
+                />
 
                 {/* 📈 Haftalık Tahmin Kartı */}
                 <ForecastCard

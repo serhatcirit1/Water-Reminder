@@ -472,13 +472,440 @@ async function enVerimliGun(): Promise<{ gun: string; ortalama: number } | null>
     }
 }
 
+// ============================================
+// YENİ İÇGÖRÜ FONKSİYONLARI
+// ============================================
+
+/**
+ * Event listener sistemi - gerçek zamanlı güncelleme için
+ */
+type InsightListener = () => void;
+const insightListeners: InsightListener[] = [];
+
+export function addInsightListener(listener: InsightListener): () => void {
+    insightListeners.push(listener);
+    return () => {
+        const index = insightListeners.indexOf(listener);
+        if (index > -1) insightListeners.splice(index, 1);
+    };
+}
+
+export function notifyInsightListeners(): void {
+    insightListeners.forEach(listener => listener());
+}
+
+/**
+ * Streak Analizi - Mevcut seri vs rekor
+ */
+async function streakAnalizi(): Promise<{ mesaj: string; icon: string; oncelik: 'yuksek' | 'orta' | 'dusuk' } | null> {
+    try {
+        const streakStr = await AsyncStorage.getItem('@streak');
+        const enUzunStreakStr = await AsyncStorage.getItem('@en_uzun_streak');
+
+        const streak = streakStr ? parseInt(streakStr, 10) : 0;
+        const enUzunStreak = enUzunStreakStr ? parseInt(enUzunStreakStr, 10) : 0;
+
+        if (streak <= 0) return null;
+
+        // Rekora yaklaşıyor mu?
+        if (enUzunStreak > 0 && streak >= enUzunStreak - 2 && streak < enUzunStreak) {
+            return {
+                mesaj: i18n.t('ai.insights.streak_close', { current: streak, record: enUzunStreak, remaining: enUzunStreak - streak }),
+                icon: '🔥',
+                oncelik: 'yuksek'
+            };
+        }
+
+        // Yeni rekor kırdı mı?
+        if (streak > enUzunStreak && streak > 3) {
+            return {
+                mesaj: i18n.t('ai.insights.streak_new_record', { streak }),
+                icon: '🏆',
+                oncelik: 'yuksek'
+            };
+        }
+
+        // Milestone'lara yakın mı?
+        const milestones = [7, 14, 30, 60, 100];
+        for (const milestone of milestones) {
+            if (streak >= milestone - 2 && streak < milestone) {
+                return {
+                    mesaj: i18n.t('ai.insights.streak_milestone', { current: streak, target: milestone, remaining: milestone - streak }),
+                    icon: '🎯',
+                    oncelik: 'orta'
+                };
+            }
+        }
+
+        return null;
+    } catch {
+        return null;
+    }
+}
+
+/**
+ * Sabah Rutini Analizi
+ */
+async function sabahRutiniAnalizi(): Promise<{ mesaj: string; icon: string; oncelik: 'yuksek' | 'orta' | 'dusuk' } | null> {
+    try {
+        const kayitliStr = await AsyncStorage.getItem(AI_SU_ICME_SAATLERI_KEY);
+        if (!kayitliStr) return null;
+
+        const kayitlar: { saat: number; gun: number; tarih: string }[] = JSON.parse(kayitliStr);
+        if (!Array.isArray(kayitlar) || kayitlar.length < 14) return null;
+
+        // Son 7 günü analiz et
+        const simdi = Date.now();
+        const yediGunOnce = simdi - 7 * 24 * 60 * 60 * 1000;
+        const sonYediGun = kayitlar.filter(k => k.tarih && new Date(k.tarih).getTime() > yediGunOnce);
+
+        // Her gün için sabah 9'dan önce su içilip içilmediğini kontrol et
+        const gunler = new Set<string>();
+        const sabahIcilenGunler = new Set<string>();
+
+        sonYediGun.forEach(k => {
+            const tarih = k.tarih.split('T')[0];
+            gunler.add(tarih);
+            if (k.saat < 9) {
+                sabahIcilenGunler.add(tarih);
+            }
+        });
+
+        if (gunler.size < 5) return null;
+
+        const sabahOrani = (sabahIcilenGunler.size / gunler.size) * 100;
+
+        if (sabahOrani < 30) {
+            return {
+                mesaj: i18n.t('ai.insights.morning_low', { percent: Math.round(sabahOrani) }),
+                icon: '🌅',
+                oncelik: 'orta'
+            };
+        } else if (sabahOrani >= 80) {
+            return {
+                mesaj: i18n.t('ai.insights.morning_great', { percent: Math.round(sabahOrani) }),
+                icon: '☀️',
+                oncelik: 'dusuk'
+            };
+        }
+
+        return null;
+    } catch {
+        return null;
+    }
+}
+
+/**
+ * En Aktif Saat Analizi
+ */
+async function enAktifSaatAnalizi(): Promise<{ mesaj: string; icon: string; oncelik: 'yuksek' | 'orta' | 'dusuk' } | null> {
+    try {
+        const kayitliStr = await AsyncStorage.getItem(AI_SU_ICME_SAATLERI_KEY);
+        if (!kayitliStr) return null;
+
+        const kayitlar: { saat: number; gun: number }[] = JSON.parse(kayitliStr);
+        if (!Array.isArray(kayitlar) || kayitlar.length < 30) return null;
+
+        // Saat bazında sayım
+        const saatSayim: { [key: number]: number } = {};
+        for (let i = 6; i <= 22; i++) saatSayim[i] = 0;
+
+        kayitlar.forEach(k => {
+            if (k.saat >= 6 && k.saat <= 22) {
+                saatSayim[k.saat]++;
+            }
+        });
+
+        // En aktif saati bul
+        let maxSaat = 0;
+        let maxDeger = 0;
+        Object.entries(saatSayim).forEach(([saat, deger]) => {
+            if (deger > maxDeger) {
+                maxDeger = deger;
+                maxSaat = parseInt(saat);
+            }
+        });
+
+        if (maxDeger < 5) return null;
+
+        return {
+            mesaj: i18n.t('ai.insights.active_hour', { hour: maxSaat }),
+            icon: '⏰',
+            oncelik: 'dusuk'
+        };
+    } catch {
+        return null;
+    }
+}
+
+/**
+ * Haftalık Hedef İlerlemesi
+ */
+async function haftalikHedefIlerlemesi(gunlukHedef: number): Promise<{ mesaj: string; icon: string; oncelik: 'yuksek' | 'orta' | 'dusuk' } | null> {
+    try {
+        const gecmisStr = await AsyncStorage.getItem(GECMIS_KEY);
+        if (!gecmisStr) return null;
+
+        const gecmis = JSON.parse(gecmisStr);
+        const bugun = new Date();
+        const haftaninGunu = bugun.getDay(); // 0=Pazar
+
+        // Bu haftaki tüketimi hesapla
+        let haftaToplam = 0;
+        let gunSayisi = 0;
+
+        for (let i = 0; i <= haftaninGunu; i++) {
+            const tarih = new Date(bugun);
+            tarih.setDate(tarih.getDate() - i);
+            const tarihStr = tarih.toISOString().split('T')[0];
+
+            const veri = gecmis[tarihStr];
+            if (veri) {
+                const ml = typeof veri === 'object' ? veri.ml : veri * 250;
+                haftaToplam += ml;
+                gunSayisi++;
+            }
+        }
+
+        if (gunSayisi < 1) return null;
+
+        const haftalikHedef = gunlukHedef * 7;
+        const ilerlemeYuzde = Math.round((haftaToplam / haftalikHedef) * 100);
+        const kalanGun = 7 - haftaninGunu;
+
+        // Final sprint - Cuma, Cumartesi, Pazar
+        if (haftaninGunu >= 5 && ilerlemeYuzde < 70) {
+            const kalanMl = haftalikHedef - haftaToplam;
+            return {
+                mesaj: i18n.t('ai.insights.weekly_sprint', { percent: ilerlemeYuzde, remaining: Math.round(kalanMl / 1000) }),
+                icon: '🏃',
+                oncelik: 'yuksek'
+            };
+        }
+
+        // İyi gidiyor
+        if (ilerlemeYuzde >= 80 && haftaninGunu >= 4) {
+            return {
+                mesaj: i18n.t('ai.insights.weekly_great', { percent: ilerlemeYuzde }),
+                icon: '🌟',
+                oncelik: 'dusuk'
+            };
+        }
+
+        return null;
+    } catch {
+        return null;
+    }
+}
+
+/**
+ * Kişisel Rekor Yakınlığı
+ */
+async function kisiselRekorYakinligi(bugunIcilen: number): Promise<{ mesaj: string; icon: string; oncelik: 'yuksek' | 'orta' | 'dusuk' } | null> {
+    try {
+        const gecmisStr = await AsyncStorage.getItem(GECMIS_KEY);
+        if (!gecmisStr) return null;
+
+        const gecmis = JSON.parse(gecmisStr);
+        let maxMl = 0;
+
+        // Tüm geçmişte en yüksek günü bul
+        Object.values(gecmis).forEach((veri: any) => {
+            const ml = typeof veri === 'object' ? veri.ml : veri * 250;
+            if (ml > maxMl) maxMl = ml;
+        });
+
+        if (maxMl < 1000) return null;
+
+        // Bugün rekora yakın mı?
+        const fark = maxMl - bugunIcilen;
+
+        if (fark > 0 && fark <= 500 && bugunIcilen >= maxMl * 0.8) {
+            return {
+                mesaj: i18n.t('ai.insights.record_close', { remaining: fark, record: maxMl }),
+                icon: '🎖️',
+                oncelik: 'yuksek'
+            };
+        }
+
+        // Bugün yeni rekor kırdı mı?
+        if (bugunIcilen > maxMl && bugunIcilen > 1500) {
+            return {
+                mesaj: i18n.t('ai.insights.record_broken', { amount: bugunIcilen }),
+                icon: '🏆',
+                oncelik: 'yuksek'
+            };
+        }
+
+        return null;
+    } catch {
+        return null;
+    }
+}
+
+/**
+ * Ay Karşılaştırması
+ */
+async function ayKarsilastirmasi(): Promise<{ mesaj: string; icon: string; oncelik: 'yuksek' | 'orta' | 'dusuk' } | null> {
+    try {
+        const gecmisStr = await AsyncStorage.getItem(GECMIS_KEY);
+        if (!gecmisStr) return null;
+
+        const gecmis = JSON.parse(gecmisStr);
+        const bugun = new Date();
+        const buAy = bugun.getMonth();
+        const buYil = bugun.getFullYear();
+
+        let buAyToplam = 0;
+        let buAyGun = 0;
+        let gecenAyToplam = 0;
+        let gecenAyGun = 0;
+
+        Object.entries(gecmis).forEach(([tarihStr, veri]: [string, any]) => {
+            const tarih = new Date(tarihStr);
+            const ml = typeof veri === 'object' ? veri.ml : veri * 250;
+
+            if (tarih.getMonth() === buAy && tarih.getFullYear() === buYil) {
+                buAyToplam += ml;
+                buAyGun++;
+            } else if (
+                (tarih.getMonth() === buAy - 1 && tarih.getFullYear() === buYil) ||
+                (buAy === 0 && tarih.getMonth() === 11 && tarih.getFullYear() === buYil - 1)
+            ) {
+                gecenAyToplam += ml;
+                gecenAyGun++;
+            }
+        });
+
+        if (buAyGun < 5 || gecenAyGun < 10) return null;
+
+        const buAyOrt = buAyToplam / buAyGun;
+        const gecenAyOrt = gecenAyToplam / gecenAyGun;
+        const farkYuzde = Math.round(((buAyOrt - gecenAyOrt) / gecenAyOrt) * 100);
+
+        if (farkYuzde >= 10) {
+            return {
+                mesaj: i18n.t('ai.insights.month_better', { percent: farkYuzde }),
+                icon: '📈',
+                oncelik: 'dusuk'
+            };
+        } else if (farkYuzde <= -15) {
+            return {
+                mesaj: i18n.t('ai.insights.month_worse', { percent: Math.abs(farkYuzde) }),
+                icon: '📉',
+                oncelik: 'orta'
+            };
+        }
+
+        return null;
+    } catch {
+        return null;
+    }
+}
+
+/**
+ * Bugünkü İlerleme Durumu
+ */
+function bugunIlerleme(bugunIcilen: number, gunlukHedef: number): { mesaj: string; icon: string; oncelik: 'yuksek' | 'orta' | 'dusuk' } | null {
+    const saat = new Date().getHours();
+    const yuzde = Math.round((bugunIcilen / gunlukHedef) * 100);
+
+    // Öğlenden sonra ve hedefin yarısına ulaşılmamış
+    if (saat >= 14 && saat < 18 && yuzde < 40) {
+        return {
+            mesaj: i18n.t('ai.insights.today_behind', { percent: yuzde }),
+            icon: '⚠️',
+            oncelik: 'yuksek'
+        };
+    }
+
+    // Akşam ve hedef tamamlanmak üzere
+    if (saat >= 18 && yuzde >= 80 && yuzde < 100) {
+        const kalanMl = gunlukHedef - bugunIcilen;
+        return {
+            mesaj: i18n.t('ai.insights.today_almost', { remaining: kalanMl }),
+            icon: '💪',
+            oncelik: 'orta'
+        };
+    }
+
+    // Hedef aşıldı
+    if (yuzde >= 120) {
+        return {
+            mesaj: i18n.t('ai.insights.today_exceeded', { percent: yuzde }),
+            icon: '🎉',
+            oncelik: 'dusuk'
+        };
+    }
+
+    return null;
+}
+
 /**
  * Ana fonksiyon: Tüm içgörüleri üret
+ * @param bugunIcilen - Bugün içilen su miktarı (ml) - gerçek zamanlı için
+ * @param gunlukHedef - Günlük hedef (ml) - gerçek zamanlı için
  */
-export async function icgorulerUret(): Promise<AIIcgoru[]> {
+export async function icgorulerUret(bugunIcilen: number = 0, gunlukHedef: number = 2500): Promise<AIIcgoru[]> {
     const icgoruler: AIIcgoru[] = [];
 
-    // 1. En az içilen saat aralığı
+    // ============================================
+    // YÜKSEK ÖNCELİKLİ İÇGÖRÜLER (Aksiyon gerektirenler)
+    // ============================================
+
+    // 1. Bugünkü ilerleme durumu (gerçek zamanlı)
+    const bugunDurum = bugunIlerleme(bugunIcilen, gunlukHedef);
+    if (bugunDurum) {
+        icgoruler.push({
+            id: 'bugun_ilerleme',
+            mesaj: bugunDurum.mesaj,
+            icon: bugunDurum.icon,
+            oncelik: bugunDurum.oncelik,
+            kategori: 'performans'
+        });
+    }
+
+    // 2. Kişisel rekor yakınlığı (gerçek zamanlı)
+    const rekor = await kisiselRekorYakinligi(bugunIcilen);
+    if (rekor) {
+        icgoruler.push({
+            id: 'rekor_yakinlik',
+            mesaj: rekor.mesaj,
+            icon: rekor.icon,
+            oncelik: rekor.oncelik,
+            kategori: 'performans'
+        });
+    }
+
+    // 3. Streak analizi
+    const streak = await streakAnalizi();
+    if (streak) {
+        icgoruler.push({
+            id: 'streak_analiz',
+            mesaj: streak.mesaj,
+            icon: streak.icon,
+            oncelik: streak.oncelik,
+            kategori: 'performans'
+        });
+    }
+
+    // 4. Haftalık hedef ilerlemesi
+    const haftalik = await haftalikHedefIlerlemesi(gunlukHedef);
+    if (haftalik) {
+        icgoruler.push({
+            id: 'haftalik_ilerleme',
+            mesaj: haftalik.mesaj,
+            icon: haftalik.icon,
+            oncelik: haftalik.oncelik,
+            kategori: 'performans'
+        });
+    }
+
+    // ============================================
+    // ORTA ÖNCELİKLİ İÇGÖRÜLER (Farkındalık)
+    // ============================================
+
+    // 5. En az içilen saat aralığı
     const saatAnalizi = await enAzIcilenSaatAraligi();
     if (saatAnalizi) {
         icgoruler.push({
@@ -490,7 +917,7 @@ export async function icgorulerUret(): Promise<AIIcgoru[]> {
         });
     }
 
-    // 2. Hafta sonu karşılaştırması
+    // 6. Hafta sonu karşılaştırması
     const haftaSonu = await haftaSonuKarsilastirmasi();
     if (haftaSonu && haftaSonu.dusukMu) {
         icgoruler.push({
@@ -502,7 +929,35 @@ export async function icgorulerUret(): Promise<AIIcgoru[]> {
         });
     }
 
-    // 3. En verimli gün
+    // 7. Sabah rutini analizi
+    const sabah = await sabahRutiniAnalizi();
+    if (sabah) {
+        icgoruler.push({
+            id: 'sabah_rutini',
+            mesaj: sabah.mesaj,
+            icon: sabah.icon,
+            oncelik: sabah.oncelik,
+            kategori: 'zaman'
+        });
+    }
+
+    // 8. Ay karşılaştırması
+    const ay = await ayKarsilastirmasi();
+    if (ay) {
+        icgoruler.push({
+            id: 'ay_karsilastirma',
+            mesaj: ay.mesaj,
+            icon: ay.icon,
+            oncelik: ay.oncelik,
+            kategori: 'performans'
+        });
+    }
+
+    // ============================================
+    // DÜŞÜK ÖNCELİKLİ İÇGÖRÜLER (Bilgi)
+    // ============================================
+
+    // 9. En verimli gün
     const verimliGun = await enVerimliGun();
     if (verimliGun) {
         icgoruler.push({
@@ -514,10 +969,21 @@ export async function icgorulerUret(): Promise<AIIcgoru[]> {
         });
     }
 
-    // 4. Trend analizi
+    // 10. En aktif saat
+    const aktifSaat = await enAktifSaatAnalizi();
+    if (aktifSaat) {
+        icgoruler.push({
+            id: 'aktif_saat',
+            mesaj: aktifSaat.mesaj,
+            icon: aktifSaat.icon,
+            oncelik: aktifSaat.oncelik,
+            kategori: 'zaman'
+        });
+    }
+
+    // 11. Trend analizi
     const gecmis = await gecmisOrtalama();
     if (gecmis.gunSayisi >= 5) {
-        // Son 7 günün verilerini al
         try {
             const gecmisStr = await AsyncStorage.getItem(GECMIS_KEY);
             if (gecmisStr) {
@@ -558,7 +1024,8 @@ export async function icgorulerUret(): Promise<AIIcgoru[]> {
         return oncelikSira[a.oncelik] - oncelikSira[b.oncelik];
     });
 
-    return icgoruler;
+    // En fazla 5 içgörü döndür (çok fazla olmasın)
+    return icgoruler.slice(0, 5);
 }
 
 // ============================================
