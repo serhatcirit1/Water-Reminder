@@ -232,7 +232,7 @@ export async function aiAyarlariniKaydet(ayarlar: Partial<AIAyarlari>): Promise<
  */
 export function trendHesapla(veriler: number[]): { egim: number; yorum: string } {
     if (veriler.length < 2) {
-        return { egim: 0, yorum: 'Yeterli veri yok' };
+        return { egim: 0, yorum: i18n.t('ai.trend.insufficient') };
     }
 
     const n = veriler.length;
@@ -432,7 +432,7 @@ async function enVerimliGun(): Promise<{ gun: string; ortalama: number } | null>
             0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: []
         };
 
-        const gunAdlari = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
+        const gunAdlari = getLocalizedDayNames();
 
         // Son 60 günü analiz et
         const bugun = new Date();
@@ -575,7 +575,18 @@ export interface AITahmin {
     mevcutToplam: number;
 }
 
-const GUN_ADLARI = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
+// Helper fonksiyon: Lokalize gün isimleri
+function getLocalizedDayNames(): string[] {
+    return [
+        i18n.t('common.days.sunday'),
+        i18n.t('common.days.monday'),
+        i18n.t('common.days.tuesday'),
+        i18n.t('common.days.wednesday'),
+        i18n.t('common.days.thursday'),
+        i18n.t('common.days.friday'),
+        i18n.t('common.days.saturday')
+    ];
+}
 
 /**
  * Haftalık hedef tamamlama tahmini hesapla
@@ -635,6 +646,8 @@ export async function haftalikTahminHesapla(
     let tamamlanmaGunu: string | null = null;
     let mesaj = '';
     let icon = '📊';
+
+    const GUN_ADLARI = getLocalizedDayNames();
 
     if (haftaBasiToplam >= haftalikHedef) {
         // Zaten tamamlandı
@@ -892,7 +905,7 @@ export async function sonrakiOptimalSaat(): Promise<{ saat: number; aciklama: st
         if (saat > suankiSaat && !optSaatler.kacinilacakSaatler.includes(saat)) {
             return {
                 saat,
-                aciklama: `${saat}:00 - En çok tepki verdiğin saat`
+                aciklama: i18n.t('ai.adaptive.best_hour', { hour: saat })
             };
         }
     }
@@ -901,7 +914,7 @@ export async function sonrakiOptimalSaat(): Promise<{ saat: number; aciklama: st
     const yarinIlkSaat = optSaatler.enIyiSaatler.sort((a, b) => a - b)[0] || 9;
     return {
         saat: yarinIlkSaat,
-        aciklama: `Yarın ${yarinIlkSaat}:00 - Optimum hatırlatma`
+        aciklama: i18n.t('ai.adaptive.tomorrow_optimal', { hour: yarinIlkSaat })
     };
 }
 
@@ -944,13 +957,13 @@ export async function adaptifOgrenimDurumu(): Promise<{
 
         let mesaj = '';
         if (ogrenmeYuzdesi < 30) {
-            mesaj = '🎯 AI hatırlatma zamanlarını öğreniyor...';
+            mesaj = i18n.t('ai.adaptive.learning');
         } else if (tepkiOrani >= 70) {
-            mesaj = '🎉 Harika! Bildirimler sana uygun zamanlarda geliyor.';
+            mesaj = i18n.t('ai.adaptive.great');
         } else if (tepkiOrani >= 40) {
-            mesaj = '📊 AI senin için en iyi saatleri buluyor.';
+            mesaj = i18n.t('ai.adaptive.finding');
         } else {
-            mesaj = '⚙️ Bildirim zamanları optimize ediliyor...';
+            mesaj = i18n.t('ai.adaptive.optimizing');
         }
 
         return { toplamTepki, tepkiOrani, ogrenmeYuzdesi, mesaj };

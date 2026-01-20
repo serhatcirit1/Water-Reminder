@@ -523,6 +523,14 @@
             "next_week_good": "⬆️ Gelecek hafta hedefe yaklaşabilirsin. Biraz daha gayret! (Tahmini: %{{percent}})",
             "next_week_hard": "⚠️ Mevcut tempoda gelecek hafta zor olabilir. Günlük {{amount}}ml daha fazla içmelisin.",
             "next_week_insufficient": "Gelecek hafta için yeterli veri yok."
+        },
+        "adaptive": {
+            "best_hour": "{{hour}}:00 - En çok tepki verdiğin saat",
+            "tomorrow_optimal": "Yarın {{hour}}:00 - Optimum hatırlatma",
+            "learning": "🎯 AI hatırlatma zamanlarını öğreniyor...",
+            "great": "🎉 Harika! Bildirimler sana uygun zamanlarda geliyor.",
+            "finding": "📊 AI senin için en iyi saatleri buluyor.",
+            "optimizing": "⚙️ Bildirim zamanları optimize ediliyor..."
         }
     },
     "pdf": {

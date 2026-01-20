@@ -523,6 +523,14 @@
             "next_week_good": "⬆️ You can reach the goal next week. A little more effort! (Est: %{{percent}})",
             "next_week_hard": "⚠️ Next week might be tough at this pace. You should drink {{amount}}ml more daily.",
             "next_week_insufficient": "Not enough data for next week."
+        },
+        "adaptive": {
+            "best_hour": "{{hour}}:00 - Your most responsive hour",
+            "tomorrow_optimal": "Tomorrow {{hour}}:00 - Optimal reminder",
+            "learning": "🎯 AI is learning your reminder times...",
+            "great": "🎉 Great! Notifications are coming at the right times for you.",
+            "finding": "📊 AI is finding the best times for you.",
+            "optimizing": "⚙️ Optimizing notification times..."
         }
     },
     "pdf": {

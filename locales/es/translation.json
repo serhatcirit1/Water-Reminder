@@ -522,7 +522,15 @@
             "next_week_great": "📈 ¡Puedes completar fácilmente el objetivo de la próxima semana! (Est: {{amount}}ml)",
             "next_week_good": "⬆️ Puedes alcanzar el objetivo la próxima semana. ¡Un poco más de esfuerzo! (Est: {{percent}}%)",
             "next_week_hard": "⚠️ La próxima semana podría ser difícil a este ritmo. Deberías beber {{amount}}ml más al día.",
-            "next_week_insufficient": "Datos insuficientes para la próxima semana."
+            "next_week_insufficient": "No hay suficientes datos para la próxima semana."
+        },
+        "adaptive": {
+            "best_hour": "{{hour}}:00 - Tu hora más receptiva",
+            "tomorrow_optimal": "Mañana {{hour}}:00 - Recordatorio óptimo",
+            "learning": "🎯 La IA está aprendiendo tus horarios de recordatorio...",
+            "great": "🎉 ¡Genial! Las notificaciones llegan en los momentos adecuados para ti.",
+            "finding": "📊 La IA está encontrando los mejores horarios para ti.",
+            "optimizing": "⚙️ Optimizando los horarios de notificación..."
         }
     },
     "pdf": {

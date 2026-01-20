@@ -523,6 +523,14 @@
             "next_week_good": "⬆️ 来週は目標に近づけます。もう少し頑張って！（推定: {{percent}}%）",
             "next_week_hard": "⚠️ このペースでは来週は厳しいかも。1日{{amount}}ml多く飲みましょう。",
             "next_week_insufficient": "来週のデータが不足しています。"
+        },
+        "adaptive": {
+            "best_hour": "{{hour}}:00 - 最も反応が良い時間",
+            "tomorrow_optimal": "明日 {{hour}}:00 - 最適なリマインダー",
+            "learning": "🎯 AIがリマインダー時間を学習中...",
+            "great": "🎉 素晴らしい！通知が最適な時間に届いています。",
+            "finding": "📊 AIがあなたに最適な時間を探しています。",
+            "optimizing": "⚙️ 通知時間を最適化中..."
         }
     },
     "pdf": {
@@ -541,7 +549,7 @@
         "weekly_trend": "週間トレンド",
         "month_highlights": "今月のハイライト",
         "based_on_avg": "平均に基づく",
-        "generated_by": "このレポートはSerhat Ciritが開発したSu Takip Premium用に生成されました。",
+        "generated_by": "このレポートはWater Premium用に生成されました。",
         "premium_certified": "🛡️ プレミアム認定レポート",
         "created_at": "作成日",
         "week": "週",

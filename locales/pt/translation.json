@@ -523,6 +523,14 @@
             "next_week_good": "⬆️ Você pode se aproximar da meta na próxima semana. Um pouco mais de esforço! (Estimativa: {{percent}}%)",
             "next_week_hard": "⚠️ A próxima semana pode ser difícil nesse ritmo. Você deveria beber {{amount}}ml a mais por dia.",
             "next_week_insufficient": "Dados insuficientes para a próxima semana."
+        },
+        "adaptive": {
+            "best_hour": "{{hour}}:00 - Sua hora mais responsiva",
+            "tomorrow_optimal": "Amanhã {{hour}}:00 - Lembrete ideal",
+            "learning": "🎯 A IA está aprendendo seus horários de lembrete...",
+            "great": "🎉 Ótimo! As notificações estão chegando nos momentos certos para você.",
+            "finding": "📊 A IA está encontrando os melhores horários para você.",
+            "optimizing": "⚙️ Otimizando horários de notificação..."
         }
     },
     "pdf": {
@@ -541,7 +549,7 @@
         "weekly_trend": "Tendência Semanal",
         "month_highlights": "Destaques do Mês",
         "based_on_avg": "Baseado na média",
-        "generated_by": "Este relatório foi gerado para Su Takip Premium desenvolvido por Serhat Cirit.",
+        "generated_by": "Este relatório foi gerado por Water Premium.",
         "premium_certified": "🛡️ Relatório Certificado Premium",
         "created_at": "Criado em",
         "week": "SEMANA",

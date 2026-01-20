@@ -523,6 +523,14 @@
             "next_week_good": "⬆️ 다음 주에 목표에 가까워질 수 있습니다. 조금만 더 노력! (예상: {{percent}}%)",
             "next_week_hard": "⚠️ 이 속도로는 다음 주가 어려울 수 있습니다. 하루에 {{amount}}ml 더 마셔야 합니다.",
             "next_week_insufficient": "다음 주에 대한 데이터가 부족합니다."
+        },
+        "adaptive": {
+            "best_hour": "{{hour}}:00 - 가장 반응이 좋은 시간",
+            "tomorrow_optimal": "내일 {{hour}}:00 - 최적의 알림",
+            "learning": "🎯 AI가 알림 시간을 학습 중...",
+            "great": "🎉 좋아요! 알림이 당신에게 맞는 시간에 오고 있습니다.",
+            "finding": "📊 AI가 당신에게 가장 좋은 시간을 찾고 있습니다.",
+            "optimizing": "⚙️ 알림 시간 최적화 중..."
         }
     },
     "pdf": {
@@ -541,7 +549,7 @@
         "weekly_trend": "주간 트렌드",
         "month_highlights": "이 달의 하이라이트",
         "based_on_avg": "평균 기준",
-        "generated_by": "이 리포트는 Serhat Cirit가 개발한 Su Takip Premium용으로 생성되었습니다.",
+        "generated_by": "이 리포트는 Water Premium용으로 생성되었습니다.",
         "premium_certified": "🛡️ 프리미엄 인증 리포트",
         "created_at": "생성일",
         "week": "주",
