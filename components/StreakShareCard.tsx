@@ -91,57 +91,58 @@ export default function StreakShareCard({
                 <View style={styles.previewContainer}>
                     <View ref={cardRef} collapsable={false} style={styles.cardWrapper}>
                         <LinearGradient
-                            colors={['#0D47A1', '#1565C0', '#42A5F5']}
+                            colors={['#4527A0', '#1565C0', '#0097A7']}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 1 }}
                             style={styles.card}
                         >
-                            {/* App Logo / Branding */}
-                            <View style={styles.branding}>
-                                <Text style={styles.brandingText}>💧 Water Reminder</Text>
-                            </View>
-
-                            {/* Main Streak Display */}
-                            <View style={styles.streakContainer}>
-                                <Text style={styles.fireEmoji}>🔥</Text>
-                                <Text style={styles.streakNumber}>{streak}</Text>
-                                <Text style={styles.streakLabel}>{t('share.dayStreak')}</Text>
-                            </View>
-
-                            {/* Motivational Message */}
-                            <Text style={styles.motivationText}>{motivasyonMesaji}</Text>
-
-                            {/* Stats Grid */}
-                            <View style={styles.statsGrid}>
-                                <View style={styles.statItem}>
-                                    <Text style={styles.statEmoji}>🎯</Text>
-                                    <Text style={styles.statValue}>{yuzde}%</Text>
-                                    <Text style={styles.statLabel}>{t('share.todayProgress')}</Text>
+                            {/* Üst Kısım: Bugün İçilen Su (Öne Çıkan) */}
+                            <View style={styles.heroSection}>
+                                <Text style={styles.heroEmoji}>💧</Text>
+                                <Text style={styles.heroTitle}>{t('share.todayIDrank')}</Text>
+                                <View style={styles.amountContainer}>
+                                    <Text style={styles.heroAmount}>
+                                        {(bugunIcilen / 1000).toFixed(1)}
+                                    </Text>
+                                    <Text style={styles.heroUnit}>{t('common.liters')}</Text>
                                 </View>
-                                <View style={styles.statDivider} />
-                                <View style={styles.statItem}>
-                                    <Text style={styles.statEmoji}>⭐</Text>
-                                    <Text style={styles.statValue}>{seviye}</Text>
-                                    <Text style={styles.statLabel}>{t('share.level')}</Text>
+                                <View style={styles.progressBarContainer}>
+                                    <View style={[styles.progressBarFill, { width: `${yuzde}%` }]} />
                                 </View>
-                                <View style={styles.statDivider} />
-                                <View style={styles.statItem}>
-                                    <Text style={styles.statEmoji}>🏅</Text>
-                                    <Text style={styles.statValue}>{rozetSayisi}</Text>
-                                    <Text style={styles.statLabel}>{t('share.badges')}</Text>
+                                <Text style={styles.heroPercentage}>%{yuzde} {t('share.completed')}</Text>
+                            </View>
+
+                            {/* Orta Kısım: İstatistikler Grid */}
+                            <View style={styles.statsContainer}>
+                                <View style={styles.statBox}>
+                                    <Text style={styles.statBoxEmoji}>🔥</Text>
+                                    <Text style={styles.statBoxValue}>{streak}</Text>
+                                    <Text style={styles.statBoxLabel}>{t('share.streakDays')}</Text>
+                                </View>
+                                <View style={styles.statBox}>
+                                    <Text style={styles.statBoxEmoji}>⭐</Text>
+                                    <Text style={styles.statBoxValue}>{seviye}</Text>
+                                    <Text style={styles.statBoxLabel}>{t('share.levelLabel')}</Text>
+                                </View>
+                                <View style={styles.statBox}>
+                                    <Text style={styles.statBoxEmoji}>🏅</Text>
+                                    <Text style={styles.statBoxValue}>{rozetSayisi}</Text>
+                                    <Text style={styles.statBoxLabel}>{t('share.badgesLabel')}</Text>
                                 </View>
                             </View>
 
-                            {/* Water Amount */}
-                            <View style={styles.waterAmount}>
-                                <Text style={styles.waterText}>
-                                    💧 {bugunIcilen} / {gunlukHedef} ml
-                                </Text>
+                            {/* Alt Kısım: Motivasyon & Branding */}
+                            <View style={styles.footerSection}>
+                                <Text style={styles.motivationText}>"{motivasyonMesaji}"</Text>
+                                <View style={styles.divider} />
+                                <View style={styles.branding}>
+                                    <Text style={styles.brandingText}>💧 Water Reminder App</Text>
+                                </View>
                             </View>
 
-                            {/* Decorative Elements */}
-                            <View style={styles.decorCircle1} />
-                            <View style={styles.decorCircle2} />
+                            {/* Dekoratif Efektler */}
+                            <View style={styles.glowEffect} />
+                            <View style={styles.glassEffect} />
                         </LinearGradient>
                     </View>
                 </View>
@@ -214,13 +215,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     cardWrapper: {
-        borderRadius: 20,
+        borderRadius: 30,
         overflow: 'hidden',
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 0.3,
-        shadowRadius: 20,
-        elevation: 20,
+        shadowOffset: { width: 0, height: 15 },
+        shadowOpacity: 0.4,
+        shadowRadius: 30,
+        elevation: 25,
     },
     card: {
         width: CARD_WIDTH,
@@ -229,101 +230,165 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         overflow: 'hidden',
     },
-    branding: {
+
+    // Hero Section
+    heroSection: {
         alignItems: 'center',
+        marginTop: 40,
+        zIndex: 10,
     },
-    brandingText: {
-        fontSize: 18,
-        fontWeight: '600',
-        color: 'rgba(255,255,255,0.9)',
-        letterSpacing: 1,
-    },
-    streakContainer: {
-        alignItems: 'center',
-        marginVertical: 20,
-    },
-    fireEmoji: {
-        fontSize: 50,
-        marginBottom: 10,
-    },
-    streakNumber: {
-        fontSize: 100,
-        fontWeight: 'bold',
-        color: '#fff',
+    heroEmoji: {
+        fontSize: 60,
+        marginBottom: 15,
         textShadowColor: 'rgba(0,0,0,0.3)',
         textShadowOffset: { width: 0, height: 4 },
         textShadowRadius: 10,
     },
-    streakLabel: {
-        fontSize: 24,
-        color: '#fff',
+    heroTitle: {
+        fontSize: 18,
+        color: 'rgba(255,255,255,0.8)',
         fontWeight: '600',
-        letterSpacing: 2,
+        letterSpacing: 1,
+        marginBottom: 5,
+        textAlign: 'center',
         textTransform: 'uppercase',
     },
-    motivationText: {
-        fontSize: 18,
-        color: '#fff',
-        textAlign: 'center',
-        fontStyle: 'italic',
-        opacity: 0.9,
-        paddingHorizontal: 20,
-    },
-    statsGrid: {
+    // Rakam ve birim için container
+    amountContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-around',
-        backgroundColor: 'rgba(255,255,255,0.15)',
-        borderRadius: 16,
-        padding: 20,
+        alignItems: 'flex-end', // Taban hizalama
+        justifyContent: 'center',
+        marginBottom: 10,
+    },
+    heroAmount: {
+        fontSize: 80,
+        fontWeight: '900',
+        color: '#fff',
+        textShadowColor: 'rgba(0,0,0,0.3)',
+        textShadowOffset: { width: 0, height: 4 },
+        textShadowRadius: 15,
+        lineHeight: 90,
+        // includeFontPadding: false, // Android'de dikey hizalamayı düzeltebilir
+    },
+    heroUnit: {
+        fontSize: 24,
+        fontWeight: '500',
+        color: 'rgba(255,255,255,0.9)',
+        marginBottom: 12, // Rakamın tabanına hizalamak için margin
+        marginLeft: 8,
+    },
+    progressBarContainer: {
+        width: '80%',
+        height: 8,
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        borderRadius: 4,
+        marginTop: 10,
+        overflow: 'hidden',
+    },
+    progressBarFill: {
+        height: '100%',
+        backgroundColor: '#4CAF50', // Başarı yeşili
+        borderRadius: 4,
+    },
+    heroPercentage: {
+        fontSize: 16,
+        color: '#4CAF50', // Parlak yeşil
+        fontWeight: 'bold',
+        marginTop: 8,
+        textShadowColor: 'rgba(0,0,0,0.5)',
+        textShadowOffset: { width: 0, height: 1 },
+        textShadowRadius: 2,
+    },
+
+    // Stats Grid
+    statsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        gap: 10,
         marginVertical: 20,
+        zIndex: 10,
     },
-    statItem: {
-        alignItems: 'center',
+    statBox: {
         flex: 1,
+        backgroundColor: 'rgba(255,255,255,0.15)', // Glassmorphism
+        borderRadius: 20,
+        padding: 15,
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.2)',
     },
-    statDivider: {
-        width: 1,
-        backgroundColor: 'rgba(255,255,255,0.3)',
-    },
-    statEmoji: {
+    statBoxEmoji: {
         fontSize: 28,
-        marginBottom: 5,
+        marginBottom: 8,
     },
-    statValue: {
-        fontSize: 28,
+    statBoxValue: {
+        fontSize: 24,
         fontWeight: 'bold',
         color: '#fff',
     },
-    statLabel: {
-        fontSize: 12,
+    statBoxLabel: {
+        fontSize: 10,
         color: 'rgba(255,255,255,0.8)',
         marginTop: 4,
-    },
-    waterAmount: {
-        alignItems: 'center',
-    },
-    waterText: {
-        fontSize: 20,
-        color: '#fff',
+        textTransform: 'uppercase',
         fontWeight: '600',
+        textAlign: 'center',
     },
-    decorCircle1: {
+
+    // Footer
+    footerSection: {
+        alignItems: 'center',
+        zIndex: 10,
+    },
+    motivationText: {
+        fontSize: 16,
+        color: '#fff',
+        textAlign: 'center',
+        fontStyle: 'italic',
+        opacity: 0.95,
+        marginBottom: 20,
+        paddingHorizontal: 10,
+        lineHeight: 22,
+    },
+    divider: {
+        width: 40,
+        height: 4,
+        backgroundColor: 'rgba(255,255,255,0.3)',
+        borderRadius: 2,
+        marginBottom: 15,
+    },
+    branding: {
+        backgroundColor: 'rgba(0,0,0,0.2)',
+        paddingHorizontal: 15,
+        paddingVertical: 8,
+        borderRadius: 20,
+    },
+    brandingText: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: 'rgba(255,255,255,0.9)',
+        letterSpacing: 0.5,
+    },
+
+    // Effects
+    glowEffect: {
         position: 'absolute',
-        width: 200,
-        height: 200,
-        borderRadius: 100,
-        backgroundColor: 'rgba(255,255,255,0.05)',
-        top: -50,
+        top: -100,
+        left: -50,
+        width: 300,
+        height: 300,
+        borderRadius: 150,
+        backgroundColor: 'rgba(79, 195, 247, 0.2)',
+    },
+    glassEffect: {
+        position: 'absolute',
+        bottom: -50,
         right: -50,
-    },
-    decorCircle2: {
-        position: 'absolute',
-        width: 150,
-        height: 150,
-        borderRadius: 75,
-        backgroundColor: 'rgba(255,255,255,0.05)',
-        bottom: -30,
-        left: -30,
+        width: 250,
+        height: 250,
+        borderRadius: 125,
+        backgroundColor: 'rgba(105, 240, 174, 0.1)',
+        transform: [{ rotate: '45deg' }],
     },
     buttonsContainer: {
         gap: 12,

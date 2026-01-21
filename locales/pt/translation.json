@@ -39,7 +39,8 @@
             "october": "Outubro",
             "november": "Novembro",
             "december": "Dezembro"
-        }
+        },
+        "liters": "Litros"
     },
     "premium": {
         "congratulations": "Parabéns! 🎉",
@@ -671,6 +672,11 @@
         "shareAsImage": "Compartilhar como Imagem",
         "shareAsText": "Compartilhar como Texto",
         "todayProgress": "Hoje",
+        "todayIDrank": "Água hoje",
+        "streakDays": "DIAS SEGUIDOS",
+        "levelLabel": "NÍVEL",
+        "badgesLabel": "EMBLEMAS",
+        "completed": "Concluído",
         "instagramTip": "Salve a imagem e adicione ao seu story do Instagram",
         "messages": {
             "legendary": "Lendário! Mais de 100 dias de sequência! 🏆",

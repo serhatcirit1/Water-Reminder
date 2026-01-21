@@ -39,7 +39,8 @@
             "october": "October",
             "november": "November",
             "december": "December"
-        }
+        },
+        "liters": "Liters"
     },
     "premium": {
         "congratulations": "Congratulations! 🎉",
@@ -693,6 +694,11 @@
         "shareAsImage": "Share as Image",
         "shareAsText": "Share as Text",
         "todayProgress": "Today",
+        "todayIDrank": "Water Drank Today",
+        "streakDays": "DAY STREAK",
+        "levelLabel": "LEVEL",
+        "badgesLabel": "BADGES",
+        "completed": "Completed",
         "instagramTip": "Save the image and add it to your Instagram Story",
         "messages": {
             "legendary": "Legendary! 100+ day streak! 🏆",

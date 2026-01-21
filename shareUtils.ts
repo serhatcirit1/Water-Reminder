@@ -25,11 +25,13 @@ export interface StreakPaylasimiVerisi {
  */
 export async function metinPaylas(veri: StreakPaylasimiVerisi): Promise<void> {
     const t = i18n.t;
+    const bugunLitre = (veri.bugunIcilen / 1000).toFixed(1);
+    const hedefLitre = (veri.gunlukHedef / 1000).toFixed(1);
 
     const mesaj = `💧 ${t('share.title')}
 
 🔥 ${veri.streak} ${t('share.dayStreak')}
-🎯 ${veri.bugunIcilen}/${veri.gunlukHedef} ml
+🎯 ${bugunLitre}/${hedefLitre} ${t('common.liters')}
 ⭐ ${t('share.level')} ${veri.seviye}
 🏅 ${veri.rozetSayisi} ${t('share.badges')}
 
@@ -64,7 +66,7 @@ export async function gorselPaylas(viewRef: any): Promise<boolean> {
         if (paylasimiAcik) {
             await Sharing.shareAsync(uri, {
                 mimeType: 'image/png',
-                dialogTitle: 'Seri Paylaş',
+                dialogTitle: i18n.t('share.title'),
                 UTI: 'public.png',
             });
             return true;

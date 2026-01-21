@@ -39,7 +39,8 @@
             "october": "Ekim",
             "november": "Kasım",
             "december": "Aralık"
-        }
+        },
+        "liters": "Litre"
     },
     "premium": {
         "congratulations": "Tebrikler! 🎉",
@@ -693,6 +694,11 @@
         "shareAsImage": "Görsel Olarak Paylaş",
         "shareAsText": "Metin Olarak Paylaş",
         "todayProgress": "Bugün",
+        "todayIDrank": "Bugün İçilen Su",
+        "streakDays": "GÜNLÜK SERİ",
+        "levelLabel": "SEVİYE",
+        "badgesLabel": "ROZET",
+        "completed": "Tamamlandı",
         "instagramTip": "Görseli kaydedip Instagram Hikayenize ekleyebilirsiniz",
         "messages": {
             "legendary": "Efsane! 100+ günlük seri! 🏆",

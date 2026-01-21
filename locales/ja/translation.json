@@ -39,7 +39,8 @@
             "october": "10月",
             "november": "11月",
             "december": "12月"
-        }
+        },
+        "liters": "リットル"
     },
     "premium": {
         "congratulations": "おめでとうございます！🎉",
@@ -671,6 +672,11 @@
         "shareAsImage": "画像として共有",
         "shareAsText": "テキストとして共有",
         "todayProgress": "今日",
+        "todayIDrank": "今日の摂取量",
+        "streakDays": "継続日数",
+        "levelLabel": "レベル",
+        "badgesLabel": "バッジ",
+        "completed": "完了",
         "instagramTip": "画像を保存してInstagramストーリーに追加してください",
         "messages": {
             "legendary": "レジェンド！100日以上連続！🏆",

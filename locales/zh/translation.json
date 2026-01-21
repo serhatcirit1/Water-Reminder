@@ -39,7 +39,8 @@
             "october": "十月",
             "november": "十一月",
             "december": "十二月"
-        }
+        },
+        "liters": "升"
     },
     "premium": {
         "congratulations": "恭喜您！🎉",
@@ -671,6 +672,11 @@
         "shareAsImage": "分享为图片",
         "shareAsText": "分享为文字",
         "todayProgress": "今天",
+        "todayIDrank": "今日饮水",
+        "streakDays": "连续天数",
+        "levelLabel": "等级",
+        "badgesLabel": "徽章",
+        "completed": "已完成",
         "instagramTip": "保存图片并添加到Instagram故事",
         "messages": {
             "legendary": "传奇！超过100天连续！🏆",

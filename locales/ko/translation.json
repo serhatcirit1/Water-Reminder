@@ -39,7 +39,8 @@
             "october": "10월",
             "november": "11월",
             "december": "12월"
-        }
+        },
+        "liters": "리터"
     },
     "premium": {
         "congratulations": "축하합니다! 🎉",
@@ -671,6 +672,11 @@
         "shareAsImage": "이미지로 공유",
         "shareAsText": "텍스트로 공유",
         "todayProgress": "오늘",
+        "todayIDrank": "오늘 마신 양",
+        "streakDays": "연속 일수",
+        "levelLabel": "레벨",
+        "badgesLabel": "배지",
+        "completed": "완료",
         "instagramTip": "이미지를 저장하고 인스타그램 스토리에 추가하세요",
         "messages": {
             "legendary": "레전드! 100일 이상 연속! 🏆",
