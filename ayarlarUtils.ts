@@ -248,6 +248,55 @@ export async function rekorKontrolEt(miktar: number, ml: number): Promise<boolea
 }
 
 /**
+ * Rekoru tüm geçmiş verilere bakarak yeniden hesapla ve güncelle
+ * (Geri alma işlemleri için)
+ */
+export async function rekoruYenidenHesapla(): Promise<void> {
+    try {
+        const gecmisStr = await AsyncStorage.getItem('@su_gecmisi');
+        if (!gecmisStr) return;
+
+        const gecmis = JSON.parse(gecmisStr);
+        let maxMl = 0;
+        let maxMiktar = 0;
+        let maxTarih = '-';
+
+        // Tüm geçmişi tara
+        Object.keys(gecmis).forEach(tarih => {
+            const veri = gecmis[tarih];
+            let ml = 0;
+            let miktar = 0;
+
+            if (typeof veri === 'object') {
+                ml = veri.ml || 0;
+                miktar = veri.miktar || 0;
+            } else {
+                // Eski format (sadece miktar)
+                miktar = veri;
+                ml = veri * 250;
+            }
+
+            if (ml > maxMl) {
+                maxMl = ml;
+                maxMiktar = miktar;
+                maxTarih = tarih;
+            }
+        });
+
+        // Yeni rekoru kaydet
+        const guncelRekor: RekorBilgisi = {
+            miktar: maxMiktar,
+            ml: maxMl,
+            tarih: maxTarih
+        };
+        await AsyncStorage.setItem(REKOR_KEY, JSON.stringify(guncelRekor));
+
+    } catch (hata) {
+        console.error('Rekor yeniden hesaplanamadı:', hata);
+    }
+}
+
+/**
  * Rekor yükle
  */
 export async function rekorYukle(): Promise<RekorBilgisi> {

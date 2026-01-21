@@ -17,7 +17,7 @@ import { useTema } from '../TemaContext';
 import {
     rekorYukle, RekorBilgisi, streakHesapla, StreakBilgisi,
     hedefYukle, suIcmeSaatleriYukle, SaatIstatistik,
-    favoriSaatHesapla, enAktifZamanDilimi
+    favoriSaatHesapla, enAktifZamanDilimi, rekoruYenidenHesapla
 } from '../ayarlarUtils';
 import { seviyeDurumuYukle, SeviyeDurumu } from '../seviyeSistemi';
 import { rozetleriYukle, Rozet } from '../rozetler';
@@ -87,6 +87,9 @@ export function IstatistiklerEkrani() {
         try {
             const hedef = await hedefYukle();
             setGunlukHedef(hedef);
+
+            // Rekoru doğrula ve gerekirse düzelt
+            await rekoruYenidenHesapla();
 
             const rekorData = await rekorYukle();
             setRekor(rekorData);
@@ -909,7 +912,7 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
     },
     favoriInfoEmoji: { fontSize: 32, marginBottom: 10 },
-    favoriInfoValue: { fontSize: 18, fontWeight: 'bold', color: '#4FC3F7', letterSpacing: 0.5 },
+    favoriInfoValue: { fontSize: 18, fontWeight: 'bold', color: '#4FC3F7', letterSpacing: 0.5, textAlign: 'center' },
     favoriInfoLabel: { fontSize: 12, color: '#90CAF9', marginTop: 6, fontWeight: '500' },
     chartContainer: { alignItems: 'center' },
 

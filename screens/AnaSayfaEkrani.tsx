@@ -19,7 +19,7 @@ import { PremiumEkrani } from './index';
 import {
     hedefYukle, bardakBoyutuYukle, bardakBoyutuKaydet,
     rekorKontrolEt, suIcmeSaatiKaydet, sonIcmeZamaniKaydet, BARDAK_SECENEKLERI,
-    streakHesapla, StreakBilgisi, sonIcmeZamaniYukle
+    streakHesapla, StreakBilgisi, sonIcmeZamaniYukle, rekoruYenidenHesapla
 } from '../ayarlarUtils';
 import { suIcmeXP, seviyeDurumuYukle, hedefTamamlamaXP, SeviyeDurumu } from '../seviyeSistemi';
 import { gunlukGorevleriYukle, GunlukGorevDurumu, suIcmeGorevKontrol } from '../gunlukGorevler';
@@ -364,6 +364,9 @@ export function AnaSayfaEkrani() {
         const gecmis = gecmisStr ? JSON.parse(gecmisStr) : {};
         gecmis[bugunKey] = { ml: yeniToplamMl, miktar: yeniMiktar };
         await AsyncStorage.setItem(GECMIS_KEY, JSON.stringify(gecmis));
+
+        // Rekoru yeniden hesapla (belki rekor kırılan bir gün geri alındı)
+        await rekoruYenidenHesapla();
 
         // AI İçgörü kartını güncelle
         notifyInsightListeners();
@@ -835,17 +838,23 @@ const styles = StyleSheet.create({
     statDivider: { width: 1, height: 50, backgroundColor: '#1E5166' },
 
     sizeSelector: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
         marginBottom: 25,
         width: '100%',
     },
-    sizeLabel: { fontSize: 14, color: '#90CAF9', marginRight: 15 },
-    sizeOptions: { flexDirection: 'row', gap: 10 },
+    sizeLabel: { fontSize: 14, color: '#90CAF9', marginBottom: 10 },
+    sizeOptions: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%'
+    },
     sizeOption: {
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        borderRadius: 20,
+        flex: 1,
+        alignItems: 'center',
+        paddingVertical: 10,
+        marginHorizontal: 3,
+        borderRadius: 15,
         borderWidth: 1,
         borderColor: '#4FC3F7',
     },
