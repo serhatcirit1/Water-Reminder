@@ -1,64 +1,67 @@
 {
-    "expo": {
-        "name": "Water Reminder",
-        "slug": "water-reminder",
-        "version": "1.0.0",
-        "orientation": "portrait",
-        "icon": "./assets/icon.png",
-        "userInterfaceStyle": "automatic",
-        "newArchEnabled": true,
-        "splash": {
-            "image": "./assets/splash.png",
-            "resizeMode": "contain",
-            "backgroundColor": "#0A2A3A"
-        },
-        "ios": {
-            "supportsTablet": true,
-            "bundleIdentifier": "com.water.reminder",
-            "icon": "./assets/icon.png",
-            "infoPlist": {
-                "NSHealthShareUsageDescription": "Water Reminder needs access to Apple Health to sync your water intake data and provide you with accurate hydration insights.",
-                "NSHealthUpdateUsageDescription": "Water Reminder writes your water intake to Apple Health so you can track all your health data in one place."
-            }
-        },
-        "android": {
-            "adaptiveIcon": {
-                "foregroundImage": "./assets/icon-foreground.png",
-                "backgroundColor": "#0A2A3A"
-            },
-            "package": "com.water.reminder",
-            "permissions": [
-                "android.permission.RECEIVE_BOOT_COMPLETED",
-                "android.permission.VIBRATE",
-                "android.permission.SCHEDULE_EXACT_ALARM"
-            ]
-        },
-        "web": {
-            "favicon": "./assets/favicon.png"
-        },
-        "plugins": [
-            [
-                "expo-notifications",
-                {
-                    "icon": "./assets/icon.png",
-                    "color": "#4FC3F7",
-                    "sounds": [],
-                    "androidMode": "default",
-                    "androidCollapsedTitle": "Water Reminder"
-                }
-            ],
-            [
-                "expo-location",
-                {
-                    "locationAlwaysAndWhenInUsePermission": "Water Reminder uses your location to provide weather-based hydration recommendations. We only access your approximate location to get local weather data.",
-                    "locationWhenInUsePermission": "Water Reminder uses your location to get local weather data for personalized hydration suggestions."
-                }
-            ]
-        ],
-        "extra": {
-            "eas": {
-                "projectId": "water-reminder-app"
-            }
+  "expo": {
+    "name": "Water Reminder",
+    "slug": "water-reminder",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0A2A3A"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.water.reminder",
+      "icon": "./assets/icon.png",
+      "infoPlist": {
+        "NSHealthShareUsageDescription": "Water Reminder needs access to Apple Health to sync your water intake data and provide you with accurate hydration insights.",
+        "NSHealthUpdateUsageDescription": "Water Reminder writes your water intake to Apple Health so you can track all your health data in one place."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon-foreground.png",
+        "backgroundColor": "#0A2A3A"
+      },
+      "package": "com.water.reminder",
+      "permissions": [
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.VIBRATE",
+        "android.permission.SCHEDULE_EXACT_ALARM",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#4FC3F7",
+          "sounds": [],
+          "androidMode": "default",
+          "androidCollapsedTitle": "Water Reminder"
         }
-    }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Water Reminder uses your location to provide weather-based hydration recommendations. We only access your approximate location to get local weather data.",
+          "locationWhenInUsePermission": "Water Reminder uses your location to get local weather data for personalized hydration suggestions."
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "32fb94a8-6dd7-48c0-aa74-ab0d38d0c53c"
+      }
+    },
+    "owner": "serhatcirit"
+  }
 }

@@ -680,5 +680,20 @@
             "started": "Meine Trinkgewohnheit bildet sich! 🌱",
             "beginning": "Erster Schritt zu gesundem Leben! 💧"
         }
+    },
+    "benefits": {
+        "default": "{{amount}} Wasser hat deinen Körper hydratisiert! ",
+        "cilt": "{{amount}} Wasser hat deine Haut zum Strahlen gebracht und deine Poren gereinigt! ",
+        "beyin": "{{amount}} Wasser hat deine Gehirnfunktion um 14% verbessert und deine Konzentration gesteigert! ",
+        "enerji": "{{amount}} Wasser hat Müdigkeit reduziert und dein Energieniveau erhöht! ",
+        "sindirim": "{{amount}} Wasser hat dein Verdauungssystem unterstützt und deinen Stoffwechsel angekurbelt! ",
+        "toksin": "{{amount}} Wasser hat geholfen, Giftstoffe aus deinem Körper zu spülen! ",
+        "kas": "{{amount}} Wasser hat die Sauerstoffversorgung deiner Muskeln erhöht! ",
+        "bagisiklik": "{{amount}} Wasser hat dein Immunsystem gestärkt! ",
+        "eklem": "{{amount}} Wasser hat deine Gelenke geschmiert und deine Flexibilität verbessert! ",
+        "kalp": "{{amount}} Wasser hat deine Durchblutung verbessert und dein Herz geschützt! ",
+        "kilo": "{{amount}} Wasser hat deinen Stoffwechsel angekurbelt und bei der Gewichtskontrolle geholfen! ",
+        "goalComplete": "Du hast dein Tagesziel erreicht! Dein Körper dankt dir! ",
+        "streak": "{{days}} Tage konstante Hydratation! Deine gesunde Gewohnheit wächst! "
     }
 }

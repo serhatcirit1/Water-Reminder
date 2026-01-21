@@ -38,7 +38,7 @@ import {
     detoksAyarKaydet, detoksAyarYukle, DetoksAyar
 } from '../ayarlarUtils';
 import { useTema } from '../TemaContext';
-import { healthKitDestekleniyor, healthKitAyarYukle, healthKitToggle } from '../healthKit';
+import { healthKitDestekleniyor, healthKitAyarYukle, healthKitToggle, dinamikHedefAyarYukle, dinamikHedefAyarKaydet, dinamikHedefHesapla, DinamikHedefSonuc } from '../healthKit';
 import { aiAyarlariniYukle, aiAyarlariniKaydet, AIAyarlari } from '../aiUtils';
 import { usePremium } from '../PremiumContext';
 import { premiumDurumKaydet } from '../premiumUtils';
@@ -72,6 +72,8 @@ export function AyarlarEkrani() {
         aktif: false, aralikDakika: 90
     });
     const [healthKitAktif, setHealthKitAktif] = useState(false);
+    const [dinamikHedefAktif, setDinamikHedefAktif] = useState(false);
+    const [dinamikHedefSonuc, setDinamikHedefSonuc] = useState<DinamikHedefSonuc | null>(null);
     const [bioritim, setBioritim] = useState<BioritimAyar>({
         aktif: false, uyanmaSaati: '08:00', uyumaSaati: '23:00'
     });
@@ -136,6 +138,10 @@ export function AyarlarEkrani() {
             // HealthKit durumunu yükle
             const hkAktif = await healthKitAyarYukle();
             setHealthKitAktif(hkAktif);
+
+            // Dinamik hedef ayarını yükle
+            const dhAktif = await dinamikHedefAyarYukle();
+            setDinamikHedefAktif(dhAktif);
 
             // Bioritim ve Detoks yükle
             const bioAyar = await bioritimAyarYukle();
@@ -917,6 +923,11 @@ export function AyarlarEkrani() {
                                 onValueChange={async () => {
                                     const yeniDurum = await healthKitToggle();
                                     setHealthKitAktif(yeniDurum);
+                                    // HealthKit kapatılırsa dinamik hedefi de kapat
+                                    if (!yeniDurum) {
+                                        setDinamikHedefAktif(false);
+                                        await dinamikHedefAyarKaydet(false);
+                                    }
                                 }}
                                 trackColor={{ false: '#ccc', true: '#4FC3F7' }}
                                 thumbColor={healthKitAktif ? '#fff' : '#f4f3f4'}
@@ -926,6 +937,125 @@ export function AyarlarEkrani() {
                         <Text style={styles.sessizAciklama}>
                             {t('settings.appleHealthDesc')}
                         </Text>
+
+                        {/* Dinamik Hedef Toggle - HealthKit aktifse göster */}
+                        {healthKitAktif && (
+                            <>
+                                <View style={[styles.modSatir, { marginTop: 15, paddingTop: 15, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.1)' }]}>
+                                    <View style={{ flex: 1 }}>
+                                        <Text style={styles.modEtiket}>🔥 {t('settings.dynamicGoal')}</Text>
+                                        <Text style={[styles.sessizAciklama, { marginTop: 4 }]}>
+                                            {t('settings.dynamicGoalDesc')}
+                                        </Text>
+                                    </View>
+                                    <Switch
+                                        value={dinamikHedefAktif}
+                                        onValueChange={async (value) => {
+                                            setDinamikHedefAktif(value);
+                                            await dinamikHedefAyarKaydet(value);
+                                            if (value) {
+                                                // Dinamik hedefi hemen hesapla
+                                                const sonuc = await dinamikHedefHesapla(profil.kilo);
+                                                setDinamikHedefSonuc(sonuc);
+                                            } else {
+                                                setDinamikHedefSonuc(null);
+                                            }
+                                        }}
+                                        trackColor={{ false: '#ccc', true: '#FF9800' }}
+                                        thumbColor={dinamikHedefAktif ? '#fff' : '#f4f3f4'}
+                                    />
+                                </View>
+
+                                {/* Dinamik Hedef Sonucu */}
+                                {dinamikHedefAktif && dinamikHedefSonuc && (
+                                    <View style={{
+                                        marginTop: 15,
+                                        padding: 15,
+                                        backgroundColor: 'rgba(255, 152, 0, 0.15)',
+                                        borderRadius: 12,
+                                        borderWidth: 1,
+                                        borderColor: 'rgba(255, 152, 0, 0.3)',
+                                    }}>
+                                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                                            <Text style={{ color: '#FF9800', fontSize: 14, fontWeight: '600' }}>
+                                                {t('settings.recommendedGoal')}
+                                            </Text>
+                                            <Text style={{ color: '#FFFFFF', fontSize: 22, fontWeight: 'bold' }}>
+                                                {dinamikHedefSonuc.hedefMl} ml
+                                            </Text>
+                                        </View>
+
+                                        <View style={{ gap: 6 }}>
+                                            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                                <Text style={{ color: '#90CAF9', fontSize: 12 }}>
+                                                    📐 {t('settings.baseNeed')} ({profil.kilo}kg × 33ml)
+                                                </Text>
+                                                <Text style={{ color: '#90CAF9', fontSize: 12 }}>
+                                                    {dinamikHedefSonuc.temelIhtiyac} ml
+                                                </Text>
+                                            </View>
+                                            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                                <Text style={{ color: '#90CAF9', fontSize: 12 }}>
+                                                    🔥 {t('settings.activityAddition')} ({dinamikHedefSonuc.yakilanKalori} kcal)
+                                                </Text>
+                                                <Text style={{ color: '#90CAF9', fontSize: 12 }}>
+                                                    +{dinamikHedefSonuc.aktiviteEklentisi} ml
+                                                </Text>
+                                            </View>
+                                        </View>
+
+                                        <Text style={{ color: '#FFC107', fontSize: 11, marginTop: 10, fontStyle: 'italic' }}>
+                                            💡 {dinamikHedefSonuc.aciklama}
+                                        </Text>
+
+                                        {/* Uygula Butonu */}
+                                        <TouchableOpacity
+                                            style={{
+                                                marginTop: 12,
+                                                backgroundColor: '#FF9800',
+                                                paddingVertical: 10,
+                                                borderRadius: 10,
+                                                alignItems: 'center',
+                                            }}
+                                            onPress={async () => {
+                                                await hedefKaydet(dinamikHedefSonuc.hedefMl);
+                                                setGunlukHedef(dinamikHedefSonuc.hedefMl);
+                                                Alert.alert(
+                                                    t('alerts.goalUpdated'),
+                                                    t('alerts.dynamicGoalApplied', { goal: dinamikHedefSonuc.hedefMl })
+                                                );
+                                            }}
+                                        >
+                                            <Text style={{ color: '#FFFFFF', fontWeight: 'bold', fontSize: 14 }}>
+                                                ✅ {t('alerts.apply')} ({dinamikHedefSonuc.hedefMl} ml)
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                )}
+
+                                {/* Dinamik hedef aktif ama sonuç yoksa hesapla butonu */}
+                                {dinamikHedefAktif && !dinamikHedefSonuc && (
+                                    <TouchableOpacity
+                                        style={{
+                                            marginTop: 10,
+                                            backgroundColor: '#FF9800',
+                                            paddingVertical: 10,
+                                            paddingHorizontal: 20,
+                                            borderRadius: 10,
+                                            alignItems: 'center',
+                                        }}
+                                        onPress={async () => {
+                                            const sonuc = await dinamikHedefHesapla(profil.kilo);
+                                            setDinamikHedefSonuc(sonuc);
+                                        }}
+                                    >
+                                        <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>
+                                            🔄 {t('settings.calculateGoal')}
+                                        </Text>
+                                    </TouchableOpacity>
+                                )}
+                            </>
+                        )}
                     </View>
                 )}
 

@@ -6,7 +6,7 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import {
     View, Text, StyleSheet, ScrollView, TouchableOpacity,
-    Alert, Animated, Dimensions, Modal
+    Animated, Dimensions, Modal
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -39,6 +39,8 @@ import { usePremium } from '../PremiumContext';
 import { tumRozetleriKontrolEt } from '../rozetler';
 import { suSesiCal } from '../sesUtils';
 import { useTranslation } from 'react-i18next';
+import { suFaydasiAl, hedefTamamlandiMesaji } from '../suFaydalari';
+import { AchievementModal, AchievementType } from '../components/AchievementModal';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -75,6 +77,18 @@ export function AnaSayfaEkrani() {
     const [gorevDurumu, setGorevDurumu] = useState<GunlukGorevDurumu | null>(null);
     const [aiOneri, setAiOneri] = useState<AIHedefOnerisi | null>(null);
     const [premiumModalGoster, setPremiumModalGoster] = useState(false);
+    const [faydaMesaji, setFaydaMesaji] = useState<{ mesaj: string; icon: string } | null>(null);
+    const faydaAnimRef = useRef(new Animated.Value(0)).current;
+
+    // Achievement Modal State
+    const [achievementModal, setAchievementModal] = useState<{
+        visible: boolean;
+        type: AchievementType;
+        title: string;
+        subtitle?: string;
+        value?: string | number;
+        emoji?: string;
+    }>({ visible: false, type: 'goal', title: '' });
 
     // Premium Context
     const { isPremium: premiumAktif } = usePremium();
@@ -243,21 +257,35 @@ export function AnaSayfaEkrani() {
         const saat = new Date().getHours();
         const tamamlananGorev = await suIcmeGorevKontrol(yeniToplamMl, saat, bardakBoyutu);
         if (tamamlananGorev) {
-            Alert.alert(t('alerts.taskCompleted'), t('alerts.taskCompletedMsg', { task: t(tamamlananGorev.baslik), xp: tamamlananGorev.xpOdulu }));
+            // Görev tamamlandı - Modal göster
+            setAchievementModal({
+                visible: true,
+                type: 'task',
+                title: t('alerts.taskCompleted'),
+                subtitle: t(tamamlananGorev.baslik),
+                value: `+${tamamlananGorev.xpOdulu} XP`,
+                emoji: '✅'
+            });
         }
         // Görev durumunu güncelle
         const yeniGorevDurumu = await gunlukGorevleriYukle();
         setGorevDurumu(yeniGorevDurumu);
 
         const yeniRekor = await rekorKontrolEt(yeniMiktar, yeniToplamMl);
-        if (yeniRekor) {
-            Alert.alert(t('home.goalReached'), `${yeniToplamMl} ml!`);
-        }
+        // Rekor yalnızca badge'lerle birlikte kutlanır
 
         if (!hedefeTamamlandi && yeniToplamMl >= gunlukHedef) {
             setHedefeTamamlandi(true);
             await hedefTamamlamaXP();
-            Alert.alert(t('home.goalReached'), t('home.goalReachedMessage', { goal: gunlukHedef }));
+            // Hedef tamamlandı - Modal göster
+            setAchievementModal({
+                visible: true,
+                type: 'goal',
+                title: t('home.goalReached'),
+                subtitle: t('home.goalReachedMessage', { goal: gunlukHedef }),
+                value: `${gunlukHedef} ml`,
+                emoji: '🏆'
+            });
         }
 
         // Streak ve Rozet Güncelleme
@@ -270,12 +298,34 @@ export function AnaSayfaEkrani() {
             yeniRekor
         );
 
-        kazanilanRozetler.forEach(rozet => {
-            Alert.alert(t('stats.badgeEarned') + ' 🏅', `${t(rozet.isim)}: ${t(rozet.aciklama)}`);
-        });
+        // Sadece rozet kazanıldığında modal göster
+        if (kazanilanRozetler.length > 0) {
+            const ilkRozet = kazanilanRozetler[0];
+            setAchievementModal({
+                visible: true,
+                type: 'badge',
+                title: t('stats.badgeEarned'),
+                subtitle: t(ilkRozet.aciklama),
+                value: t(ilkRozet.isim),
+                emoji: ilkRozet.emoji || '🏅'
+            });
+        }
 
         // AI İçgörü kartını güncelle
         notifyInsightListeners();
+
+        // Sağlık faydası mesajı göster
+        const fayda = yeniToplamMl >= gunlukHedef
+            ? hedefTamamlandiMesaji()
+            : suFaydasiAl(yeniToplamMl);
+        setFaydaMesaji(fayda);
+
+        // Animasyon: Mesajı göster, 5 saniye sonra gizle
+        Animated.sequence([
+            Animated.timing(faydaAnimRef, { toValue: 1, duration: 300, useNativeDriver: true }),
+            Animated.delay(5000),
+            Animated.timing(faydaAnimRef, { toValue: 0, duration: 300, useNativeDriver: true })
+        ]).start(() => setFaydaMesaji(null));
     };
 
     // Bugünü geri al fonksiyonu
@@ -547,6 +597,17 @@ export function AnaSayfaEkrani() {
                     </View>
                 </TouchableOpacity>
 
+                {/* Sağlık Faydası Mesajı */}
+                {faydaMesaji && (
+                    <Animated.View style={[
+                        styles.faydaMesajiContainer,
+                        { opacity: faydaAnimRef, transform: [{ translateY: faydaAnimRef.interpolate({ inputRange: [0, 1], outputRange: [10, 0] }) }] }
+                    ]}>
+                        <Text style={styles.faydaMesajiIcon}>{faydaMesaji.icon}</Text>
+                        <Text style={styles.faydaMesajiText}>{faydaMesaji.mesaj}</Text>
+                    </Animated.View>
+                )}
+
                 {/* Stats Row */}
                 <View style={styles.statsRow}>
                     <View style={styles.statItem}>
@@ -666,6 +727,17 @@ export function AnaSayfaEkrani() {
             >
                 <PremiumEkrani onClose={() => setPremiumModalGoster(false)} />
             </Modal>
+
+            {/* Achievement Modal */}
+            <AchievementModal
+                visible={achievementModal.visible}
+                onClose={() => setAchievementModal(prev => ({ ...prev, visible: false }))}
+                type={achievementModal.type}
+                title={achievementModal.title}
+                subtitle={achievementModal.subtitle}
+                value={achievementModal.value}
+                emoji={achievementModal.emoji}
+            />
         </SafeAreaView>
     );
 }
@@ -955,5 +1027,30 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: '#A5D6A7',
         marginTop: 4,
+    },
+
+    // Sağlık Faydası Mesajı Stilleri
+    faydaMesajiContainer: {
+        backgroundColor: 'rgba(76, 195, 247, 0.15)',
+        borderRadius: 16,
+        padding: 16,
+        marginTop: 12,
+        marginBottom: 8,
+        width: '100%',
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: 'rgba(76, 195, 247, 0.3)',
+    },
+    faydaMesajiIcon: {
+        fontSize: 28,
+        marginRight: 12,
+    },
+    faydaMesajiText: {
+        flex: 1,
+        fontSize: 14,
+        color: '#E1F5FE',
+        lineHeight: 20,
+        fontWeight: '500',
     },
 });

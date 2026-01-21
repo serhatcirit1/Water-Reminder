@@ -680,5 +680,20 @@
             "started": "Mon habitude d'hydratation a commencé ! 🌱",
             "beginning": "Premier pas vers une vie saine ! 💧"
         }
+    },
+    "benefits": {
+        "default": "{{amount}} d eau ont hydraté ton corps! ",
+        "cilt": "{{amount}} d eau ont amélioré l éclat de ta peau et nettoyé tes pores! ",
+        "beyin": "{{amount}} d eau ont amélioré ta fonction cérébrale de 14% et augmenté ta concentration! ",
+        "enerji": "{{amount}} d eau ont réduit la fatigue et boosté ton énergie! ",
+        "sindirim": "{{amount}} d eau ont soutenu ton système digestif et accéléré ton métabolisme! ",
+        "toksin": "{{amount}} d eau ont aidé à éliminer les toxines de ton corps! ",
+        "kas": "{{amount}} d eau ont augmenté l apport en oxygène à tes muscles! ",
+        "bagisiklik": "{{amount}} d eau ont renforcé ton système immunitaire! ",
+        "eklem": "{{amount}} d eau ont lubrifié tes articulations et amélioré ta souplesse! ",
+        "kalp": "{{amount}} d eau ont amélioré ta circulation et protégé ton cœur! ",
+        "kilo": "{{amount}} d eau ont boosté ton métabolisme et aidé au contrôle du poids! ",
+        "goalComplete": "Tu as atteint ton objectif quotidien! Ton corps te remercie! ",
+        "streak": "{{days}} jours d hydratation constante! Ton habitude saine grandit! "
     }
 }
