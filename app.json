@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Water Reminder",
-    "slug": "water-reminder",
+    "name": "Smart Water: AI Insights",
+    "slug": "smart-water-ai-insights",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -14,11 +14,13 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.water.reminder",
+      "bundleIdentifier": "com.selcukciritacademy.smartwater",
       "icon": "./assets/icon.png",
+      "buildNumber": "1",
       "infoPlist": {
         "NSHealthShareUsageDescription": "Water Reminder needs access to Apple Health to sync your water intake data and provide you with accurate hydration insights.",
-        "NSHealthUpdateUsageDescription": "Water Reminder writes your water intake to Apple Health so you can track all your health data in one place."
+        "NSHealthUpdateUsageDescription": "Water Reminder writes your water intake to Apple Health so you can track all your health data in one place.",
+        "NSUserTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you."
       }
     },
     "android": {
@@ -26,7 +28,8 @@
         "foregroundImage": "./assets/icon-foreground.png",
         "backgroundColor": "#0A2A3A"
       },
-      "package": "com.water.reminder",
+      "package": "com.selcukciritacademy.smartwater",
+      "versionCode": 1,
       "permissions": [
         "android.permission.RECEIVE_BOOT_COMPLETED",
         "android.permission.VIBRATE",
@@ -55,7 +58,8 @@
           "locationAlwaysAndWhenInUsePermission": "Water Reminder uses your location to provide weather-based hydration recommendations. We only access your approximate location to get local weather data.",
           "locationWhenInUsePermission": "Water Reminder uses your location to get local weather data for personalized hydration suggestions."
         }
-      ]
+      ],
+      "expo-font"
     ],
     "extra": {
       "eas": {

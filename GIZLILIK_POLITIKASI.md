@@ -2,7 +2,7 @@
 
 **Son Güncelleme:** 19 Ocak 2026
 
-Bu Gizlilik Politikası, **Water Reminder & Tracker** ("Uygulama") uygulamasını kullandığınızda bilgilerinizin nasıl toplandığını, kullanıldığını ve paylaşıldığını açıklar. Gizliliğiniz bizim için önemlidir ve kişisel verilerinizi korumayı taahhüt ediyoruz.
+Bu Gizlilik Politikası, **Smart Water: AI Insights** ("Uygulama") uygulamasını kullandığınızda bilgilerinizin nasıl toplandığını, kullanıldığını ve paylaşıldığını açıklar. Gizliliğiniz bizim için önemlidir ve kişisel verilerinizi korumayı taahhüt ediyoruz.
 
 ## 1. Toplanan Bilgiler ve Kullanım
 
@@ -62,4 +62,4 @@ Gizlilik politikamızı zaman zaman güncelleyebiliriz. Herhangi bir değişikli
 
 Gizlilik politikamızla ilgili sorularınız veya önerileriniz varsa, lütfen bizimle iletişime geçmekten çekinmeyin:
 
-**E-posta:** [destek@email-adresiniz.com]
+**E-posta:** [admin@selcukcirit.academy]

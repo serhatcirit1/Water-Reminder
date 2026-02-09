@@ -4,7 +4,7 @@ Son Güncelleme: 19 Ocak 2026
 
 ## 1. Sözleşmenin Kabulü
 
-"Water Reminder & Tracker" uygulamasını indirerek veya kullanarak, bu kullanım koşullarını kabul etmiş olursunuz.
+"Smart Water: AI Insights" uygulamasını indirerek veya kullanarak, bu kullanım koşullarını kabul etmiş olursunuz.
 
 ## 2. Standart Apple Lisans Sözleşmesi (EULA)
 
@@ -30,4 +30,4 @@ Uygulama, "Premium" özelliklere erişim için abonelikler sunabilir.
 ## 5. İletişim
 
 Kullanım koşulları hakkında sorularınız için:
-E-posta: [destek@email-adresiniz.com]
+E-posta: [admin@selcukcirit.academy]

@@ -4,7 +4,7 @@
 // Bildirim ayarları, hedef ve uygulama bilgileri
 
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, ScrollView, Alert, TouchableOpacity, Switch, Modal } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, Alert, TouchableOpacity, Switch, Modal, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -46,7 +46,7 @@ import { csvOlusturVePaylas } from '../exportUtils';
 import { aylikPdfOlusturVePaylas, haftalikPdfOlusturVePaylas } from '../pdfExport';
 import { useTranslation } from 'react-i18next';
 import { LANGUAGES, changeLanguage, getCurrentLanguage } from '../locales/i18n';
-import { getPrivacyPolicy, getTermsOfUse } from '../constants/LegalTexts';
+
 
 // --- COMPONENT ---
 export function AyarlarEkrani() {
@@ -93,8 +93,6 @@ export function AyarlarEkrani() {
     const [bioritimUyumaModalGoster, setBioritimUyumaModalGoster] = useState(false);
     const [premiumModalGoster, setPremiumModalGoster] = useState(false);
     const [dilModalGoster, setDilModalGoster] = useState(false);
-    const [gizlilikModalGoster, setGizlilikModalGoster] = useState(false);
-    const [kullanimModalGoster, setKullanimModalGoster] = useState(false);
 
     // Tema hook
     const { mod, renkler, modDegistir, otomatikMod, otomatikModDegistir } = useTema();
@@ -184,16 +182,6 @@ export function AyarlarEkrani() {
         }
     };
 
-    // Test gönder
-    const testGonder = async () => {
-        const izinVar = await bildirimIzniIste();
-        if (izinVar) {
-            await testBildirimiGonder();
-            Alert.alert(t('alerts.notificationSent'), t('alerts.notificationSentMsg'));
-        } else {
-            Alert.alert(t('alerts.permissionRequired'), t('alerts.notificationPermission'));
-        }
-    };
 
     // Hedef değiştir
     const hedefDegistir = async (yeniHedef: number) => {
@@ -509,13 +497,6 @@ export function AyarlarEkrani() {
                                     {hatirlatmaAraligi >= 60 ? `${hatirlatmaAraligi / 60} ${t('time.hours')}` : `${hatirlatmaAraligi} ${t('time.minutes')}`}
                                 </Text>
                             </TouchableOpacity>
-
-                            <TouchableOpacity
-                                style={[styles.oneriButon, { marginTop: 15 }]}
-                                onPress={testGonder}
-                            >
-                                <Text style={styles.oneriButonYazi}>📲 {t('settings.testNotification')}</Text>
-                            </TouchableOpacity>
                         </>
                     )}
                 </View>
@@ -613,14 +594,6 @@ export function AyarlarEkrani() {
                             <Text style={styles.sessizAciklama}>
                                 {t('settings.smartReminderDesc')}
                             </Text>
-                            <TouchableOpacity
-                                style={[styles.oneriButon, { marginTop: 10 }]}
-                                onPress={async () => {
-                                    await akilliHatirlatmaTestBildirimi();
-                                }}
-                            >
-                                <Text style={styles.oneriButonYazi}>📲 {t('settings.smartTestNotification')}</Text>
-                            </TouchableOpacity>
                         </>
                     )}
                 </View>
@@ -646,14 +619,6 @@ export function AyarlarEkrani() {
                             <Text style={styles.sessizAciklama}>
                                 {t('settings.dailySummaryDesc')}
                             </Text>
-                            <TouchableOpacity
-                                style={[styles.oneriButon, { marginTop: 10 }]}
-                                onPress={async () => {
-                                    await gunlukOzetTestBildirimi();
-                                }}
-                            >
-                                <Text style={styles.oneriButonYazi}>📲 {t('settings.dailySummaryTest')}</Text>
-                            </TouchableOpacity>
                         </>
                     )}
                 </View>
@@ -679,14 +644,6 @@ export function AyarlarEkrani() {
                             <Text style={styles.sessizAciklama}>
                                 {t('settings.weeklyReportDesc')}
                             </Text>
-                            <TouchableOpacity
-                                style={[styles.oneriButon, { marginTop: 10 }]}
-                                onPress={async () => {
-                                    await haftalikRaporTestBildirimi();
-                                }}
-                            >
-                                <Text style={styles.oneriButonYazi}>📲 {t('settings.weeklyReportTest')}</Text>
-                            </TouchableOpacity>
                         </>
                     )}
                 </View>
@@ -1240,7 +1197,7 @@ export function AyarlarEkrani() {
 
                     <TouchableOpacity
                         style={[styles.bilgiSatir, { marginTop: 10 }]}
-                        onPress={() => setGizlilikModalGoster(true)}
+                        onPress={() => Linking.openURL('https://serhatcirit1.github.io/Smart-Water-AI-Insights-Privacy-Policy/')}
                     >
                         <Text style={[styles.bilgiEtiket, { color: '#4FC3F7', textDecorationLine: 'underline' }]}>{t('settings.legal.privacyPolicy')}</Text>
                         <Text style={styles.bilgiDeger}>📄</Text>
@@ -1248,7 +1205,7 @@ export function AyarlarEkrani() {
 
                     <TouchableOpacity
                         style={styles.bilgiSatir}
-                        onPress={() => setKullanimModalGoster(true)}
+                        onPress={() => Linking.openURL('https://serhatcirit1.github.io/Smart-Water-AI-Insights-Privacy-Policy/terms.html')}
                     >
                         <Text style={[styles.bilgiEtiket, { color: '#4FC3F7', textDecorationLine: 'underline' }]}>{t('settings.legal.termsOfUse')}</Text>
                         <Text style={styles.bilgiDeger}>⚖️</Text>
@@ -1439,52 +1396,6 @@ export function AyarlarEkrani() {
                 }}
                 onClose={() => setBioritimUyumaModalGoster(false)}
             />
-
-            {/* Gizlilik Politikası Modal */}
-            <Modal
-                visible={gizlilikModalGoster}
-                animationType="slide"
-                presentationStyle="pageSheet"
-                onRequestClose={() => setGizlilikModalGoster(false)}
-            >
-                <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 16, borderBottomWidth: 1, borderBottomColor: '#eee', backgroundColor: '#f8f9fa' }}>
-                        <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{t('settings.legal.privacyPolicy')}</Text>
-                        <TouchableOpacity onPress={() => setGizlilikModalGoster(false)}>
-                            <Text style={{ color: '#007AFF', fontSize: 16, fontWeight: '600' }}>{t('settings.legal.close')}</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <ScrollView style={{ flex: 1, padding: 16 }}>
-                        <Text style={{ fontSize: 14, lineHeight: 22, color: '#333' }}>
-                            {getPrivacyPolicy(currentLang)}
-                        </Text>
-                        <View style={{ height: 40 }} />
-                    </ScrollView>
-                </SafeAreaView>
-            </Modal>
-
-            {/* Kullanım Koşulları Modal */}
-            <Modal
-                visible={kullanimModalGoster}
-                animationType="slide"
-                presentationStyle="pageSheet"
-                onRequestClose={() => setKullanimModalGoster(false)}
-            >
-                <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 16, borderBottomWidth: 1, borderBottomColor: '#eee', backgroundColor: '#f8f9fa' }}>
-                        <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{t('settings.legal.termsOfUse')}</Text>
-                        <TouchableOpacity onPress={() => setKullanimModalGoster(false)}>
-                            <Text style={{ color: '#007AFF', fontSize: 16, fontWeight: '600' }}>{t('settings.legal.close')}</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <ScrollView style={{ flex: 1, padding: 16 }}>
-                        <Text style={{ fontSize: 14, lineHeight: 22, color: '#333' }}>
-                            {getTermsOfUse(currentLang)}
-                        </Text>
-                        <View style={{ height: 40 }} />
-                    </ScrollView>
-                </SafeAreaView>
-            </Modal>
         </SafeAreaView >
     );
 }
