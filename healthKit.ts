@@ -9,15 +9,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // HealthKit sadece iOS'ta çalışır
 let AppleHealthKit: any = null;
 
-// GELİŞTİRME MODU - Expo Go'da test için
-// Production'da bu false olmalı
-const DEV_MODE_SIMULATION = __DEV__; // Geliştirme modunda true
+// GELİŞTİRME MODU - Simülasyon Devre Dışı (Production Ready)
+const DEV_MODE_SIMULATION = false;
 
 if (Platform.OS === 'ios') {
     try {
         AppleHealthKit = require('react-native-health').default;
     } catch (error) {
-        console.log('HealthKit yüklenemedi:', error);
+        // console.log('HealthKit yüklenemedi:', error);
     }
 }
 
@@ -44,12 +43,8 @@ const healthKitOptions = {
 
 /**
  * HealthKit'in cihazda desteklenip desteklenmediğini kontrol et
- * Geliştirme modunda her zaman true döner
  */
 export function healthKitDestekleniyor(): boolean {
-    if (DEV_MODE_SIMULATION) {
-        return true; // Geliştirme modunda simülasyon için true
-    }
     return Platform.OS === 'ios' && AppleHealthKit !== null;
 }
 
@@ -72,7 +67,7 @@ export async function healthKitAyarKaydet(aktif: boolean): Promise<void> {
     try {
         await AsyncStorage.setItem(HEALTHKIT_ENABLED_KEY, aktif ? 'true' : 'false');
     } catch (error) {
-        console.error('HealthKit ayarı kaydedilemedi:', error);
+        // console.error('HealthKit ayarı kaydedilemedi:', error);
     }
 }
 
@@ -80,24 +75,18 @@ export async function healthKitAyarKaydet(aktif: boolean): Promise<void> {
  * HealthKit'i başlat ve izin iste
  */
 export async function healthKitBaslat(): Promise<boolean> {
-    // Geliştirme modunda simülasyon
-    if (DEV_MODE_SIMULATION) {
-        console.log('[DEV] HealthKit simülasyon modu aktif');
-        return true;
-    }
-
     if (!healthKitDestekleniyor()) {
-        console.log('HealthKit bu cihazda desteklenmiyor');
+        // console.log('HealthKit bu cihazda desteklenmiyor');
         return false;
     }
 
     return new Promise((resolve) => {
         AppleHealthKit.initHealthKit(healthKitOptions, (error: string) => {
             if (error) {
-                console.log('HealthKit başlatılamadı:', error);
+                // console.log('HealthKit başlatılamadı:', error);
                 resolve(false);
             } else {
-                console.log('HealthKit başarıyla başlatıldı');
+                // console.log('HealthKit başarıyla başlatıldı');
                 resolve(true);
             }
         });
@@ -130,16 +119,15 @@ export async function suTuketimiKaydet(mlMiktar: number): Promise<boolean> {
 
         AppleHealthKit.saveWater(options, (error: string, result: any) => {
             if (error) {
-                console.log('Su tüketimi kaydedilemedi:', error);
+                // console.log('Su tüketimi kaydedilemedi:', error);
                 resolve(false);
             } else {
-                console.log('Su tüketimi Apple Health\'e kaydedildi:', litreMiktar, 'L');
+                // console.log('Su tüketimi Apple Health\'e kaydedildi:', litreMiktar, 'L');
                 resolve(true);
             }
         });
     });
 }
-
 /**
  * HealthKit durumunu al
  */
@@ -173,7 +161,7 @@ export async function healthKitToggle(): Promise<boolean> {
         const izinVerildi = await healthKitBaslat();
         if (izinVerildi) {
             await healthKitAyarKaydet(true);
-            Alert.alert('✅ Aktif', 'Su tüiketimin artık Apple Health\'e kaydedilecek.');
+            Alert.alert('✅ Aktif', 'Su tüketimin artık Apple Health\'e kaydedilecek.');
             return true;
         } else {
             Alert.alert(
@@ -214,10 +202,10 @@ export async function adimSayisiAl(): Promise<number> {
 
         AppleHealthKit.getStepCount(options, (error: string, results: { value: number }) => {
             if (error) {
-                console.log('Adım sayısı alınamadı:', error);
+                // console.log('Adım sayısı alınamadı:', error);
                 resolve(0);
             } else {
-                console.log('Bugünkü adım sayısı:', results?.value || 0);
+                // console.log('Bugünkü adım sayısı:', results?.value || 0);
                 resolve(results?.value || 0);
             }
         });
@@ -251,13 +239,13 @@ export async function suTuketimiOku(): Promise<number> {
 
         AppleHealthKit.getWaterSamples(options, (error: string, results: Array<{ value: number }>) => {
             if (error) {
-                console.log('Su tüketimi okunamadı:', error);
+                // console.log('Su tüketimi okunamadı:', error);
                 resolve(0);
             } else {
                 // Tüm kayıtları topla (litre cinsinden)
                 const toplamLitre = results?.reduce((toplam, kayit) => toplam + (kayit.value || 0), 0) || 0;
                 const toplamMl = Math.round(toplamLitre * 1000);
-                console.log('Bugünkü Apple Health su tüketimi:', toplamMl, 'ml');
+                // console.log('Bugünkü Apple Health su tüketimi:', toplamMl, 'ml');
                 resolve(toplamMl);
             }
         });
@@ -307,7 +295,7 @@ export async function dinamikHedefAyarKaydet(aktif: boolean): Promise<void> {
     try {
         await AsyncStorage.setItem(HEALTHKIT_DYNAMIC_GOAL_KEY, aktif ? 'true' : 'false');
     } catch (error) {
-        console.error('Dinamik hedef ayarı kaydedilemedi:', error);
+        // console.error('Dinamik hedef ayarı kaydedilemedi:', error);
     }
 }
 
@@ -315,14 +303,6 @@ export async function dinamikHedefAyarKaydet(aktif: boolean): Promise<void> {
  * Bugünkü aktif enerji (yakılan kalori) Apple Health'ten al
  */
 export async function yakilanKaloriAl(): Promise<number> {
-    // Geliştirme modunda simülasyon
-    if (DEV_MODE_SIMULATION) {
-        // Rastgele 200-600 kcal arası kalori simüle et
-        const simKalori = Math.floor(Math.random() * 400) + 200;
-        console.log('[DEV] Simüle edilen kalori:', simKalori, 'kcal');
-        return simKalori;
-    }
-
     // HealthKit aktif mi kontrol et
     const aktif = await healthKitAyarYukle();
     if (!aktif) {
@@ -344,12 +324,12 @@ export async function yakilanKaloriAl(): Promise<number> {
 
         AppleHealthKit.getActiveEnergyBurned(options, (error: string, results: Array<{ value: number }>) => {
             if (error) {
-                console.log('Yakılan kalori alınamadı:', error);
+                // console.log('Yakılan kalori alınamadı:', error);
                 resolve(0);
             } else {
                 // Tüm kayıtları topla
                 const toplamKalori = results?.reduce((toplam, kayit) => toplam + (kayit.value || 0), 0) || 0;
-                console.log('Bugünkü yakılan kalori:', Math.round(toplamKalori), 'kcal');
+                // console.log('Bugünkü yakılan kalori:', Math.round(toplamKalori), 'kcal');
                 resolve(Math.round(toplamKalori));
             }
         });

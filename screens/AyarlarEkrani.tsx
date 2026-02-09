@@ -34,8 +34,7 @@ import {
     sesAyarKaydet, sesAyarYukle,
     profilKaydet, profilYukle, KullaniciProfil, onerilenSuHesapla,
     akilliHatirlatmaAyarKaydet, akilliHatirlatmaAyarYukle, AkilliHatirlatmaAyar,
-    bioritimAyarKaydet, bioritimAyarYukle, BioritimAyar,
-    detoksAyarKaydet, detoksAyarYukle, DetoksAyar
+    bioritimAyarKaydet, bioritimAyarYukle, BioritimAyar
 } from '../ayarlarUtils';
 import { useTema } from '../TemaContext';
 import { healthKitDestekleniyor, healthKitAyarYukle, healthKitToggle, dinamikHedefAyarYukle, dinamikHedefAyarKaydet, dinamikHedefHesapla, DinamikHedefSonuc } from '../healthKit';
@@ -77,7 +76,7 @@ export function AyarlarEkrani() {
     const [bioritim, setBioritim] = useState<BioritimAyar>({
         aktif: false, uyanmaSaati: '08:00', uyumaSaati: '23:00'
     });
-    const [detoks, setDetoks] = useState<DetoksAyar>({ aktif: false });
+
     const [aiAktif, setAiAktif] = useState(true);
 
     // Premium Context
@@ -144,8 +143,8 @@ export function AyarlarEkrani() {
             // Bioritim ve Detoks yükle
             const bioAyar = await bioritimAyarYukle();
             setBioritim(bioAyar);
-            const detAyar = await detoksAyarYukle();
-            setDetoks(detAyar);
+            setBioritim(bioAyar);
+
 
             // AI ayarlarını yükle
             const aiAyar = await aiAyarlariniYukle();
@@ -693,44 +692,17 @@ export function AyarlarEkrani() {
                     )}
                 </View>
 
-                {/* Detoks Modu */}
-                <View style={[styles.temaContainer, { backgroundColor: renkler.kartArkaplan }]}>
-                    <Text style={styles.temaBaslik}>🧪 {t('settings.detoxMode')}</Text>
 
-                    <View style={styles.modSatir}>
-                        <Text style={styles.modEtiket}>
-                            {detoks.aktif ? `💪 ${t('settings.detoxActive')}` : t('settings.notificationsOff')}
-                        </Text>
-                        <Switch
-                            value={detoks.aktif}
-                            onValueChange={async (value) => {
-                                const yeniAyar = { aktif: value };
-                                setDetoks(yeniAyar);
-                                await detoksAyarKaydet(yeniAyar);
-                                if (value) {
-                                    Alert.alert(t('settings.detoxMode'), t('settings.detoxActiveMsg'));
-                                }
-                            }}
-                            trackColor={{ false: '#ccc', true: '#4FC3F7' }}
-                            thumbColor={detoks.aktif ? '#fff' : '#f4f3f4'}
-                        />
-                    </View>
-
-                    {detoks.aktif && (
-                        <Text style={styles.sessizAciklama}>
-                            {t('settings.detoxDesc')}
-                        </Text>
-                    )}
-                </View>
 
                 {/* Tema Ayarları */}
                 <View style={[styles.temaContainer, { backgroundColor: renkler.kartArkaplan }]}>
                     <Text style={styles.temaBaslik}>🎨 {t('settings.theme')}</Text>
 
                     {/* Otomatik Gece Modu */}
+                    {/* Otomatik Mod */}
                     <View style={styles.modSatir}>
                         <View style={{ flex: 1 }}>
-                            <Text style={styles.modEtiket}>🌙 {t('settings.autoNightMode')}</Text>
+                            <Text style={styles.modEtiket}>🔄 {t('settings.autoNightMode')}</Text>
                             <Text style={styles.sessizAciklama}>{t('settings.autoNightModeDesc')}</Text>
                         </View>
                         <Switch
@@ -741,17 +713,17 @@ export function AyarlarEkrani() {
                         />
                     </View>
 
-                    {/* Koyu/Açık Mod (Otomatik kapalıyken göster) */}
+                    {/* Yeşil/Mavi Mod (Otomatik kapalıyken göster) */}
                     {!otomatikMod && (
                         <View style={[styles.modSatir, { marginTop: 10 }]}>
                             <Text style={styles.modEtiket}>
-                                {mod === 'koyu' ? `🌑 ${t('settings.darkMode')}` : `☀️ ${t('settings.lightMode')}`}
+                                {mod === 'koyu' ? `🌿 ${t('settings.darkMode')}` : `💧 ${t('settings.lightMode')}`}
                             </Text>
                             <Switch
                                 value={mod === 'koyu'}
                                 onValueChange={(value) => modDegistir(value ? 'koyu' : 'acik')}
-                                trackColor={{ false: '#ccc', true: '#4FC3F7' }}
-                                thumbColor={mod === 'koyu' ? '#fff' : '#f4f3f4'}
+                                trackColor={{ false: '#2196F3', true: '#4CAF50' }} // Mavi (False) -> Yeşil (True)
+                                thumbColor={'#fff'}
                             />
                         </View>
                     )}
@@ -1211,56 +1183,10 @@ export function AyarlarEkrani() {
                         <Text style={styles.bilgiDeger}>⚖️</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity
-                        style={[styles.oneriButon, { marginTop: 15 }]}
-                        onPress={async () => {
-                            await AsyncStorage.removeItem('@onboarding_tamamlandi');
-                            Alert.alert(t('settings.resetComplete'), t('settings.resetCompleteMessage'));
-                        }}
-                    >
-                        <Text style={styles.oneriButonYazi}>🔄 {t('settings.resetOnboarding')}</Text>
-                    </TouchableOpacity>
+
                 </View>
 
-                {/* 🔧 Geliştirici Test Modu */}
-                <View style={[styles.temaContainer, { backgroundColor: '#1a1a2e', borderWidth: 1, borderColor: '#FF6B6B' }]}>
-                    <Text style={[styles.temaBaslik, { color: '#FF6B6B' }]}>🔧 {t('settings.devTestMode')}</Text>
-                    <Text style={[styles.sessizAciklama, { color: '#888', marginBottom: 10 }]}>
-                        {t('settings.devTestModeWarning')}
-                    </Text>
 
-                    <View style={styles.modSatir}>
-                        <View style={{ flex: 1 }}>
-                            <Text style={[styles.modEtiket, { color: '#fff' }]}>
-                                {premiumAktif ? t('settings.premiumActive') : t('settings.premiumOff')}
-                            </Text>
-                            <Text style={[styles.sessizAciklama, { fontSize: 11, marginTop: 2, color: '#666' }]}>
-                                {t('settings.premiumToggleDesc')}
-                            </Text>
-                        </View>
-                        <Switch
-                            value={premiumAktif}
-                            onValueChange={async (value) => {
-                                const yeniDurum = {
-                                    aktif: value,
-                                    paketId: value ? 'omur_boyu' as const : undefined,
-                                    satinAlmaTarihi: value ? new Date().toISOString() : undefined
-                                };
-                                await premiumDurumKaydet(yeniDurum);
-                                // Context'i güncelle
-                                setPremium(yeniDurum);
-                                Alert.alert(
-                                    value ? t('settings.premiumActive') : t('settings.premiumOff'),
-                                    value
-                                        ? t('settings.premiumActivated')
-                                        : t('settings.premiumDeactivated')
-                                );
-                            }}
-                            trackColor={{ false: '#333', true: '#FF6B6B' }}
-                            thumbColor={premiumAktif ? '#fff' : '#666'}
-                        />
-                    </View>
-                </View>
 
                 {/* İpuçları */}
                 <View style={[styles.ipucuContainer, { backgroundColor: renkler.kartArkaplan }]}>
