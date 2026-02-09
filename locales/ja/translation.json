@@ -262,7 +262,20 @@
             "privacyPolicy": "プライバシーポリシー",
             "termsOfUse": "利用規約",
             "close": "閉じる"
+        },
+        "pickerTitles": {
+            "dailyGoal": "1日の水分目標 (ml)",
+            "reminderInterval": "リマインダー間隔",
+            "smartReminderInterval": "水不足時のリマインダー",
+            "silentStart": "静音時間の開始",
+            "silentEnd": "静音時間の終了",
+            "wakeUpTime": "起床時間",
+            "sleepTime": "就寝時間"
         }
+    },
+    "appInfo": {
+        "versionValue": "1.0.0",
+        "developerName": "Serhat Cirit"
     },
     "alerts": {
         "permissionRequired": "許可が必要です",

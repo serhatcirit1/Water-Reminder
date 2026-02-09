@@ -262,7 +262,20 @@
             "privacyPolicy": "개인정보 처리방침",
             "termsOfUse": "이용약관",
             "close": "닫기"
+        },
+        "pickerTitles": {
+            "dailyGoal": "일일 수분 목표 (ml)",
+            "reminderInterval": "알림 간격",
+            "smartReminderInterval": "수분 부족 시 알림",
+            "silentStart": "방해 금지 시작",
+            "silentEnd": "방해 금지 종료",
+            "wakeUpTime": "기상 시간",
+            "sleepTime": "취침 시간"
         }
+    },
+    "appInfo": {
+        "versionValue": "1.0.0",
+        "developerName": "Serhat Cirit"
     },
     "alerts": {
         "permissionRequired": "권한 필요",

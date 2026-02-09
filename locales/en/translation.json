@@ -268,7 +268,20 @@
             "privacyPolicy": "Privacy Policy",
             "termsOfUse": "Terms of Use",
             "close": "Close"
+        },
+        "pickerTitles": {
+            "dailyGoal": "Daily Water Goal (ml)",
+            "reminderInterval": "Reminder Interval",
+            "smartReminderInterval": "Remind If No Water",
+            "silentStart": "Silent Hour Start",
+            "silentEnd": "Silent Hour End",
+            "wakeUpTime": "Wake Up Time",
+            "sleepTime": "Sleep Time"
         }
+    },
+    "appInfo": {
+        "versionValue": "1.0.0",
+        "developerName": "Serhat Cirit"
     },
     "alerts": {
         "permissionRequired": "Permission Required",

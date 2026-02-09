@@ -262,7 +262,20 @@
             "privacyPolicy": "Política de Privacidade",
             "termsOfUse": "Termos de Uso",
             "close": "Fechar"
+        },
+        "pickerTitles": {
+            "dailyGoal": "Meta Diária de Água (ml)",
+            "reminderInterval": "Intervalo de Lembrete",
+            "smartReminderInterval": "Lembrar Se Não Beber",
+            "silentStart": "Início Hora Silenciosa",
+            "silentEnd": "Fim Hora Silenciosa",
+            "wakeUpTime": "Hora de Acordar",
+            "sleepTime": "Hora de Dormir"
         }
+    },
+    "appInfo": {
+        "versionValue": "1.0.0",
+        "developerName": "Serhat Cirit"
     },
     "alerts": {
         "permissionRequired": "Permissão Necessária",

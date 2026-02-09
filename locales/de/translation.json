@@ -262,7 +262,20 @@
             "privacyPolicy": "Datenschutzrichtlinie",
             "termsOfUse": "Nutzungsbedingungen",
             "close": "Schließen"
+        },
+        "pickerTitles": {
+            "dailyGoal": "Tagesziel (ml)",
+            "reminderInterval": "Erinnerungsintervall",
+            "smartReminderInterval": "Erinnern wenn kein Wasser",
+            "silentStart": "Ruhezeit Beginn",
+            "silentEnd": "Ruhezeit Ende",
+            "wakeUpTime": "Aufwachzeit",
+            "sleepTime": "Schlafenszeit"
         }
+    },
+    "appInfo": {
+        "versionValue": "1.0.0",
+        "developerName": "Serhat Cirit"
     },
     "alerts": {
         "permissionRequired": "Berechtigung erforderlich",

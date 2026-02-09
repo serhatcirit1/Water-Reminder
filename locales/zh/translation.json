@@ -262,7 +262,20 @@
             "privacyPolicy": "隐私政策",
             "termsOfUse": "使用条款",
             "close": "关闭"
+        },
+        "pickerTitles": {
+            "dailyGoal": "每日饮水目标 (毫升)",
+            "reminderInterval": "提醒间隔",
+            "smartReminderInterval": "缺水提醒",
+            "silentStart": "静音开始时间",
+            "silentEnd": "静音结束时间",
+            "wakeUpTime": "起床时间",
+            "sleepTime": "就寝时间"
         }
+    },
+    "appInfo": {
+        "versionValue": "1.0.0",
+        "developerName": "Serhat Cirit"
     },
     "alerts": {
         "permissionRequired": "需要权限",

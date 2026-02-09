@@ -1187,12 +1187,12 @@ export function AyarlarEkrani() {
 
                     <View style={styles.bilgiSatir}>
                         <Text style={styles.bilgiEtiket}>{t('settings.version')}</Text>
-                        <Text style={styles.bilgiDeger}>1.0.0</Text>
+                        <Text style={styles.bilgiDeger}>{t('appInfo.versionValue')}</Text>
                     </View>
 
                     <View style={styles.bilgiSatir}>
                         <Text style={styles.bilgiEtiket}>{t('settings.developer')}</Text>
-                        <Text style={styles.bilgiDeger}>Serhat Cirit</Text>
+                        <Text style={styles.bilgiDeger}>{t('appInfo.developerName')}</Text>
                     </View>
 
                     <TouchableOpacity
@@ -1290,7 +1290,7 @@ export function AyarlarEkrani() {
             {/* Günlük Hedef Picker Modal */}
             <PickerModal
                 visible={hedefModalGoster}
-                title="Günlük Su Hedefi (ml)"
+                title={t('settings.pickerTitles.dailyGoal')}
                 value={gunlukHedef}
                 options={HEDEF_SECENEKLERI.map(ml => ({
                     label: `${ml} ml (${(ml / 1000).toFixed(ml % 1000 === 0 ? 0 : 1)} L)`,
@@ -1303,17 +1303,17 @@ export function AyarlarEkrani() {
             {/* Bildirim Aralığı Picker Modal */}
             <PickerModal
                 visible={bildirimAralikModalGoster}
-                title="Hatırlatma Aralığı"
+                title={t('settings.pickerTitles.reminderInterval')}
                 value={hatirlatmaAraligi}
                 options={[
-                    { label: '15 dakika', value: 15 },
-                    { label: '30 dakika', value: 30 },
-                    { label: '45 dakika', value: 45 },
-                    { label: '1 saat', value: 60 },
-                    { label: '1.5 saat', value: 90 },
-                    { label: '2 saat', value: 120 },
-                    { label: '3 saat', value: 180 },
-                    { label: '4 saat', value: 240 },
+                    { label: `15 ${t('time.minutes')}`, value: 15 },
+                    { label: `30 ${t('time.minutes')}`, value: 30 },
+                    { label: `45 ${t('time.minutes')}`, value: 45 },
+                    { label: `1 ${t('time.hours')}`, value: 60 },
+                    { label: `1.5 ${t('time.hours')}`, value: 90 },
+                    { label: `2 ${t('time.hours')}`, value: 120 },
+                    { label: `3 ${t('time.hours')}`, value: 180 },
+                    { label: `4 ${t('time.hours')}`, value: 240 },
                 ]}
                 onSelect={(value) => aralikDegistir(Number(value))}
                 onClose={() => setBildirimAralikModalGoster(false)}
@@ -1322,16 +1322,16 @@ export function AyarlarEkrani() {
             {/* Akıllı Hatırlatma Aralığı Picker Modal */}
             <PickerModal
                 visible={akilliAralikModalGoster}
-                title="Su İçmezsen Hatırlat"
+                title={t('settings.pickerTitles.smartReminderInterval')}
                 value={akilliHatirlatma.aralikDakika}
                 options={[
-                    { label: '30 dakika', value: 30 },
-                    { label: '45 dakika', value: 45 },
-                    { label: '1 saat', value: 60 },
-                    { label: '1.5 saat', value: 90 },
-                    { label: '2 saat', value: 120 },
-                    { label: '2.5 saat', value: 150 },
-                    { label: '3 saat', value: 180 },
+                    { label: `30 ${t('time.minutes')}`, value: 30 },
+                    { label: `45 ${t('time.minutes')}`, value: 45 },
+                    { label: `1 ${t('time.hours')}`, value: 60 },
+                    { label: `1.5 ${t('time.hours')}`, value: 90 },
+                    { label: `2 ${t('time.hours')}`, value: 120 },
+                    { label: `2.5 ${t('time.hours')}`, value: 150 },
+                    { label: `3 ${t('time.hours')}`, value: 180 },
                 ]}
                 onSelect={async (value) => {
                     const yeniAyar = { ...akilliHatirlatma, aralikDakika: Number(value) };
@@ -1344,7 +1344,7 @@ export function AyarlarEkrani() {
             {/* Sessiz Saatler Başlangıç Modal */}
             <TimePickerModal
                 visible={sessizBaslangicModalGoster}
-                title="Sessiz Saat Başlangıcı"
+                title={t('settings.pickerTitles.silentStart')}
                 hour={sessizSaatler.baslangic}
                 onSelect={async (hour) => {
                     const yeniAyar = { ...sessizSaatler, baslangic: hour };
@@ -1357,7 +1357,7 @@ export function AyarlarEkrani() {
             {/* Sessiz Saatler Bitiş Modal */}
             <TimePickerModal
                 visible={sessizBitisModalGoster}
-                title="Sessiz Saat Bitişi"
+                title={t('settings.pickerTitles.silentEnd')}
                 hour={sessizSaatler.bitis}
                 onSelect={async (hour) => {
                     const yeniAyar = { ...sessizSaatler, bitis: hour };
@@ -1370,7 +1370,7 @@ export function AyarlarEkrani() {
             {/* Bioritim Uyanma Saati Modal */}
             <TimePickerModal
                 visible={bioritimUyanmaModalGoster}
-                title="Uyanış Saati"
+                title={t('settings.pickerTitles.wakeUpTime')}
                 hour={parseInt(bioritim.uyanmaSaati.split(':')[0])}
                 minute={parseInt(bioritim.uyanmaSaati.split(':')[1] || '0')}
                 onSelect={async (hour, minute) => {
@@ -1385,7 +1385,7 @@ export function AyarlarEkrani() {
             {/* Bioritim Uyuma Saati Modal */}
             <TimePickerModal
                 visible={bioritimUyumaModalGoster}
-                title="Uyku Saati"
+                title={t('settings.pickerTitles.sleepTime')}
                 hour={parseInt(bioritim.uyumaSaati.split(':')[0])}
                 minute={parseInt(bioritim.uyumaSaati.split(':')[1] || '0')}
                 onSelect={async (hour, minute) => {

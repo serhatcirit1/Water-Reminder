@@ -268,7 +268,20 @@
             "privacyPolicy": "Gizlilik Politikası",
             "termsOfUse": "Kullanım Koşulları",
             "close": "Kapat"
+        },
+        "pickerTitles": {
+            "dailyGoal": "Günlük Su Hedefi (ml)",
+            "reminderInterval": "Hatırlatma Aralığı",
+            "smartReminderInterval": "Su İçmezsen Hatırlat",
+            "silentStart": "Sessiz Saat Başlangıcı",
+            "silentEnd": "Sessiz Saat Bitişi",
+            "wakeUpTime": "Uyanış Saati",
+            "sleepTime": "Uyku Saati"
         }
+    },
+    "appInfo": {
+        "versionValue": "1.0.0",
+        "developerName": "Serhat Cirit"
     },
     "alerts": {
         "permissionRequired": "İzin Gerekli",

@@ -262,7 +262,20 @@
             "privacyPolicy": "Politique de confidentialité",
             "termsOfUse": "Conditions d'utilisation",
             "close": "Fermer"
+        },
+        "pickerTitles": {
+            "dailyGoal": "Objectif Quotidien d'Eau (ml)",
+            "reminderInterval": "Intervalle de Rappel",
+            "smartReminderInterval": "Rappeler Si Pas d'Eau",
+            "silentStart": "Début Heure Silencieuse",
+            "silentEnd": "Fin Heure Silencieuse",
+            "wakeUpTime": "Heure de Réveil",
+            "sleepTime": "Heure de Coucher"
         }
+    },
+    "appInfo": {
+        "versionValue": "1.0.0",
+        "developerName": "Serhat Cirit"
     },
     "alerts": {
         "permissionRequired": "Permission requise",
