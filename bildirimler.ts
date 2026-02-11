@@ -35,7 +35,7 @@ export async function bildirimIzniIste(): Promise<boolean> {
     try {
         // Fiziksel cihaz mı kontrol et (emülatörde çalışmaz)
         if (!Device.isDevice) {
-            console.log('Bildirimler sadece fiziksel cihazda çalışır');
+
             return false;
         }
 
@@ -52,7 +52,7 @@ export async function bildirimIzniIste(): Promise<boolean> {
 
         // İzin verildi mi?
         if (sonDurum !== 'granted') {
-            console.log('Bildirim izni reddedildi');
+
             return false;
         }
 
@@ -105,13 +105,13 @@ export async function hatirlatmalariPlanla(aralikDakika: number = 120): Promise<
         });
     }
 
-    console.log(`${bildirimSayisi} bildirim planlandı (${aralikDakika} dakika aralıkla)`);
+
 }
 
 // --- TÜM BİLDİRİMLERİ İPTAL ET ---
 export async function tumBildirimleriIptalEt(): Promise<void> {
     await Notifications.cancelAllScheduledNotificationsAsync();
-    console.log('Tüm planlanmış bildirimler iptal edildi');
+
 }
 
 // --- ANLIK BİLDİRİM GÖNDER (Test için) ---
@@ -311,7 +311,7 @@ export async function akilliHatirlatmaPlanla(
             },
         });
 
-        console.log(`Akıllı hatırlatma planlandı: ${kalanDakika} dakika sonra (saat ${saat})`);
+
     } catch (hata) {
         console.error('Akıllı hatırlatma planlanamadı:', hata);
     }
@@ -464,7 +464,7 @@ export async function gunlukOzetPlanla(suMl?: number, hedefMl?: number, saat?: n
                 hedef = parseInt(hedefVerisi, 10);
             }
         } catch (e) {
-            console.log('Su verisi alınamadı, varsayılan değerler kullanılıyor');
+
         }
 
         const yuzde = hedef > 0 ? Math.round((toplamMl / hedef) * 100) : 0;
@@ -503,7 +503,7 @@ export async function gunlukOzetPlanla(suMl?: number, hedefMl?: number, saat?: n
             },
         });
 
-        console.log('Günlük özet planlandı:', bildirimZamani);
+
     } catch (hata) {
         console.error('Günlük özet planlanamadı:', hata);
     }
@@ -601,7 +601,7 @@ export async function haftalikRaporPlanla(
                     ort = Math.round(toplam / 7);
                 }
             } catch (e) {
-                console.log('Haftalık veriler hesaplanamadı, varsayılan değerler kullanılıyor');
+
             }
         }
 
@@ -655,7 +655,7 @@ export async function haftalikRaporPlanla(
             },
         });
 
-        console.log('Haftalık rapor planlandı:', bildirimZamani);
+
     } catch (hata) {
         console.error('Haftalık rapor planlanamadı:', hata);
     }

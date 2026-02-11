@@ -294,7 +294,7 @@ export async function suIcmeSaatiKaydet(saat: number, gun: number): Promise<void
                     kayitlar = parsed;
                 } else {
                     // Eski format veya bozuk veri - sıfırdan başla
-                    console.log('Su içme saatleri verisi sıfırlandı (eski format)');
+
                     kayitlar = [];
                 }
             } catch {
@@ -1227,7 +1227,7 @@ export async function bildirimGonderildiKaydet(saat: number): Promise<void> {
         });
 
         await AsyncStorage.setItem(BILDIRIM_TEPKI_KEY, JSON.stringify(tepkiler));
-        console.log('Bildirim gönderildi kaydedildi:', saat);
+
     } catch (e) {
         console.error('Bildirim tepki kaydı başarısız:', e);
     }
@@ -1261,7 +1261,7 @@ export async function bildirimTepkisiKaydet(): Promise<void> {
 
         if (guncellendi) {
             await AsyncStorage.setItem(BILDIRIM_TEPKI_KEY, JSON.stringify(tepkiler));
-            console.log('Bildirim tepkisi kaydedildi');
+
         }
     } catch (e) {
         console.error('Bildirim tepkisi kaydedilemedi:', e);

@@ -599,7 +599,7 @@ export async function suIcmeSaatiKaydet(): Promise<void> {
                 if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
                     saatler = parsed;
                 } else {
-                    console.log('Su saatleri verisi sıfırlandı (yanlış format)');
+
                     saatler = {};
                 }
             } catch {
@@ -611,7 +611,7 @@ export async function suIcmeSaatiKaydet(): Promise<void> {
         const saatKey = saat.toString();
         saatler[saatKey] = (saatler[saatKey] || 0) + 1;
 
-        console.log('Su saati kaydedildi:', saat, 'Toplam:', saatler[saatKey]);
+
         await AsyncStorage.setItem(SU_ICME_SAATLERI_KEY, JSON.stringify(saatler));
     } catch (hata) {
         console.error('Su içme saati kaydedilemedi:', hata);
@@ -641,10 +641,10 @@ export async function suIcmeSaatleriYukle(): Promise<SaatIstatistik[]> {
                     });
                 }
 
-                console.log('Su saatleri yüklendi:', Object.keys(saatler).length, 'kayıt');
+
                 return sonuc;
             } else {
-                console.log('Su saatleri verisi yanlış formatta, sıfırlanıyor');
+
                 // Yanlış format varsa temizle
                 await AsyncStorage.removeItem(SU_ICME_SAATLERI_KEY);
             }
