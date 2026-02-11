@@ -32,41 +32,46 @@ Notifications.setNotificationHandler({
 // iOS'ta bildirim göndermek için kullanıcı izni gerekir
 // Android'de genelde otomatik verilir
 export async function bildirimIzniIste(): Promise<boolean> {
-    // Fiziksel cihaz mı kontrol et (emülatörde çalışmaz)
-    if (!Device.isDevice) {
-        console.log('Bildirimler sadece fiziksel cihazda çalışır');
+    try {
+        // Fiziksel cihaz mı kontrol et (emülatörde çalışmaz)
+        if (!Device.isDevice) {
+            console.log('Bildirimler sadece fiziksel cihazda çalışır');
+            return false;
+        }
+
+        // Mevcut izin durumunu kontrol et
+        const { status: mevcutDurum } = await Notifications.getPermissionsAsync();
+
+        let sonDurum = mevcutDurum;
+
+        // Eğer izin verilmemişse, iste
+        if (mevcutDurum !== 'granted') {
+            const { status } = await Notifications.requestPermissionsAsync();
+            sonDurum = status;
+        }
+
+        // İzin verildi mi?
+        if (sonDurum !== 'granted') {
+            console.log('Bildirim izni reddedildi');
+            return false;
+        }
+
+        // Android için bildirim kanalı oluştur
+        // (Android 8+ için gerekli)
+        if (Platform.OS === 'android') {
+            await Notifications.setNotificationChannelAsync('su-hatirlatma', {
+                name: i18n.t('notif.channel_name'),
+                importance: Notifications.AndroidImportance.HIGH,
+                vibrationPattern: [0, 250, 250, 250], // Titreşim paterni
+                lightColor: '#4FC3F7', // LED rengi
+            });
+        }
+
+        return true;
+    } catch (hata) {
+        console.error('Bildirim izni istenemedi:', hata);
         return false;
     }
-
-    // Mevcut izin durumunu kontrol et
-    const { status: mevcutDurum } = await Notifications.getPermissionsAsync();
-
-    let sonDurum = mevcutDurum;
-
-    // Eğer izin verilmemişse, iste
-    if (mevcutDurum !== 'granted') {
-        const { status } = await Notifications.requestPermissionsAsync();
-        sonDurum = status;
-    }
-
-    // İzin verildi mi?
-    if (sonDurum !== 'granted') {
-        console.log('Bildirim izni reddedildi');
-        return false;
-    }
-
-    // Android için bildirim kanalı oluştur
-    // (Android 8+ için gerekli)
-    if (Platform.OS === 'android') {
-        await Notifications.setNotificationChannelAsync('su-hatirlatma', {
-            name: i18n.t('notif.channel_name'),
-            importance: Notifications.AndroidImportance.HIGH,
-            vibrationPattern: [0, 250, 250, 250], // Titreşim paterni
-            lightColor: '#4FC3F7', // LED rengi
-        });
-    }
-
-    return true;
 }
 
 // --- HATIRLATMA BİLDİRİMİ ZAMANLAMA ---
@@ -350,7 +355,7 @@ export async function akilliHatirlatmaTestBildirimi(): Promise<void> {
 }
 // --- RASTGELE MOTİVASYON MESAJI ---
 // Her bildirimde farklı mesaj göster
-function getRandomMesaj(): string {
+export function getRandomMesaj(): string {
     const mesajKeys = ['msg1', 'msg2', 'msg3', 'msg4', 'msg5', 'msg6', 'msg7', 'msg8', 'msg9', 'msg10'];
     const rastgeleIndex = Math.floor(Math.random() * mesajKeys.length);
     return i18n.t(`notif.messages.${mesajKeys[rastgeleIndex]}`);

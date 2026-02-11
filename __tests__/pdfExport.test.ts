@@ -10,6 +10,14 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
     setItem: jest.fn(),
 }));
 
+jest.mock('../locales/i18n', () => ({
+    __esModule: true,
+    default: {
+        t: (key: string) => key,
+        language: 'en',
+    },
+}));
+
 jest.mock('expo-print', () => ({
     printToFileAsync: jest.fn().mockResolvedValue({ uri: '/test/file.pdf' }),
 }));

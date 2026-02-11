@@ -5,5 +5,8 @@ module.exports = {
     testMatch: ['**/__tests__/**/*.test.ts'],
     transform: {
         '^.+\\.tsx?$': 'ts-jest'
+    },
+    moduleNameMapper: {
+        '\\.(mp3|wav|ogg|png|jpg|jpeg|gif|svg)$': '<rootDir>/__mocks__/fileMock.js'
     }
 };

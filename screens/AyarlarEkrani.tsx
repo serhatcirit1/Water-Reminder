@@ -1153,7 +1153,7 @@ export function AyarlarEkrani() {
                     )}
                 </View>
 
-                {/* 🛠️ Geliştirici Test Modu */}
+                {/* 🛠️ Geliştirici Test Modu - KAPALI
                 <View style={[styles.temaContainer, { backgroundColor: renkler.kartArkaplan, borderColor: '#FF9800', borderWidth: 1 }]}>
                     <Text style={[styles.temaBaslik, { color: '#FF9800' }]}>🛠️ Geliştirici Test Modu</Text>
                     <Text style={styles.hedefAciklama}>
@@ -1189,6 +1189,7 @@ export function AyarlarEkrani() {
                         />
                     </View>
                 </View>
+                */}
 
                 {/* Uygulama Bilgileri */}
                 <View style={[styles.bilgiContainer, { backgroundColor: renkler.kartArkaplan }]}>

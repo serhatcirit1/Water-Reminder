@@ -10,6 +10,17 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
     setItem: jest.fn(),
 }));
 
+jest.mock('../locales/i18n', () => ({
+    __esModule: true,
+    default: {
+        t: (key: string) => {
+            if (key === 'common.locale') return 'en-US';
+            return key;
+        },
+        language: 'en',
+    },
+}));
+
 jest.mock('expo-file-system/legacy', () => ({
     cacheDirectory: '/cache/',
     writeAsStringAsync: jest.fn(),
@@ -75,9 +86,9 @@ describe('ExportUtils', () => {
 
             const csv = premiumCsvOlustur(mockGecmis, 2000);
 
-            expect(csv).toContain('SU TAKİP PREMIUM');
-            expect(csv).toContain('Tarih');
-            expect(csv).toContain('Tüketim (ml)');
+            expect(csv).toContain('csv.title');
+            expect(csv).toContain('csv.date');
+            expect(csv).toContain('csv.consumption_ml');
             expect(csv).toContain('2024-01-15');
             expect(csv).toContain('2500');
         });
@@ -85,8 +96,8 @@ describe('ExportUtils', () => {
         it('boş veri ile header içerir', () => {
             const csv = premiumCsvOlustur({}, 2000);
 
-            expect(csv).toContain('SU TAKİP PREMIUM');
-            expect(csv).toContain('Tarih');
+            expect(csv).toContain('csv.title');
+            expect(csv).toContain('csv.date');
         });
     });
 

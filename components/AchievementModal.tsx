@@ -14,6 +14,7 @@ import {
     Dimensions,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import i18n from '../locales/i18n';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -195,7 +196,7 @@ export function AchievementModal({
                                         end={{ x: 1, y: 0 }}
                                         style={styles.buttonGradient}
                                     >
-                                        <Text style={styles.buttonText}>Devam Et</Text>
+                                        <Text style={styles.buttonText}>{i18n.t('common.continue')}</Text>
                                     </LinearGradient>
                                 </TouchableOpacity>
                             </LinearGradient>

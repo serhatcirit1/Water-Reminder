@@ -16,6 +16,15 @@ jest.mock('expo-notifications', () => ({
     scheduleNotificationAsync: jest.fn(),
     cancelAllScheduledNotificationsAsync: jest.fn(),
     getPermissionsAsync: jest.fn(),
+    AndroidImportance: { HIGH: 4 },
+    AndroidNotificationPriority: { HIGH: 'high' },
+    SchedulableTriggerInputTypes: { TIME_INTERVAL: 'timeInterval' },
+    setNotificationChannelAsync: jest.fn(),
+    cancelScheduledNotificationAsync: jest.fn(),
+}));
+
+jest.mock('expo-device', () => ({
+    isDevice: true,
 }));
 
 jest.mock('react-native', () => ({
@@ -25,6 +34,14 @@ jest.mock('react-native', () => ({
 
 jest.mock('../aiUtils', () => ({
     bildirimGonderildiKaydet: jest.fn(),
+}));
+
+jest.mock('../locales/i18n', () => ({
+    __esModule: true,
+    default: {
+        t: (key: string) => key,
+        language: 'en',
+    },
 }));
 
 import * as Notifications from 'expo-notifications';

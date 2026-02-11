@@ -13,6 +13,7 @@
         "back": "Back",
         "next": "Next",
         "done": "Done",
+        "continue": "Continue",
         "locale": "en-US",
         "great": "Great!",
         "errorOccurred": "An error occurred during the process.",
