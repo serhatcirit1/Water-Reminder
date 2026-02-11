@@ -15,6 +15,7 @@ import {
     Image,
     Platform,
     Alert,
+    Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -38,9 +39,9 @@ const FEATURE_KEYS = [
 ];
 
 const PLAN_KEYS = [
-    { id: 'aylik', titleKey: 'premium.plans.monthly', price: '$4.99', subKey: 'premium.plans.payMonthly', populer: false },
-    { id: 'yillik', titleKey: 'premium.plans.yearly', price: '$29.99', subKey: 'premium.plans.mostPopular', populer: true },
-    { id: 'omur_boyu', titleKey: 'premium.plans.lifetime', price: '$79.99', subKey: 'premium.plans.oneTime', populer: false },
+    { id: 'aylik', titleKey: 'premium.plans.monthly', subKey: 'premium.plans.payMonthly', populer: false },
+    { id: 'yillik', titleKey: 'premium.plans.yearly', subKey: 'premium.plans.mostPopular', populer: true },
+    { id: 'omur_boyu', titleKey: 'premium.plans.lifetime', subKey: 'premium.plans.oneTime', populer: false },
 ];
 
 interface PremiumEkraniProps {
@@ -182,7 +183,7 @@ export default function PremiumEkrani({ onClose }: PremiumEkraniProps) {
                                     </LinearGradient>
                                 )}
                                 <Text style={[styles.planTitle, (plan.populer || seciliPlan === plan.id) && { color: '#FFD700' }]}>{t(plan.titleKey)}</Text>
-                                <Text style={styles.planPrice}>{plan.price}</Text>
+                                <Text style={styles.planPrice}>{t(`premium.prices.${plan.id}`)}</Text>
                                 <Text style={styles.planSubtext}>{t(plan.subKey)}</Text>
                             </TouchableOpacity>
                         ))}
@@ -215,6 +216,15 @@ export default function PremiumEkrani({ onClose }: PremiumEkraniProps) {
                             seciliPlan === 'yillik' ? t('premium.trialText.yearly') :
                                 t('premium.trialText.lifetime')}
                     </Text>
+                    <View style={styles.legalLinksContainer}>
+                        <TouchableOpacity onPress={() => Linking.openURL('https://serhatcirit1.github.io/Smart-Water-AI-Insights-Privacy-Policy/terms.html')}>
+                            <Text style={styles.legalLink}>{t('premium.legal.termsOfUse')}</Text>
+                        </TouchableOpacity>
+                        <Text style={styles.legalSeparator}>•</Text>
+                        <TouchableOpacity onPress={() => Linking.openURL('https://serhatcirit1.github.io/Smart-Water-AI-Insights-Privacy-Policy/')}>
+                            <Text style={styles.legalLink}>{t('premium.legal.privacyPolicy')}</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </SafeAreaView>
         </View >
@@ -453,5 +463,21 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginTop: 16,
         fontWeight: '500',
+    },
+    legalLinksContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 12,
+        gap: 8,
+    },
+    legalLink: {
+        color: '#64748B',
+        fontSize: 12,
+        textDecorationLine: 'underline',
+    },
+    legalSeparator: {
+        color: '#64748B',
+        fontSize: 12,
     },
 });

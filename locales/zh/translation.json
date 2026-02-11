@@ -73,16 +73,25 @@
             "mostPopular": "最受欢迎 • 节省50%",
             "oneTime": "一次性付款"
         },
+        "prices": {
+            "aylik": "$2.99",
+            "yillik": "$17.99",
+            "omur_boyu": "$29.99"
+        },
         "buttons": {
             "startTrial": "开始免费试用",
             "subscribe": "立即订阅"
         },
         "trialText": {
-            "monthly": "前7天免费，之后每月¥18",
-            "yearly": "每年¥108 • 随时取消",
+            "monthly": "前7天免费，之后每月$2.99",
+            "yearly": "每年$17.99 • 随时取消",
             "lifetime": "一次性付款 • 永久使用"
         },
-        "footer": "您可以随时取消。付款将从您的Google Play Store / App Store账户扣除。"
+        "legal": {
+            "termsOfUse": "使用条款",
+            "privacyPolicy": "隐私政策"
+        },
+        "footer": "您可以随时取消。付款将从您的App Store账户扣除。"
     },
     "home": {
         "title": "首页",

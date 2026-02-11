@@ -73,16 +73,25 @@
             "mostPopular": "Mais popular • 50% de economia",
             "oneTime": "Pagamento único"
         },
+        "prices": {
+            "aylik": "$2.99",
+            "yillik": "$17.99",
+            "omur_boyu": "$29.99"
+        },
         "buttons": {
             "startTrial": "INICIAR TESTE GRATUITO",
             "subscribe": "ASSINAR AGORA"
         },
         "trialText": {
-            "monthly": "Primeiros 7 dias grátis, depois R$ 14,99/mês",
-            "yearly": "R$ 89,99/ano • Cancele a qualquer momento",
+            "monthly": "Primeiros 7 dias grátis, depois $2.99/mês",
+            "yearly": "$17.99/ano • Cancele a qualquer momento",
             "lifetime": "Pagamento único • Acesso ilimitado"
         },
-        "footer": "Você pode cancelar a qualquer momento. Os pagamentos são cobrados na sua conta Google Play Store / App Store."
+        "legal": {
+            "termsOfUse": "Termos de Uso",
+            "privacyPolicy": "Política de Privacidade"
+        },
+        "footer": "Você pode cancelar a qualquer momento. Os pagamentos são cobrados na sua conta App Store."
     },
     "home": {
         "title": "Início",

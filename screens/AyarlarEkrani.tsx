@@ -1153,6 +1153,43 @@ export function AyarlarEkrani() {
                     )}
                 </View>
 
+                {/* 🛠️ Geliştirici Test Modu */}
+                <View style={[styles.temaContainer, { backgroundColor: renkler.kartArkaplan, borderColor: '#FF9800', borderWidth: 1 }]}>
+                    <Text style={[styles.temaBaslik, { color: '#FF9800' }]}>🛠️ Geliştirici Test Modu</Text>
+                    <Text style={styles.hedefAciklama}>
+                        Bu alan sadece geliştirme aşamasında görünür. Premium özelliklerini test etmek için kullanabilirsiniz.
+                    </Text>
+
+                    <View style={styles.modSatir}>
+                        <View>
+                            <Text style={styles.modEtiket}>Premium Kilidi</Text>
+                            <Text style={styles.sessizAciklama}>
+                                {premiumAktif ? 'Premium Açık (Kilitler Kalktı)' : 'Premium Kapalı (Kilitler Aktif)'}
+                            </Text>
+                        </View>
+                        <Switch
+                            value={premiumAktif}
+                            onValueChange={async (value) => {
+                                const yeniDurum = {
+                                    aktif: value,
+                                    paketId: value ? 'omur_boyu' as const : undefined,
+                                    satinAlmaTarihi: value ? new Date().toISOString() : undefined
+                                };
+                                await premiumDurumKaydet(yeniDurum);
+                                setPremium(yeniDurum);
+
+                                if (value) {
+                                    Alert.alert('Geliştirici Modu', 'Premium özellikleri aktif edildi.');
+                                } else {
+                                    Alert.alert('Geliştirici Modu', 'Premium özellikleri kapatıldı. Paywall ekranlarını test edebilirsiniz.');
+                                }
+                            }}
+                            trackColor={{ false: '#ccc', true: '#FF9800' }}
+                            thumbColor={premiumAktif ? '#fff' : '#f4f3f4'}
+                        />
+                    </View>
+                </View>
+
                 {/* Uygulama Bilgileri */}
                 <View style={[styles.bilgiContainer, { backgroundColor: renkler.kartArkaplan }]}>
                     <Text style={styles.bilgiBaslik}>{t('settings.appInfo')}</Text>

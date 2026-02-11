@@ -73,6 +73,11 @@
             "mostPopular": "En Popüler • %50 tasarruf",
             "oneTime": "Tek seferlik ödeme"
         },
+        "prices": {
+            "aylik": "49,99 TL",
+            "yillik": "299,99 TL",
+            "omur_boyu": "499,99 TL"
+        },
         "buttons": {
             "startTrial": "ÜCRETSİZ DENEMEYİ BAŞLAT",
             "subscribe": "ŞİMDİ ABONE OL"
@@ -82,7 +87,11 @@
             "yearly": "Yıllık 299,99 TL • İstediğin zaman iptal et",
             "lifetime": "Tek seferlik ödeme • Sınırsız erişim"
         },
-        "footer": "İstediğiniz zaman iptal edebilirsiniz. Ödemeler Google Play Store / App Store hesabınızdan tahsil edilir."
+        "legal": {
+            "termsOfUse": "Kullanım Koşulları",
+            "privacyPolicy": "Gizlilik Politikası"
+        },
+        "footer": "İstediğiniz zaman iptal edebilirsiniz. Ödemeler App Store hesabınızdan tahsil edilir."
     },
     "home": {
         "title": "Ana Sayfa",

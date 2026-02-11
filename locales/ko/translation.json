@@ -73,16 +73,25 @@
             "mostPopular": "가장 인기 • 50% 할인",
             "oneTime": "일회성 결제"
         },
+        "prices": {
+            "aylik": "$2.99",
+            "yillik": "$17.99",
+            "omur_boyu": "$29.99"
+        },
         "buttons": {
             "startTrial": "무료 체험 시작",
             "subscribe": "지금 구독"
         },
         "trialText": {
-            "monthly": "처음 7일 무료, 이후 월 ₩5,900",
-            "yearly": "연 ₩35,000 • 언제든 취소 가능",
+            "monthly": "처음 7일 무료, 이후 월 $2.99",
+            "yearly": "연 $17.99 • 언제든 취소 가능",
             "lifetime": "일회성 결제 • 영구 이용"
         },
-        "footer": "언제든지 취소할 수 있습니다. 결제는 Google Play Store / App Store 계정으로 청구됩니다."
+        "legal": {
+            "termsOfUse": "이용약관",
+            "privacyPolicy": "개인정보 처리방침"
+        },
+        "footer": "언제든지 취소할 수 있습니다. 결제는 App Store 계정으로 청구됩니다."
     },
     "home": {
         "title": "홈",
