@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
 import './locales/i18n';
 import { bildirimIzniIste, hatirlatmalariPlanla, bildirimAyarlariniKaydet, gunlukOzetPlanla, haftalikRaporPlanla } from './bildirimler';
+import { healthKitAyarYukle, healthKitBaslat } from './healthKit';
 
 // Ekranlar ve Context
 import { TemaProvider, useTema } from './TemaContext';
@@ -90,7 +91,19 @@ function AppContent() {
 
   useEffect(() => {
     checkOnboarding();
+    initHealthKit();
   }, []);
+
+  const initHealthKit = async () => {
+    try {
+      const hkAktif = await healthKitAyarYukle();
+      if (hkAktif) {
+        await healthKitBaslat();
+      }
+    } catch (error) {
+      // HealthKit başlatma hatası sessizce yoksayılır
+    }
+  };
 
   const checkOnboarding = async () => {
     try {

@@ -503,51 +503,68 @@ export async function gunlukOzetPlanla(suMl?: number, hedefMl?: number, saat?: n
 
         const kullanilacakSaat = saat ?? ozetAyar.saat;
 
-        // Mevcut su verisini AsyncStorage'dan al
-        let toplamMl = suMl ?? 0;
-        let hedef = hedefMl ?? 2000;
+        // Mevcut su verisini al
+        let toplamMl = suMl;
+        let hedef = hedefMl;
 
-        try {
-            // Su sayacı verisini al
-            const suVerisi = await AsyncStorage.getItem('@gunluk_su');
-            if (suVerisi) {
-                const veri = JSON.parse(suVerisi);
-                const bugun = new Date().toDateString();
-                if (veri.tarih === bugun) {
-                    toplamMl = veri.toplamMl || 0;
+        // Eğer değerler dışarıdan gelmediyse Storage'dan çek
+        if (toplamMl === undefined || hedef === undefined) {
+            try {
+                if (toplamMl === undefined) {
+                    const suVerisi = await AsyncStorage.getItem('@gunluk_su');
+                    if (suVerisi) {
+                        const veri = JSON.parse(suVerisi);
+                        const bugun = new Date().toDateString();
+                        if (veri.tarih === bugun) {
+                            toplamMl = veri.toplamMl || 0;
+                        } else {
+                            toplamMl = 0;
+                        }
+                    } else {
+                        toplamMl = 0;
+                    }
                 }
-            }
 
-            // Hedefi al
-            const hedefVerisi = await AsyncStorage.getItem('@gunluk_hedef');
-            if (hedefVerisi) {
-                hedef = parseInt(hedefVerisi, 10);
+                if (hedef === undefined) {
+                    const hedefVerisi = await AsyncStorage.getItem('@gunluk_hedef');
+                    if (hedefVerisi) {
+                        hedef = parseInt(hedefVerisi, 10);
+                    } else {
+                        hedef = 2500;
+                    }
+                }
+            } catch (e) {
+                toplamMl = toplamMl ?? 0;
+                hedef = hedef ?? 2500;
             }
-        } catch (e) {
-
         }
 
-        const yuzde = hedef > 0 ? Math.round((toplamMl / hedef) * 100) : 0;
-        let mesaj = '';
-
-        if (yuzde >= 100) {
-            mesaj = i18n.t('notif.goal_reached', { current: toplamMl, goal: hedef });
-        } else if (yuzde >= 75) {
-            mesaj = i18n.t('notif.goal_almost', { current: toplamMl, goal: hedef, percent: yuzde });
-        } else if (yuzde >= 50) {
-            mesaj = i18n.t('notif.goal_half', { current: toplamMl, goal: hedef, percent: yuzde });
-        } else {
-            mesaj = i18n.t('notif.goal_low', { current: toplamMl, goal: hedef });
-        }
-
-        // Bugün belirlenen saatte bildirim planla
+        // Bildirim zamanını hesapla
         const simdi = new Date();
         const bildirimZamani = new Date();
         bildirimZamani.setHours(kullanilacakSaat, 0, 0, 0);
 
-        // Eğer belirlenen saat geçtiyse, yarına planla
+        // Eğer belirlenen saat geçtiyse veya çok yakınsa, yarına planla
+        // (Gelecek günün verisi henüz bilinmediği için 0 olarak planlanmalı)
         if (simdi >= bildirimZamani) {
             bildirimZamani.setDate(bildirimZamani.getDate() + 1);
+            toplamMl = 0; // Yarın için özet 0'dan başlar
+        }
+
+        const yuzde = (hedef || 2500) > 0 ? Math.round(((toplamMl || 0) / (hedef || 2500)) * 100) : 0;
+        let mesaj = '';
+
+        if (yuzde >= 100) {
+            mesaj = i18n.t('notif.goal_reached', { current: toplamMl || 0, goal: hedef });
+        } else if (yuzde >= 75) {
+            mesaj = i18n.t('notif.goal_almost', { current: toplamMl || 0, goal: hedef, percent: yuzde });
+        } else if (yuzde >= 50) {
+            mesaj = i18n.t('notif.goal_half', { current: toplamMl || 0, goal: hedef, percent: yuzde });
+        } else if ((toplamMl || 0) > 0) {
+            mesaj = i18n.t('notif.goal_low', { current: toplamMl || 0, goal: hedef });
+        } else {
+            // Eğer su hiç içilmediyse (veya yarın için planlanıyorsa)
+            mesaj = i18n.t('notif.daily_summary_desc');
         }
 
         await Notifications.scheduleNotificationAsync({
@@ -562,8 +579,6 @@ export async function gunlukOzetPlanla(suMl?: number, hedefMl?: number, saat?: n
                 date: bildirimZamani,
             },
         });
-
-
     } catch (hata) {
         console.error('Günlük özet planlanamadı:', hata);
     }

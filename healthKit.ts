@@ -14,7 +14,8 @@ const DEV_MODE_SIMULATION = false;
 
 if (Platform.OS === 'ios') {
     try {
-        AppleHealthKit = require('react-native-health').default;
+        const HK = require('react-native-health');
+        AppleHealthKit = HK.default || HK;
     } catch (error) {
         // console.log('HealthKit yüklenemedi:', error);
     }

@@ -41,6 +41,8 @@ import { suSesiCal } from '../sesUtils';
 import { useTranslation } from 'react-i18next';
 import { suFaydasiAl, hedefTamamlandiMesaji } from '../suFaydalari';
 import { AchievementModal, AchievementType } from '../components/AchievementModal';
+import { gunlukOzetPlanla } from '../bildirimler';
+import { suTuketimiKaydet } from '../healthKit';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -249,6 +251,9 @@ export function AnaSayfaEkrani() {
         await sonIcmeZamaniKaydet();
         await suIcmeXP();
 
+        // Apple Health'e kaydet
+        await suTuketimiKaydet(bardakBoyutu);
+
         // AI İçgörü sistemi için saat kaydı
         const simdikiSaat = new Date().getHours();
         const simdikiGun = new Date().getDay();
@@ -301,6 +306,9 @@ export function AnaSayfaEkrani() {
             yeniToplamMl,
             yeniRekor
         );
+
+        // Günlük özet bildirimini güncelle
+        await gunlukOzetPlanla(yeniToplamMl, gunlukHedef);
 
         // Sadece rozet kazanıldığında modal göster
         if (kazanilanRozetler.length > 0) {
@@ -374,6 +382,9 @@ export function AnaSayfaEkrani() {
 
         // AI İçgörü kartını güncelle
         notifyInsightListeners();
+
+        // Günlük özet bildirimini güncelle
+        await gunlukOzetPlanla(yeniToplamMl, gunlukHedef);
     };
 
     const yuzde = (toplamMl / gunlukHedef) * 100; // Sınırsız yüzde
