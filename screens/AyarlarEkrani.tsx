@@ -49,7 +49,7 @@ import { LANGUAGES, changeLanguage, getCurrentLanguage } from '../locales/i18n';
 
 // --- COMPONENT ---
 export function AyarlarEkrani() {
-    const [bildirimAktif, setBildirimAktif] = useState(false);
+    const [bildirimAktif, setBildirimAktif] = useState(true);
     const [hatirlatmaAraligi, setHatirlatmaAraligi] = useState(120);
     const [gunlukHedef, setGunlukHedef] = useState(2000);
     const [bardakBoyutu, setBardakBoyutu] = useState(250);
@@ -62,13 +62,13 @@ export function AyarlarEkrani() {
         kilo: 70, yas: 30, aktifMi: false
     });
     const [gunlukOzet, setGunlukOzet] = useState<GunlukOzetAyar>({
-        aktif: false, saat: 21
+        aktif: true, saat: 21
     });
     const [haftalikRapor, setHaftalikRapor] = useState<HaftalikRaporAyar>({
-        aktif: false, gun: 0, saat: 20
+        aktif: true, gun: 0, saat: 20
     });
     const [akilliHatirlatma, setAkilliHatirlatma] = useState<AkilliHatirlatmaAyar>({
-        aktif: false, aralikDakika: 90
+        aktif: true, aralikDakika: 90
     });
     const [healthKitAktif, setHealthKitAktif] = useState(false);
     const [dinamikHedefAktif, setDinamikHedefAktif] = useState(false);
@@ -142,7 +142,6 @@ export function AyarlarEkrani() {
 
             // Bioritim ve Detoks yükle
             const bioAyar = await bioritimAyarYukle();
-            setBioritim(bioAyar);
             setBioritim(bioAyar);
 
 
@@ -309,33 +308,27 @@ export function AyarlarEkrani() {
                         {t('settings.personalizedGoalDesc')}
                     </Text>
 
-                    {/* Cinsiyet */}
-                    <View style={styles.profilSatir}>
-                        <Text style={styles.profilEtiket}>{t('onboarding.gender')}</Text>
-                        <View style={{ flexDirection: 'row', gap: 10 }}>
-                            <TouchableOpacity
-                                style={[
-                                    styles.profilButon,
-                                    { paddingHorizontal: 12, backgroundColor: profil.cinsiyet === 'erkek' ? '#4FC3F7' : 'transparent' }
-                                ]}
-                                onPress={() => profilDegistir({ ...profil, cinsiyet: 'erkek' })}
-                            >
-                                <Text style={[styles.profilButonYazi, { color: profil.cinsiyet === 'erkek' ? '#fff' : '#4FC3F7' }]}>
-                                    👨 {t('onboarding.male')}
-                                </Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={[
-                                    styles.profilButon,
-                                    { paddingHorizontal: 12, backgroundColor: profil.cinsiyet === 'kadin' ? '#4FC3F7' : 'transparent' }
-                                ]}
-                                onPress={() => profilDegistir({ ...profil, cinsiyet: 'kadin' })}
-                            >
-                                <Text style={[styles.profilButonYazi, { color: profil.cinsiyet === 'kadin' ? '#fff' : '#4FC3F7' }]}>
-                                    👩 {t('onboarding.female')}
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
+                    {/* Cinsiyet - Sadece Emojiler ve Text */}
+                    <View style={styles.cinsiyetSecimContainer}>
+                        <TouchableOpacity
+                            style={[
+                                styles.cinsiyetKutu,
+                                profil.cinsiyet === 'erkek' && styles.cinsiyetKutuSecili
+                            ]}
+                            onPress={() => profilDegistir({ ...profil, cinsiyet: 'erkek' })}
+                        >
+                            <Text style={styles.cinsiyetEmoji}>👨</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={[
+                                styles.cinsiyetKutu,
+                                profil.cinsiyet === 'kadin' && styles.cinsiyetKutuSecili
+                            ]}
+                            onPress={() => profilDegistir({ ...profil, cinsiyet: 'kadin' })}
+                        >
+                            <Text style={styles.cinsiyetEmoji}>👩</Text>
+                        </TouchableOpacity>
                     </View>
 
                     {/* Boy */}
@@ -344,14 +337,14 @@ export function AyarlarEkrani() {
                         <View style={styles.profilDegerler}>
                             <TouchableOpacity
                                 style={styles.profilButon}
-                                onPress={() => profilDegistir({ ...profil, boy: Math.max(100, (profil.boy || 170) - 5) })}
+                                onPress={() => profilDegistir({ ...profil, boy: Math.max(100, (profil.boy || 170) - 1) })}
                             >
                                 <Text style={styles.profilButonYazi}>-</Text>
                             </TouchableOpacity>
                             <Text style={styles.profilDeger}>{profil.boy || 170} cm</Text>
                             <TouchableOpacity
                                 style={styles.profilButon}
-                                onPress={() => profilDegistir({ ...profil, boy: Math.min(220, (profil.boy || 170) + 5) })}
+                                onPress={() => profilDegistir({ ...profil, boy: Math.min(220, (profil.boy || 170) + 1) })}
                             >
                                 <Text style={styles.profilButonYazi}>+</Text>
                             </TouchableOpacity>
@@ -364,14 +357,14 @@ export function AyarlarEkrani() {
                         <View style={styles.profilDegerler}>
                             <TouchableOpacity
                                 style={styles.profilButon}
-                                onPress={() => profilDegistir({ ...profil, kilo: Math.max(30, profil.kilo - 5) })}
+                                onPress={() => profilDegistir({ ...profil, kilo: Math.max(30, profil.kilo - 1) })}
                             >
                                 <Text style={styles.profilButonYazi}>-</Text>
                             </TouchableOpacity>
                             <Text style={styles.profilDeger}>{profil.kilo} kg</Text>
                             <TouchableOpacity
                                 style={styles.profilButon}
-                                onPress={() => profilDegistir({ ...profil, kilo: Math.min(150, profil.kilo + 5) })}
+                                onPress={() => profilDegistir({ ...profil, kilo: Math.min(150, profil.kilo + 1) })}
                             >
                                 <Text style={styles.profilButonYazi}>+</Text>
                             </TouchableOpacity>
@@ -384,14 +377,14 @@ export function AyarlarEkrani() {
                         <View style={styles.profilDegerler}>
                             <TouchableOpacity
                                 style={styles.profilButon}
-                                onPress={() => profilDegistir({ ...profil, yas: Math.max(10, profil.yas - 5) })}
+                                onPress={() => profilDegistir({ ...profil, yas: Math.max(10, profil.yas - 1) })}
                             >
                                 <Text style={styles.profilButonYazi}>-</Text>
                             </TouchableOpacity>
                             <Text style={styles.profilDeger}>{profil.yas} {t('alerts.age')}</Text>
                             <TouchableOpacity
                                 style={styles.profilButon}
-                                onPress={() => profilDegistir({ ...profil, yas: Math.min(100, profil.yas + 5) })}
+                                onPress={() => profilDegistir({ ...profil, yas: Math.min(100, profil.yas + 1) })}
                             >
                                 <Text style={styles.profilButonYazi}>+</Text>
                             </TouchableOpacity>
@@ -414,7 +407,7 @@ export function AyarlarEkrani() {
                     {/* Önerilen */}
                     <View style={styles.oneriContainer}>
                         <Text style={styles.oneriYazi}>
-                            {t('alerts.recommended')}: {Math.round((profil.kilo * 33 + (profil.aktifMi ? 500 : 0)) / 250) * 250} {t('alerts.perDay')}
+                            {t('alerts.recommended')}: {onerilenSuHesapla(profil, bardakBoyutu)} {t('alerts.perDay')}
                         </Text>
                         <TouchableOpacity style={styles.oneriButon} onPress={oneriUygula}>
                             <Text style={styles.oneriButonYazi}>{t('alerts.apply')}</Text>
@@ -459,14 +452,6 @@ export function AyarlarEkrani() {
                             thumbColor={aiAktif ? '#fff' : '#f4f3f4'}
                         />
                     </View>
-
-                    {aiAktif && (
-                        <View style={styles.oneriContainer}>
-                            <Text style={styles.oneriYazi}>
-                                ✅ {t('settings.aiActive')}
-                            </Text>
-                        </View>
-                    )}
                 </View>
 
                 {/* Bildirim Ayarları */}
@@ -496,6 +481,43 @@ export function AyarlarEkrani() {
                                     {hatirlatmaAraligi >= 60 ? `${hatirlatmaAraligi / 60} ${t('time.hours')}` : `${hatirlatmaAraligi} ${t('time.minutes')}`}
                                 </Text>
                             </TouchableOpacity>
+                        </>
+                    )}
+                </View>
+
+                {/* Akıllı Hatırlatma */}
+                <View style={[styles.temaContainer, { backgroundColor: renkler.kartArkaplan }]}>
+                    <Text style={styles.temaBaslik}>🧠 {t('settings.smartReminder')}</Text>
+
+                    <View style={styles.modSatir}>
+                        <Text style={styles.modEtiket}>
+                            {akilliHatirlatma.aktif ? `${akilliHatirlatma.aralikDakika} ${t('time.minutes')}` : t('settings.notificationsOff')}
+                        </Text>
+                        <Switch
+                            value={akilliHatirlatma.aktif}
+                            onValueChange={akilliHatirlatmaDegistir}
+                            trackColor={{ false: '#ccc', true: '#4FC3F7' }}
+                            thumbColor={akilliHatirlatma.aktif ? '#fff' : '#f4f3f4'}
+                        />
+                    </View>
+
+                    {akilliHatirlatma.aktif && (
+                        <>
+                            <TouchableOpacity
+                                style={[styles.pickerButton, { marginTop: 10 }]}
+                                onPress={() => setAkilliAralikModalGoster(true)}
+                            >
+                                <Text style={styles.pickerButtonLabel}>⏱️ {t('settings.reminderInterval')}</Text>
+                                <Text style={styles.pickerButtonValue}>
+                                    {akilliHatirlatma.aralikDakika >= 60
+                                        ? `${akilliHatirlatma.aralikDakika / 60} ${t('time.hours')}`
+                                        : `${akilliHatirlatma.aralikDakika} ${t('time.minutes')}`}
+                                </Text>
+                            </TouchableOpacity>
+
+                            <Text style={styles.sessizAciklama}>
+                                {t('settings.smartReminderDesc')}
+                            </Text>
                         </>
                     )}
                 </View>
@@ -560,51 +582,22 @@ export function AyarlarEkrani() {
                     </View>
                 </View>
 
-                {/* Akıllı Hatırlatma */}
+
+
+                {/* Raporlar & Özetler */}
                 <View style={[styles.temaContainer, { backgroundColor: renkler.kartArkaplan }]}>
-                    <Text style={styles.temaBaslik}>🧠 {t('settings.smartReminder')}</Text>
+                    <Text style={styles.temaBaslik}>📊 {t('settings.reportsTitle')}</Text>
+                    <Text style={styles.hedefAciklama}>
+                        {t('settings.reportsDesc')}
+                    </Text>
 
                     <View style={styles.modSatir}>
-                        <Text style={styles.modEtiket}>
-                            {akilliHatirlatma.aktif ? `${akilliHatirlatma.aralikDakika} ${t('time.minutes')}` : t('settings.notificationsOff')}
-                        </Text>
-                        <Switch
-                            value={akilliHatirlatma.aktif}
-                            onValueChange={akilliHatirlatmaDegistir}
-                            trackColor={{ false: '#ccc', true: '#4FC3F7' }}
-                            thumbColor={akilliHatirlatma.aktif ? '#fff' : '#f4f3f4'}
-                        />
-                    </View>
-
-                    {akilliHatirlatma.aktif && (
-                        <>
-                            <TouchableOpacity
-                                style={[styles.pickerButton, { marginTop: 10 }]}
-                                onPress={() => setAkilliAralikModalGoster(true)}
-                            >
-                                <Text style={styles.pickerButtonLabel}>⏱️ {t('settings.reminderInterval')}</Text>
-                                <Text style={styles.pickerButtonValue}>
-                                    {akilliHatirlatma.aralikDakika >= 60
-                                        ? `${akilliHatirlatma.aralikDakika / 60} ${t('time.hours')}`
-                                        : `${akilliHatirlatma.aralikDakika} ${t('time.minutes')}`}
-                                </Text>
-                            </TouchableOpacity>
-
-                            <Text style={styles.sessizAciklama}>
-                                {t('settings.smartReminderDesc')}
+                        <View style={{ flex: 1 }}>
+                            <Text style={styles.modEtiket}>{t('settings.dailySummary')}</Text>
+                            <Text style={[styles.hedefAciklama, { fontSize: 11, marginTop: 2 }]}>
+                                {t('settings.dailySummaryDesc')}
                             </Text>
-                        </>
-                    )}
-                </View>
-
-                {/* Günlük Özet */}
-                <View style={[styles.temaContainer, { backgroundColor: renkler.kartArkaplan }]}>
-                    <Text style={styles.temaBaslik}>📊 {t('settings.dailySummary')}</Text>
-
-                    <View style={styles.modSatir}>
-                        <Text style={styles.modEtiket}>
-                            {gunlukOzet.aktif ? `${gunlukOzet.saat}:00` : t('settings.notificationsOff')}
-                        </Text>
+                        </View>
                         <Switch
                             value={gunlukOzet.aktif}
                             onValueChange={gunlukOzetDegistir}
@@ -613,23 +606,13 @@ export function AyarlarEkrani() {
                         />
                     </View>
 
-                    {gunlukOzet.aktif && (
-                        <>
-                            <Text style={styles.sessizAciklama}>
-                                {t('settings.dailySummaryDesc')}
+                    <View style={[styles.modSatir, { marginTop: 10 }]}>
+                        <View style={{ flex: 1 }}>
+                            <Text style={styles.modEtiket}>{t('settings.weeklyReport')}</Text>
+                            <Text style={[styles.hedefAciklama, { fontSize: 11, marginTop: 2 }]}>
+                                {t('settings.weeklyReportDesc')}
                             </Text>
-                        </>
-                    )}
-                </View>
-
-                {/* Haftalık Rapor */}
-                <View style={[styles.temaContainer, { backgroundColor: renkler.kartArkaplan }]}>
-                    <Text style={styles.temaBaslik}>📊 {t('settings.weeklyReport')}</Text>
-
-                    <View style={styles.modSatir}>
-                        <Text style={styles.modEtiket}>
-                            {haftalikRapor.aktif ? t('settings.notificationsOn') : t('settings.notificationsOff')}
-                        </Text>
+                        </View>
                         <Switch
                             value={haftalikRapor.aktif}
                             onValueChange={haftalikRaporDegistir}
@@ -637,14 +620,6 @@ export function AyarlarEkrani() {
                             thumbColor={haftalikRapor.aktif ? '#fff' : '#f4f3f4'}
                         />
                     </View>
-
-                    {haftalikRapor.aktif && (
-                        <>
-                            <Text style={styles.sessizAciklama}>
-                                {t('settings.weeklyReportDesc')}
-                            </Text>
-                        </>
-                    )}
                 </View>
 
                 {/* Bioritim Ayarları */}
@@ -661,6 +636,7 @@ export function AyarlarEkrani() {
                                 const yeniAyar = { ...bioritim, aktif: value };
                                 setBioritim(yeniAyar);
                                 await bioritimAyarKaydet(yeniAyar);
+                                if (bildirimAktif) await bildirimAyarlariniKaydet(true, hatirlatmaAraligi);
                             }}
                             trackColor={{ false: '#ccc', true: '#4FC3F7' }}
                             thumbColor={bioritim.aktif ? '#fff' : '#f4f3f4'}
@@ -668,28 +644,27 @@ export function AyarlarEkrani() {
                     </View>
 
                     {bioritim.aktif && (
-                        <>
-                            <View style={{ flexDirection: 'row', marginTop: 10, gap: 10 }}>
-                                <TouchableOpacity
-                                    style={[styles.pickerButton, { flex: 1, flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', gap: 5 }]}
-                                    onPress={() => setBioritimUyanmaModalGoster(true)}
-                                >
-                                    <Text style={styles.pickerButtonLabel}>☀️ {t('settings.wakeUpTime')}</Text>
-                                    <Text style={[styles.pickerButtonValue, { marginLeft: 0 }]}>{bioritim.uyanmaSaati}</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={[styles.pickerButton, { flex: 1, flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', gap: 5 }]}
-                                    onPress={() => setBioritimUyumaModalGoster(true)}
-                                >
-                                    <Text style={styles.pickerButtonLabel}>🌙 {t('settings.sleepTime')}</Text>
-                                    <Text style={[styles.pickerButtonValue, { marginLeft: 0 }]}>{bioritim.uyumaSaati}</Text>
-                                </TouchableOpacity>
-                            </View>
-                            <Text style={styles.sessizAciklama}>
-                                {t('settings.biorhythmDesc')}
-                            </Text>
-                        </>
+                        <View style={{ flexDirection: 'row', marginTop: 10, gap: 10 }}>
+                            <TouchableOpacity
+                                style={[styles.pickerButton, { flex: 1, flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', gap: 5 }]}
+                                onPress={() => setBioritimUyanmaModalGoster(true)}
+                            >
+                                <Text style={styles.pickerButtonLabel}>☀️ {t('settings.wakeUpTime')}</Text>
+                                <Text style={[styles.pickerButtonValue, { marginLeft: 0 }]}>{bioritim.uyanmaSaati}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[styles.pickerButton, { flex: 1, flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', gap: 5 }]}
+                                onPress={() => setBioritimUyumaModalGoster(true)}
+                            >
+                                <Text style={styles.pickerButtonLabel}>🌙 {t('settings.sleepTime')}</Text>
+                                <Text style={[styles.pickerButtonValue, { marginLeft: 0 }]}>{bioritim.uyumaSaati}</Text>
+                            </TouchableOpacity>
+                        </View>
                     )}
+
+                    <Text style={styles.sessizAciklama}>
+                        {t('settings.biorhythmDesc')}
+                    </Text>
                 </View>
 
 
@@ -698,35 +673,53 @@ export function AyarlarEkrani() {
                 <View style={[styles.temaContainer, { backgroundColor: renkler.kartArkaplan }]}>
                     <Text style={styles.temaBaslik}>🎨 {t('settings.theme')}</Text>
 
-                    {/* Otomatik Gece Modu */}
-                    {/* Otomatik Mod */}
+                    {/* Mavi Mod (Gündüz/Açık) */}
                     <View style={styles.modSatir}>
-                        <View style={{ flex: 1 }}>
-                            <Text style={styles.modEtiket}>🔄 {t('settings.autoNightMode')}</Text>
-                            <Text style={styles.sessizAciklama}>{t('settings.autoNightModeDesc')}</Text>
-                        </View>
+                        <Text style={styles.modEtiket}>💧 {t('settings.themeBlue')}</Text>
                         <Switch
-                            value={otomatikMod}
-                            onValueChange={otomatikModDegistir}
-                            trackColor={{ false: '#ccc', true: '#4FC3F7' }}
-                            thumbColor={otomatikMod ? '#fff' : '#f4f3f4'}
+                            value={!otomatikMod && mod === 'acik'}
+                            onValueChange={(val) => {
+                                if (val) {
+                                    otomatikModDegistir(false);
+                                    modDegistir('acik');
+                                }
+                            }}
+                            trackColor={{ false: '#ccc', true: '#42A5F5' }}
+                            thumbColor={!otomatikMod && mod === 'acik' ? '#fff' : '#f4f3f4'}
                         />
                     </View>
 
-                    {/* Yeşil/Mavi Mod (Otomatik kapalıyken göster) */}
-                    {!otomatikMod && (
-                        <View style={[styles.modSatir, { marginTop: 10 }]}>
-                            <Text style={styles.modEtiket}>
-                                {mod === 'koyu' ? `🌿 ${t('settings.darkMode')}` : `💧 ${t('settings.lightMode')}`}
-                            </Text>
-                            <Switch
-                                value={mod === 'koyu'}
-                                onValueChange={(value) => modDegistir(value ? 'koyu' : 'acik')}
-                                trackColor={{ false: '#2196F3', true: '#4CAF50' }} // Mavi (False) -> Yeşil (True)
-                                thumbColor={'#fff'}
-                            />
+                    {/* Yeşil Mod (Akşam/Koyu) */}
+                    <View style={styles.modSatir}>
+                        <Text style={styles.modEtiket}>🌿 {t('settings.themeGreen')}</Text>
+                        <Switch
+                            value={!otomatikMod && mod === 'koyu'}
+                            onValueChange={(val) => {
+                                if (val) {
+                                    otomatikModDegistir(false);
+                                    modDegistir('koyu');
+                                }
+                            }}
+                            trackColor={{ false: '#ccc', true: '#4CAF50' }}
+                            thumbColor={!otomatikMod && mod === 'koyu' ? '#fff' : '#f4f3f4'}
+                        />
+                    </View>
+
+                    {/* Sistem Modu */}
+                    <View style={styles.modSatir}>
+                        <View style={{ flex: 1 }}>
+                            <Text style={styles.modEtiket}>🔄 {t('settings.themeSystem')}</Text>
+                            <Text style={styles.sessizAciklama}>{t('settings.themeSystemDesc')}</Text>
                         </View>
-                    )}
+                        <Switch
+                            value={otomatikMod}
+                            onValueChange={(val) => {
+                                if (val) otomatikModDegistir(true);
+                            }}
+                            trackColor={{ false: '#ccc', true: '#9C27B0' }}
+                            thumbColor={otomatikMod ? '#fff' : '#f4f3f4'}
+                        />
+                    </View>
 
                     {/* Premium Temalar */}
                     <View style={{ marginTop: 15 }}>
@@ -852,7 +845,6 @@ export function AyarlarEkrani() {
                                 onValueChange={async () => {
                                     const yeniDurum = await healthKitToggle();
                                     setHealthKitAktif(yeniDurum);
-                                    // HealthKit kapatılırsa dinamik hedefi de kapat
                                     if (!yeniDurum) {
                                         setDinamikHedefAktif(false);
                                         await dinamikHedefAyarKaydet(false);
@@ -867,7 +859,6 @@ export function AyarlarEkrani() {
                             {t('settings.appleHealthDesc')}
                         </Text>
 
-                        {/* Dinamik Hedef Toggle - HealthKit aktifse göster */}
                         {healthKitAktif && (
                             <>
                                 <View style={[styles.modSatir, { marginTop: 15, paddingTop: 15, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.1)' }]}>
@@ -883,7 +874,6 @@ export function AyarlarEkrani() {
                                             setDinamikHedefAktif(value);
                                             await dinamikHedefAyarKaydet(value);
                                             if (value) {
-                                                // Dinamik hedefi hemen hesapla
                                                 const sonuc = await dinamikHedefHesapla(profil.kilo);
                                                 setDinamikHedefSonuc(sonuc);
                                             } else {
@@ -895,7 +885,6 @@ export function AyarlarEkrani() {
                                     />
                                 </View>
 
-                                {/* Dinamik Hedef Sonucu */}
                                 {dinamikHedefAktif && dinamikHedefSonuc && (
                                     <View style={{
                                         marginTop: 15,
@@ -937,7 +926,6 @@ export function AyarlarEkrani() {
                                             💡 {dinamikHedefSonuc.aciklama}
                                         </Text>
 
-                                        {/* Uygula Butonu */}
                                         <TouchableOpacity
                                             style={{
                                                 marginTop: 12,
@@ -962,7 +950,6 @@ export function AyarlarEkrani() {
                                     </View>
                                 )}
 
-                                {/* Dinamik hedef aktif ama sonuç yoksa hesapla butonu */}
                                 {dinamikHedefAktif && !dinamikHedefSonuc && (
                                     <TouchableOpacity
                                         style={{
@@ -1342,6 +1329,7 @@ export function AyarlarEkrani() {
                     const yeniAyar = { ...bioritim, uyanmaSaati: yeniSaat };
                     setBioritim(yeniAyar);
                     await bioritimAyarKaydet(yeniAyar);
+                    if (bildirimAktif) await bildirimAyarlariniKaydet(true, hatirlatmaAraligi);
                 }}
                 onClose={() => setBioritimUyanmaModalGoster(false)}
             />
@@ -1357,6 +1345,7 @@ export function AyarlarEkrani() {
                     const yeniAyar = { ...bioritim, uyumaSaati: yeniSaat };
                     setBioritim(yeniAyar);
                     await bioritimAyarKaydet(yeniAyar);
+                    if (bildirimAktif) await bildirimAyarlariniKaydet(true, hatirlatmaAraligi);
                 }}
                 onClose={() => setBioritimUyumaModalGoster(false)}
             />
@@ -1819,6 +1808,41 @@ const styles = StyleSheet.create({
     dilModalCheck: {
         color: '#4FC3F7',
         fontSize: 20,
+        fontWeight: 'bold',
+    },
+    // Cinsiyet Seçimi Yeni
+    cinsiyetSecimContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        gap: 30,
+        marginVertical: 15,
+    },
+    cinsiyetKutu: {
+        width: 80,
+        height: 80,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 40, // Yuvarlak
+        backgroundColor: 'rgba(79, 195, 247, 0.1)',
+        borderWidth: 2,
+        borderColor: 'transparent',
+    },
+    cinsiyetKutuSecili: {
+        backgroundColor: 'rgba(79, 195, 247, 0.2)',
+        borderColor: '#4FC3F7',
+        transform: [{ scale: 1.1 }], // Hafif büyüme efekti
+    },
+    cinsiyetEmoji: {
+        fontSize: 40,
+    },
+    cinsiyetEtiket: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#ccc', // Pasif renk
+        marginTop: 5,
+    },
+    cinsiyetEtiketSecili: {
+        color: '#4FC3F7', // Aktif renk
         fontWeight: 'bold',
     },
 });

@@ -20,6 +20,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTema } from '../TemaContext';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTranslation } from 'react-i18next';
+import { bildirimIzniIste } from '../bildirimler';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -101,6 +102,7 @@ export default function OnboardingEkrani({ onComplete }: OnboardingEkraniProps) 
             await AsyncStorage.setItem('@kullanici_cinsiyet', cinsiyet);
             await AsyncStorage.setItem('@gunluk_hedef', hedef);
             await AsyncStorage.setItem('@onboarding_tamamlandi', 'true');
+            await bildirimIzniIste();
             onComplete();
         } catch (error) {
             console.error('Profile save error:', error);
@@ -111,6 +113,7 @@ export default function OnboardingEkrani({ onComplete }: OnboardingEkraniProps) 
     // Skip profile setup
     const handleSkipProfile = async () => {
         await AsyncStorage.setItem('@onboarding_tamamlandi', 'true');
+        await bildirimIzniIste();
         onComplete();
     };
 
@@ -127,6 +130,7 @@ export default function OnboardingEkrani({ onComplete }: OnboardingEkraniProps) 
     // Skip onboarding entirely
     const handleSkip = async () => {
         await AsyncStorage.setItem('@onboarding_tamamlandi', 'true');
+        await bildirimIzniIste();
         onComplete();
     };
 

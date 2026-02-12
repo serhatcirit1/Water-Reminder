@@ -193,24 +193,29 @@ export async function profilYukle(): Promise<KullaniciProfil> {
  * Sonuç 250 ml'nin katlarına yuvarlanır
  */
 export function onerilenSuHesapla(profil: KullaniciProfil, bardakBoyutu: number): number {
-    // Temel: kilo x 33ml
-    let gunlukMl = profil.kilo * 33;
+    // Mifflin-St Jeor Formülü (BMR Hesaplama)
+    // Erkek: (10 x kilo) + (6.25 x boy) - (5 x yaş) + 5
+    // Kadın: (10 x kilo) + (6.25 x boy) - (5 x yaş) - 161
 
-    // Yaşa göre ayarlama (50+ yaş için biraz azalt)
-    if (profil.yas >= 50) {
-        gunlukMl = profil.kilo * 30;
+    let bmr = (10 * profil.kilo) + (6.25 * (profil.boy || 170)) - (5 * profil.yas);
+
+    if (profil.cinsiyet === 'erkek') {
+        bmr += 5;
+    } else {
+        bmr -= 161;
     }
 
-    // Aktif yaşam için ekstra
-    if (profil.aktifMi) {
-        gunlukMl += 500;
-    }
+    // Aktivite Çarpanı (Su ihtiyacı genelde alınan kaloriye paraleldir, 1 kcal ≈ 1 ml)
+    const aktiviteCarpani = profil.aktifMi ? 1.6 : 1.3;
 
-    // 250 ml'nin katlarına yuvarla
+    let gunlukMl = bmr * aktiviteCarpani;
+
+    // 50 ml'nin katlarına yuvarla (daha hassas olması için 250 yerine 50 yaptık, ama bardak boyutu için 250 daha iyi olabilir. Standart kalsın)
+    // Kullanıcının bardak seçimine göre veya 250 ml katlarına yuvarla
     const yuvarlanmis = Math.round(gunlukMl / 250) * 250;
 
-    // Min 1500, max 4000 ml
-    return Math.max(1500, Math.min(4000, yuvarlanmis));
+    // Min 1500, max 5000 ml
+    return Math.max(1500, Math.min(5000, yuvarlanmis));
 }
 
 // --- REKOR SİSTEMİ ---
@@ -569,7 +574,7 @@ export async function akilliHatirlatmaAyarYukle(): Promise<AkilliHatirlatmaAyar>
     } catch (hata) {
         console.error('Akıllı hatırlatma ayarı yüklenemedi:', hata);
     }
-    return { aktif: false, aralikDakika: 90 }; // Varsayılan: 90 dakika
+    return { aktif: true, aralikDakika: 90 }; // Varsayılan: 90 dakika
 }
 
 // ============================================

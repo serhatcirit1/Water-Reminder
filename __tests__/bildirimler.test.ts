@@ -121,7 +121,7 @@ describe('Bildirimler', () => {
 
             const ayar = await bildirimAyarlariniYukle();
 
-            expect(ayar.aktif).toBe(false);
+            expect(ayar.aktif).toBe(true);
             expect(ayar.aralikDakika).toBe(120);
         });
     });

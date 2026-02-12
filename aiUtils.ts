@@ -1401,7 +1401,7 @@ export async function adaptifOgrenimDurumu(): Promise<{
                 toplamTepki: 0,
                 tepkiOrani: 0,
                 ogrenmeYuzdesi: 0,
-                mesaj: '🎯 Henüz veri toplanıyor...'
+                mesaj: i18n.t('ai.adaptive.collecting')
             };
         }
 
@@ -1411,7 +1411,7 @@ export async function adaptifOgrenimDurumu(): Promise<{
                 toplamTepki: 0,
                 tepkiOrani: 0,
                 ogrenmeYuzdesi: 0,
-                mesaj: '🎯 Henüz veri toplanıyor...'
+                mesaj: i18n.t('ai.adaptive.collecting')
             };
         }
 
@@ -1439,7 +1439,7 @@ export async function adaptifOgrenimDurumu(): Promise<{
             toplamTepki: 0,
             tepkiOrani: 0,
             ogrenmeYuzdesi: 0,
-            mesaj: '🎯 Henüz veri toplanıyor...'
+            mesaj: i18n.t('ai.adaptive.collecting')
         };
     }
 }

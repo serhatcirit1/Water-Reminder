@@ -7,11 +7,12 @@ import { Text, View, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
 import './locales/i18n';
+import { bildirimIzniIste, hatirlatmalariPlanla, bildirimAyarlariniKaydet, gunlukOzetPlanla, haftalikRaporPlanla } from './bildirimler';
 
 // Ekranlar ve Context
 import { TemaProvider, useTema } from './TemaContext';
 import { PremiumProvider } from './PremiumContext';
-import { AnaSayfaEkrani, IstatistiklerEkrani, AyarlarEkrani, OnboardingEkrani } from './screens';
+import { AnaSayfaEkrani, IstatistiklerEkrani, GorevlerEkrani, AyarlarEkrani, OnboardingEkrani } from './screens';
 
 const Tab = createBottomTabNavigator();
 
@@ -63,6 +64,14 @@ function NavigationContent() {
         }}
       />
       <Tab.Screen
+        name="Gorevler"
+        component={GorevlerEkrani}
+        options={{
+          tabBarLabel: t('gorevler.tabTitle'),
+          tabBarIcon: ({ focused }) => <TabBarIcon label="🎯" focused={focused} />
+        }}
+      />
+      <Tab.Screen
         name="Ayarlar"
         component={AyarlarEkrani}
         options={{
@@ -95,7 +104,23 @@ function AppContent() {
     }
   };
 
-  const handleOnboardingComplete = () => {
+  const handleOnboardingComplete = async () => {
+    // Onboarding sonrası bildirim izni iste ve bildirimleri planla
+    try {
+      const izinVerildi = await bildirimIzniIste();
+      if (izinVerildi) {
+        // Bildirim ayarlarını aktif olarak kaydet
+        await bildirimAyarlariniKaydet(true, 120);
+        // Hatırlatma bildirimlerini planla
+        await hatirlatmalariPlanla(120);
+        // Günlük özet bildirimini planla
+        await gunlukOzetPlanla();
+        // Haftalık rapor bildirimini planla
+        await haftalikRaporPlanla();
+      }
+    } catch (error) {
+      console.error('Bildirim ayarlama hatası:', error);
+    }
     setShowOnboarding(false);
   };
 

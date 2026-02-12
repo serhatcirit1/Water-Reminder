@@ -274,27 +274,7 @@ export function IstatistiklerEkrani() {
                     <Text style={styles.headerSubtitle}>{t('stats.headerSubtitle')}</Text>
                 </View>
 
-                {/* Seviye Kartı */}
-                {seviye && (
-                    <View style={styles.levelCard}>
-                        <View style={styles.levelHeader}>
-                            <Text style={styles.levelTitle}>{t(seviye.unvan)}</Text>
-                            <Text style={styles.levelNumber}>{t('home.level')} {seviye.seviye}</Text>
-                        </View>
-                        <View style={styles.xpBarBg}>
-                            <View
-                                style={[
-                                    styles.xpBarFill,
-                                    { width: `${Math.min((seviye.mevcutSeviyeXP / seviye.sonrakiSeviyeXP) * 100, 100)}%` }
-                                ]}
-                            />
-                        </View>
-                        <Text style={styles.xpText}>
-                            {seviye.mevcutSeviyeXP} / {seviye.sonrakiSeviyeXP} XP
-                        </Text>
-                        <Text style={styles.totalXp}>{t('stats.total')}: {seviye.toplamXP} XP</Text>
-                    </View>
-                )}
+
 
                 {/* Rekor Kartı */}
                 <View style={styles.rekorCard}>
@@ -737,93 +717,7 @@ export function IstatistiklerEkrani() {
                     </Text>
                 </View>
 
-                {/* Günlük Görevler Özeti */}
-                {gorevDurumu && (
-                    <View style={styles.gorevCard}>
-                        <View style={styles.gorevHeader}>
-                            <Text style={styles.gorevEmoji}>✅</Text>
-                            <Text style={styles.gorevTitle}>{t('home.dailyTasks')}</Text>
-                        </View>
-                        <View style={styles.gorevProgress}>
-                            <View style={styles.gorevBarBg}>
-                                <View style={[
-                                    styles.gorevBarFill,
-                                    { width: `${(gorevDurumu.toplamTamamlanan / gorevDurumu.gorevler.length) * 100}%` }
-                                ]} />
-                            </View>
-                            <Text style={styles.gorevSayi}>
-                                {gorevDurumu.toplamTamamlanan}/{gorevDurumu.gorevler.length}
-                            </Text>
-                        </View>
-                        <View style={styles.gorevListe}>
-                            {gorevDurumu.gorevler.map((gorev, index) => (
-                                <View key={index} style={styles.gorevItem}>
-                                    <Text style={styles.gorevCheck}>
-                                        {gorev.tamamlandi ? '✅' : '⬜'}
-                                    </Text>
-                                    <Text style={[
-                                        styles.gorevText,
-                                        gorev.tamamlandi && styles.gorevTamamlandi
-                                    ]}>
-                                        {t(gorev.aciklama)}
-                                    </Text>
-                                </View>
-                            ))}
-                        </View>
-                    </View>
-                )}
 
-                {/* Rozetler */}
-                <View style={styles.rozetCard}>
-                    <Text style={styles.rozetTitle}>
-                        🏅 {t('stats.badges')} ({rozetler.filter(r => r.kazanildi).length}/{rozetler.length})
-                    </Text>
-
-                    {/* Seçili Rozet Bilgisi */}
-                    {seciliRozet && (
-                        <TouchableOpacity
-                            style={styles.rozetTooltip}
-                            onPress={() => setSeciliRozet(null)}
-                        >
-                            <Text style={styles.rozetTooltipEmoji}>
-                                {seciliRozet.kazanildi ? seciliRozet.emoji : '🔒'}
-                            </Text>
-                            <View style={styles.rozetTooltipContent}>
-                                <Text style={styles.rozetTooltipTitle}>{t(seciliRozet.isim)}</Text>
-                                <Text style={styles.rozetTooltipDesc}>{t(seciliRozet.aciklama)}</Text>
-                                <Text style={styles.rozetTooltipStatus}>
-                                    {seciliRozet.kazanildi ? `✅ ${t('stats.badgeEarned')}` : `🎯 ${t(seciliRozet.kosul)}`}
-                                </Text>
-                            </View>
-                        </TouchableOpacity>
-                    )}
-
-                    <View style={styles.rozetGrid}>
-                        {rozetler.map((rozet, index) => (
-                            <TouchableOpacity
-                                key={index}
-                                style={[
-                                    styles.rozetItem,
-                                    !rozet.kazanildi && styles.rozetKilitli
-                                ]}
-                                onPress={() => setSeciliRozet(seciliRozet?.isim === rozet.isim ? null : rozet)}
-                            >
-                                <Text style={[
-                                    styles.rozetEmoji,
-                                    !rozet.kazanildi && styles.rozetEmojiKilitli
-                                ]}>
-                                    {rozet.kazanildi ? rozet.emoji : '🔒'}
-                                </Text>
-                                <Text style={[
-                                    styles.rozetName,
-                                    !rozet.kazanildi && styles.rozetNameKilitli
-                                ]}>
-                                    {t(rozet.isim)}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
-                </View>
 
                 {/* Hikaye Paylaş Butonu */}
                 <TouchableOpacity

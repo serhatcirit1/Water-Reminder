@@ -52,7 +52,7 @@ i18n
     .init({
         resources,
         lng: 'tr', // Default language
-        fallbackLng: 'tr',
+        fallbackLng: 'en',
         interpolation: {
             escapeValue: false,
         },

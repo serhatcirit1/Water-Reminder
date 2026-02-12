@@ -12,6 +12,35 @@ import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { bildirimGonderildiKaydet } from './aiUtils';
 import i18n from './locales/i18n';
+import { sessizSaatlerYukle, SessizSaatlerAyar, bioritimAyarYukle, BioritimAyar } from './ayarlarUtils';
+
+// Belirli bir saatin sessiz saatlere düşüp düşmediğini kontrol et
+function saatSessizMi(saat: number, ayar: SessizSaatlerAyar): boolean {
+    if (!ayar.aktif) return false;
+    // Gece yarısını geçen aralık (örn: 22:00 - 07:00)
+    if (ayar.baslangic > ayar.bitis) {
+        return saat >= ayar.baslangic || saat < ayar.bitis;
+    }
+    // Normal aralık (örn: 14:00 - 16:00)
+    return saat >= ayar.baslangic && saat < ayar.bitis;
+}
+
+// Bioritim aktif mi ve saat uygun mu kontrol et
+function bioritimUygunMu(saat: number, ayar: BioritimAyar): boolean {
+    if (!ayar.aktif) return true; // Bioritim kapalıysa her saat uygun (sessiz saatler ayrıca kontrol edilir)
+
+    const uyanmaSaat = parseInt(ayar.uyanmaSaati.split(':')[0], 10);
+    const uyumaSaat = parseInt(ayar.uyumaSaati.split(':')[0], 10);
+
+    // Normal döngü (örn: 08:00 - 23:00)
+    if (uyanmaSaat < uyumaSaat) {
+        return saat >= uyanmaSaat && saat < uyumaSaat;
+    }
+    // Gece yarısı geçişi (örn: 10:00 - 02:00)
+    else {
+        return saat >= uyanmaSaat || saat < uyumaSaat;
+    }
+}
 
 // --- SABİTLER ---
 const BILDIRIM_AYAR_KEY = '@bildirim_ayarlari';
@@ -80,15 +109,37 @@ export async function hatirlatmalariPlanla(aralikDakika: number = 120): Promise<
     // Önce tüm mevcut bildirimleri iptal et
     await tumBildirimleriIptalEt();
 
+    // Sessiz saatler ayarını yükle
+    const sessizAyar = await sessizSaatlerYukle();
+
     // Yeni bildirimler planla
     // Günde kaç bildirim olacağını hesapla (sabah 8 - gece 22 arası)
     // 14 saatlik süre / aralık = bildirim sayısı
     const gunlukSaat = 14; // Aktif saat sayısı
     const bildirimSayisi = Math.floor((gunlukSaat * 60) / aralikDakika);
 
+    const simdi = new Date();
+
     // Her bildirim için ayrı zamanlama yap
     for (let i = 1; i <= bildirimSayisi; i++) {
         const saniyeSonra = i * aralikDakika * 60; // Dakikayı saniyeye çevir
+
+        // Bildirimin düşeceği saati hesapla
+        const bildirimZamani = new Date(simdi.getTime() + saniyeSonra * 1000);
+        const bildirimSaati = bildirimZamani.getHours();
+
+        const sessizAyar = await sessizSaatlerYukle();
+        const bioritimAyar = await bioritimAyarYukle();
+
+        // Sessiz saate düşüyorsa bu bildirimi atla
+        // Bioritim aktifse, bioritim saatleri dışındaysa atla
+        if (bioritimAyar.aktif) {
+            if (!bioritimUygunMu(bildirimSaati, bioritimAyar)) continue;
+        }
+        // Bioritim kapalıysa klasik sessiz saatleri kontrol et
+        else if (saatSessizMi(bildirimSaati, sessizAyar)) {
+            continue;
+        }
 
         await Notifications.scheduleNotificationAsync({
             content: {
@@ -104,8 +155,6 @@ export async function hatirlatmalariPlanla(aralikDakika: number = 120): Promise<
             },
         });
     }
-
-
 }
 
 // --- TÜM BİLDİRİMLERİ İPTAL ET ---
@@ -278,8 +327,25 @@ export async function akilliHatirlatmaPlanla(
         // Önceki akıllı hatırlatmayı iptal et
         await Notifications.cancelScheduledNotificationAsync('akilli-hatirlatma');
 
+        // Sessiz saatler ayarını yükle
+        const sessizAyar = await sessizSaatlerYukle();
+
         // Kalan süreyi hesapla
         const kalanDakika = Math.max(aralikDakika - sonIcmeDakika, 1);
+
+        // Bildirimin gönderileceği saati hesapla
+        const simdi = new Date();
+        const bildirimSaati = new Date(simdi.getTime() + kalanDakika * 60 * 1000);
+        const saat = bildirimSaati.getHours();
+
+        // Sessiz saate düşüyorsa bildirim gönderme
+        const bioritimAyar = await bioritimAyarYukle();
+
+        if (bioritimAyar.aktif) {
+            if (!bioritimUygunMu(saat, bioritimAyar)) return;
+        } else if (saatSessizMi(saat, sessizAyar)) {
+            return;
+        }
 
         // Dinamik mesaj oluştur
         let mesaj = '';
@@ -288,11 +354,6 @@ export async function akilliHatirlatmaPlanla(
         } else {
             mesaj = i18n.t('notif.water_time_general');
         }
-
-        // Bildirimin gönderileceği saati hesapla
-        const simdi = new Date();
-        const bildirimSaati = new Date(simdi.getTime() + kalanDakika * 60 * 1000);
-        const saat = bildirimSaati.getHours();
 
         // Adaptif öğrenme için bildirim kaydı
         await bildirimGonderildiKaydet(saat);
@@ -310,7 +371,6 @@ export async function akilliHatirlatmaPlanla(
                 repeats: false,
             },
         });
-
 
     } catch (hata) {
         console.error('Akıllı hatırlatma planlanamadı:', hata);
@@ -391,7 +451,7 @@ export async function bildirimAyarlariniYukle(): Promise<{
     }
 
     // Varsayılan ayarlar
-    return { aktif: false, aralikDakika: 120 };
+    return { aktif: true, aralikDakika: 120 };
 }
 
 // --- GÜNLÜK ÖZET BİLDİRİMİ ---
@@ -425,7 +485,7 @@ export async function gunlukOzetAyarYukle(): Promise<GunlukOzetAyar> {
     } catch (hata) {
         console.error('Günlük özet ayarı yüklenemedi:', hata);
     }
-    return { aktif: false, saat: 21 }; // Varsayılan: 21:00
+    return { aktif: true, saat: 21 }; // Varsayılan: 21:00
 }
 
 /**
@@ -542,7 +602,7 @@ export async function haftalikRaporAyarYukle(): Promise<HaftalikRaporAyar> {
     } catch (hata) {
         console.error('Haftalık rapor ayarı yüklenemedi:', hata);
     }
-    return { aktif: false, gun: 0, saat: 20 }; // Varsayılan: Pazar 20:00
+    return { aktif: true, gun: 0, saat: 20 }; // Varsayılan: Pazar 20:00
 }
 
 /**

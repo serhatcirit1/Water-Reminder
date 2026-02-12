@@ -76,6 +76,7 @@ export function AnaSayfaEkrani() {
     const [sonIcmeZamani, setSonIcmeZamani] = useState<Date | null>(null);
     const [gorevDurumu, setGorevDurumu] = useState<GunlukGorevDurumu | null>(null);
     const [aiOneri, setAiOneri] = useState<AIHedefOnerisi | null>(null);
+    const [aiAktif, setAiAktif] = useState(true);
     const [premiumModalGoster, setPremiumModalGoster] = useState(false);
     const [faydaMesaji, setFaydaMesaji] = useState<{ mesaj: string; icon: string } | null>(null);
     const faydaAnimRef = useRef(new Animated.Value(0)).current;
@@ -162,9 +163,12 @@ export function AnaSayfaEkrani() {
 
             // AI Hedef Hesapla
             const aiAyarlar = await aiAyarlariniYukle();
+            setAiAktif(aiAyarlar.aktif);
             if (aiAyarlar.aktif && havaData) {
                 const oneri = await akilliHedefHesapla(hedef, havaData, 0);
                 setAiOneri(oneri);
+            } else if (!aiAyarlar.aktif) {
+                setAiOneri(null);
             }
 
         } catch (hata) {
@@ -675,36 +679,23 @@ export function AnaSayfaEkrani() {
                 </View>
 
                 {/* 💡 AI İçgörü Kartı */}
-                <InsightsCard
-                    bugunIcilen={toplamMl}
-                    gunlukHedef={gunlukHedef}
-                    onPremiumPress={() => setPremiumModalGoster(true)}
-                />
+                {aiAktif && (
+                    <InsightsCard
+                        bugunIcilen={toplamMl}
+                        gunlukHedef={gunlukHedef}
+                        onPremiumPress={() => setPremiumModalGoster(true)}
+                    />
+                )}
 
                 {/* 📈 Haftalık Tahmin Kartı */}
-                <ForecastCard
-                    gunlukHedef={gunlukHedef}
-                    bugunIcilen={toplamMl}
-                />
-
-                {/* Günlük Görevler Mini */}
-                {gorevDurumu && gorevDurumu.gorevler.length > 0 && (
-                    <View style={styles.gorevMiniKart}>
-                        <View style={styles.gorevMiniHeader}>
-                            <Text style={styles.gorevMiniEmoji}>✅</Text>
-                            <Text style={styles.gorevMiniTitle}>{t('home.dailyTasks')}</Text>
-                            <Text style={styles.gorevMiniSayi}>
-                                {gorevDurumu.toplamTamamlanan}/{gorevDurumu.gorevler.length}
-                            </Text>
-                        </View>
-                        <View style={styles.gorevMiniBarBg}>
-                            <View style={[
-                                styles.gorevMiniBarFill,
-                                { width: `${(gorevDurumu.toplamTamamlanan / gorevDurumu.gorevler.length) * 100}%` }
-                            ]} />
-                        </View>
-                    </View>
+                {aiAktif && (
+                    <ForecastCard
+                        gunlukHedef={gunlukHedef}
+                        bugunIcilen={toplamMl}
+                    />
                 )}
+
+
 
                 {/* Bugünü Geri Al Butonu */}
                 {suMiktari > 0 && (

@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Smart Water: AI Insights",
-    "slug": "smart-water-ai-insights",
+    "slug": "water-reminder",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -16,11 +16,16 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.selcukciritacademy.smartwater",
       "icon": "./assets/icon.png",
-      "buildNumber": "1",
+      "buildNumber": "2",
+      "entitlements": {
+        "com.apple.developer.healthkit": true,
+        "com.apple.developer.healthkit.access": []
+      },
       "infoPlist": {
-        "NSHealthShareUsageDescription": "Water Reminder needs access to Apple Health to sync your water intake data and provide you with accurate hydration insights.",
-        "NSHealthUpdateUsageDescription": "Water Reminder writes your water intake to Apple Health so you can track all your health data in one place.",
-        "NSUserTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you."
+        "NSHealthShareUsageDescription": "Smart Water: AI Insights needs access to Apple Health to sync your water intake data and provide you with accurate hydration insights.",
+        "NSHealthUpdateUsageDescription": "Smart Water: AI Insights writes your water intake to Apple Health so you can track all your health data in one place.",
+        "NSUserTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -59,7 +64,15 @@
           "locationWhenInUsePermission": "Water Reminder uses your location to get local weather data for personalized hydration suggestions."
         }
       ],
-      "expo-font"
+      "expo-font",
+      [
+        "react-native-health",
+        {
+          "isClinicalDataEnabled": false,
+          "healthSharePermission": "Smart Water: AI Insights needs access to Apple Health to sync your water intake data and provide you with accurate hydration insights.",
+          "healthUpdatePermission": "Smart Water: AI Insights writes your water intake to Apple Health so you can track all your health data in one place."
+        }
+      ]
     ],
     "extra": {
       "eas": {
