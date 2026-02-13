@@ -374,7 +374,7 @@ export function GorevlerEkrani() {
 
                                 {seciliRozet.kazanildi && (
                                     <Text style={styles.earningDate}>
-                                        {t('gorevler.earnedDate')}: {seciliRozet.kazanilmaTarihi}
+                                        {t('gorevler.earnedDate')}: {new Date(seciliRozet.kazanilmaTarihi || new Date()).toLocaleDateString('tr-TR')}
                                     </Text>
                                 )}
 

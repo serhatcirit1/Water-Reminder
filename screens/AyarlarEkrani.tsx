@@ -620,6 +620,24 @@ export function AyarlarEkrani() {
                             <Switch value={profil.aktifMi} onValueChange={(v) => profilDegistir({ ...profil, aktifMi: v })} />
                         </View>
 
+                        <View style={styles.recommendationBox}>
+                            <View>
+                                <Text style={styles.recommendationLabel}>{t('settings.recommended')}</Text>
+                                <Text style={styles.recommendationValue}>{onerilenSuHesapla(profil, bardakBoyutu)} ml</Text>
+                            </View>
+                            <TouchableOpacity
+                                style={styles.applyRecommendButton}
+                                onPress={async () => {
+                                    const onerilen = onerilenSuHesapla(profil, bardakBoyutu);
+                                    await hedefKaydet(onerilen);
+                                    setGunlukHedef(onerilen);
+                                    Alert.alert(t('common.success'), t('alerts.goalUpdatedMsg').replace('{{goal}}', onerilen.toString()));
+                                }}
+                            >
+                                <Text style={styles.applyRecommendButtonText}>{t('settings.apply')}</Text>
+                            </TouchableOpacity>
+                        </View>
+
                         <TouchableOpacity style={styles.modalCloseBtn} onPress={() => setProfilModalGoster(false)}>
                             <Text style={styles.modalCloseText}>{t('common.done')}</Text>
                         </TouchableOpacity>
@@ -708,4 +726,10 @@ const styles = StyleSheet.create({
     genderBtnActive: { borderColor: '#4FC3F7', backgroundColor: 'rgba(79, 195, 247, 0.1)' },
     modalCloseBtn: { marginTop: 10, padding: 16 },
     modalCloseText: { color: '#4FC3F7', fontSize: 16, fontWeight: 'bold' },
+
+    recommendationBox: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'rgba(79, 195, 247, 0.1)', padding: 16, borderRadius: 16, width: '100%', marginBottom: 20, borderWidth: 1, borderColor: 'rgba(79, 195, 247, 0.3)' },
+    recommendationLabel: { color: 'rgba(255,255,255,0.6)', fontSize: 12, marginBottom: 4 },
+    recommendationValue: { color: '#4FC3F7', fontSize: 20, fontWeight: 'bold' },
+    applyRecommendButton: { backgroundColor: '#4FC3F7', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 12 },
+    applyRecommendButtonText: { color: '#000', fontWeight: 'bold', fontSize: 13 },
 });

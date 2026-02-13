@@ -16,7 +16,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.selcukciritacademy.smartwater",
       "icon": "./assets/icon.png",
-      "buildNumber": "3",
+      "buildNumber": "5",
       "entitlements": {
         "com.apple.developer.healthkit": true,
         "com.apple.developer.healthkit.access": []

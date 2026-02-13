@@ -503,7 +503,8 @@
         "specialBadges": "Özel Rozetler",
         "badgeEarned": "Kazanıldı!",
         "noEarnedYet": "Henüz rozet kazanılmadı. Su içmeye devam!",
-        "allEarned": "Tüm rozetler kazanıldı! 🎉"
+        "allEarned": "Tüm rozetler kazanıldı! 🎉",
+        "earnedDate": "Kazanılan Tarih"
     },
     "tasks": {
         "sabah_su_title": "Güne Başlangıç",
