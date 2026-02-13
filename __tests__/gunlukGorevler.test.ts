@@ -9,7 +9,7 @@ describe('Günlük Görevler Sistemi', () => {
         { id: 'sabah_su', baslik: 'Güne Başlangıç', hedef: 500, xpOdulu: 25 },
         { id: 'ogle_su', baslik: 'Öğle Molası', hedef: 500, xpOdulu: 20 },
         { id: 'aksam_su', baslik: 'Akşam Rutini', hedef: 500, xpOdulu: 20 },
-        { id: 'toplam_1250', baslik: 'Yarıyıladık', hedef: 1250, xpOdulu: 15 },
+        { id: 'toplam_1250', baslik: 'Yarıladık', hedef: 1250, xpOdulu: 15 },
         { id: 'toplam_2000', baslik: 'Sağlıklı Yaşam', hedef: 2000, xpOdulu: 30 },
         { id: 'ust_uste_3', baslik: 'Hidrasyon Serisi', hedef: 750, xpOdulu: 35 },
     ];
