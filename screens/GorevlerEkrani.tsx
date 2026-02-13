@@ -1,26 +1,30 @@
 // ============================================
-// GÖREVLER & ROZETLER EKRANI
+// GÖREVLER & ROZETLER EKRANI - UI PRO MAX
 // ============================================
-// Günlük görevler ve başarı rozetleri
+// Premium tasarım, akıcı animasyonlar ve gameification odaklı arayüz
 
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import {
-    View, Text, StyleSheet, ScrollView, Dimensions,
-    ActivityIndicator, Animated, Easing, TouchableOpacity, Modal
+    View, Text, StyleSheet, Dimensions,
+    ActivityIndicator, Animated, TouchableOpacity, Modal
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
+import * as Haptics from 'expo-haptics';
 import { useTema } from '../TemaContext';
 import { seviyeDurumuYukle, SeviyeDurumu, XP_KAZANIMLARI } from '../seviyeSistemi';
-import { rozetleriYukle, Rozet, ROZET_TANIMLARI } from '../rozetler';
-import { gunlukGorevleriYukle, GunlukGorevDurumu, GunlukGorev } from '../gunlukGorevler';
+import { rozetleriYukle, Rozet } from '../rozetler';
+import { gunlukGorevleriYukle, GunlukGorevDurumu } from '../gunlukGorevler';
 import { useTranslation } from 'react-i18next';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const GAP = 8;
+const PADDING = 40; // 20 left + 20 right
+const CARD_WIDTH = (SCREEN_WIDTH - PADDING - (GAP * 3)) / 4;
 
 export function GorevlerEkrani() {
-    const { renkler } = useTema();
+    const { renkler, koyuMu } = useTema();
     const { t } = useTranslation();
 
     // State
@@ -32,12 +36,12 @@ export function GorevlerEkrani() {
     const [rozetModalGoster, setRozetModalGoster] = useState(false);
     const [aktifRozetTab, setAktifRozetTab] = useState<'tumu' | 'kazanilan' | 'kilitli'>('tumu');
 
-    // Animasyonlar
-    const fadeAnim = useRef(new Animated.Value(0)).current;
-    const slideAnim = useRef(new Animated.Value(30)).current;
-    const progressAnims = useRef<Animated.Value[]>([]).current;
-    const xpBarAnim = useRef(new Animated.Value(0)).current;
-    const badgeScaleAnims = useRef<Animated.Value[]>([]).current;
+    // Animasyon Değerleri
+    const scrollY = useRef(new Animated.Value(0)).current;
+
+    // Stagger animasyonları için
+    const fadeAnims = useRef<Animated.Value[]>([]).current;
+    const scaleAnims = useRef<Animated.Value[]>([]).current;
 
     useFocusEffect(
         useCallback(() => {
@@ -46,19 +50,22 @@ export function GorevlerEkrani() {
     );
 
     const verileriYukle = async () => {
-        setYukleniyor(true);
+        if (!seviye) setYukleniyor(true);
+
         try {
-            const seviyeData = await seviyeDurumuYukle();
+            const [seviyeData, rozetData, gorevData] = await Promise.all([
+                seviyeDurumuYukle(),
+                rozetleriYukle(),
+                gunlukGorevleriYukle()
+            ]);
+
             setSeviye(seviyeData);
-
-            const rozetData = await rozetleriYukle();
             setRozetler(rozetData.rozetler);
-
-            const gorevData = await gunlukGorevleriYukle();
             setGorevDurumu(gorevData);
 
-            // Animasyonları başlat
-            animasyonlariBaslat(gorevData, seviyeData, rozetData.rozetler);
+            // Yeni veri geldiğinde animasyonları tetikle
+            startEntranceAnimations(gorevData.gorevler.length + 5);
+
         } catch (hata) {
             console.error('Görevler yüklenemedi:', hata);
         } finally {
@@ -66,344 +73,236 @@ export function GorevlerEkrani() {
         }
     };
 
-    const animasyonlariBaslat = (gorev: GunlukGorevDurumu, seviye: SeviyeDurumu, rozetler: Rozet[]) => {
-        // Fade in
-        Animated.parallel([
-            Animated.timing(fadeAnim, {
-                toValue: 1,
-                duration: 400,
-                useNativeDriver: true,
-            }),
-            Animated.timing(slideAnim, {
-                toValue: 0,
-                duration: 400,
-                easing: Easing.out(Easing.cubic),
-                useNativeDriver: true,
-            }),
-        ]).start();
+    const startEntranceAnimations = (count: number) => {
+        fadeAnims.length = 0;
+        scaleAnims.length = 0;
 
-        // Progress animasyonları
-        progressAnims.length = 0;
-        gorev.gorevler.forEach((g) => {
-            const anim = new Animated.Value(0);
-            progressAnims.push(anim);
-            const targetValue = g.hedef > 0 ? Math.min(g.ilerleme / g.hedef, 1) : (g.tamamlandi ? 1 : 0);
-            Animated.timing(anim, {
-                toValue: targetValue,
-                duration: 800,
-                delay: 200,
-                easing: Easing.out(Easing.cubic),
-                useNativeDriver: false,
-            }).start();
-        });
+        for (let i = 0; i < count; i++) {
+            fadeAnims.push(new Animated.Value(0));
+            scaleAnims.push(new Animated.Value(0.9));
+        }
 
-        // XP bar animasyonu
-        const xpPercent = seviye.sonrakiSeviyeXP > 0
-            ? Math.min(seviye.mevcutSeviyeXP / seviye.sonrakiSeviyeXP, 1)
-            : 0;
-        Animated.timing(xpBarAnim, {
-            toValue: xpPercent,
-            duration: 1000,
-            delay: 300,
-            easing: Easing.out(Easing.cubic),
-            useNativeDriver: false,
-        }).start();
+        const animations = fadeAnims.map((anim, i) =>
+            Animated.parallel([
+                Animated.timing(anim, {
+                    toValue: 1,
+                    duration: 400,
+                    delay: i * 50,
+                    useNativeDriver: true
+                }),
+                Animated.spring(scaleAnims[i], {
+                    toValue: 1,
+                    friction: 8,
+                    tension: 40,
+                    delay: i * 50,
+                    useNativeDriver: true
+                })
+            ])
+        );
 
-        // Badge scale animasyonları
-        badgeScaleAnims.length = 0;
-        rozetler.forEach((r, i) => {
-            const anim = new Animated.Value(0);
-            badgeScaleAnims.push(anim);
-            Animated.timing(anim, {
-                toValue: 1,
-                duration: 300,
-                delay: 400 + (i * 40),
-                easing: Easing.out(Easing.back(1.5)),
-                useNativeDriver: true,
-            }).start();
-        });
+        Animated.stagger(50, animations).start();
     };
 
-    // Filtrelenmiş rozetler
-    const filtrelenmisRozetler = rozetler.filter(r => {
-        if (aktifRozetTab === 'kazanilan') return r.kazanildi;
-        if (aktifRozetTab === 'kilitli') return !r.kazanildi;
-        return true;
-    });
+    const handleRozetPress = (rozet: Rozet) => {
+        Haptics.selectionAsync();
+        setSeciliRozet(rozet);
+        setRozetModalGoster(true);
+    };
 
-    const kazanilanSayisi = rozetler.filter(r => r.kazanildi).length;
-    const toplamRozet = rozetler.length;
+    // Rozetleri filtrele
+    const getFilteredBadges = () => {
+        let filtered = rozetler;
+        if (aktifRozetTab === 'kazanilan') filtered = rozetler.filter(r => r.kazanildi);
+        if (aktifRozetTab === 'kilitli') filtered = rozetler.filter(r => !r.kazanildi);
+        return filtered;
+    };
 
-    // Streak rozetleri
-    const streakRozetler = rozetler.filter(r => r.id.startsWith('streak_'));
-    const toplamRozetler = rozetler.filter(r => r.id.startsWith('toplam_'));
-    const ozelRozetler = rozetler.filter(r => !r.id.startsWith('streak_') && !r.id.startsWith('toplam_'));
+    const filteredBadges = getFilteredBadges();
 
     if (yukleniyor) {
         return (
-            <SafeAreaView style={[styles.safeArea, { backgroundColor: renkler.arkaplan }]} edges={['top']}>
-                <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color={renkler.vurguAcik} />
-                </View>
-            </SafeAreaView>
+            <View style={[styles.loadingContainer, { backgroundColor: renkler.arkaplan }]}>
+                <ActivityIndicator size="large" color={renkler.vurguAcik} />
+            </View>
         );
     }
 
     return (
         <SafeAreaView style={[styles.safeArea, { backgroundColor: renkler.arkaplan }]} edges={['top']}>
+            {/* Header Arkaplan Efekti */}
+            <View style={styles.headerBackground}>
+                <LinearGradient
+                    colors={koyuMu ? ['rgba(21, 32, 43, 0.9)', 'rgba(21, 32, 43, 0)'] : ['rgba(255, 255, 255, 0.9)', 'rgba(255, 255, 255, 0)']}
+                    style={StyleSheet.absoluteFill}
+                />
+            </View>
+
             <Animated.ScrollView
-                style={[styles.container, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}
+                style={styles.container}
+                contentContainerStyle={styles.contentContainer}
                 showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ paddingBottom: 120 }}
+                onScroll={Animated.event(
+                    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+                    { useNativeDriver: false }
+                )}
+                scrollEventThrottle={16}
             >
-                {/* Başlık */}
-                <View style={styles.header}>
-                    <Text style={styles.headerEmoji}>🎯</Text>
-                    <Text style={[styles.headerTitle, { color: renkler.metin }]}>
-                        {t('gorevler.title')}
-                    </Text>
-                    <Text style={[styles.headerSubtitle, { color: renkler.metinSoluk }]}>
-                        {t('gorevler.subtitle')}
-                    </Text>
-                </View>
+                {/* Header Section */}
+                <Animated.View style={[styles.header, { opacity: fadeAnims[0], transform: [{ scale: scaleAnims[0] }] }]}>
+                    <View>
+                        <Text style={[styles.headerTitle, { color: renkler.metin }]}>{t('gorevler.title')}</Text>
+                        <Text style={[styles.headerSubtitle, { color: renkler.metinSoluk }]}>{t('gorevler.subtitle')}</Text>
+                    </View>
+                    <View style={[styles.headerIconContainer, { backgroundColor: renkler.kartArkaplan }]}>
+                        <Text style={styles.headerIcon}>🎯</Text>
+                    </View>
+                </Animated.View>
 
-                {/* Seviye Kartı */}
+                {/* Level Card - Hero Section */}
                 {seviye && (
-                    <LinearGradient
-                        colors={['#1a3a4a', '#0d2533']}
-                        style={styles.seviyeCard}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 1 }}
-                    >
-                        <View style={styles.seviyeHeader}>
-                            <View style={styles.seviyeBadge}>
-                                <Text style={styles.seviyeNum}>{seviye.seviye}</Text>
+                    <Animated.View style={[styles.heroCardContainer, { opacity: fadeAnims[1], transform: [{ scale: scaleAnims[1] }] }]}>
+                        <LinearGradient
+                            colors={[renkler.vurguAcik, renkler.vurgu]}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 1 }}
+                            style={styles.heroCard}
+                        >
+                            <View style={styles.heroContent}>
+                                <View style={styles.levelBadge}>
+                                    <Text style={styles.levelNumber}>{seviye.seviye}</Text>
+                                    <Text style={styles.levelText}>{t('home.level')}</Text>
+                                </View>
+                                <View style={styles.levelInfo}>
+                                    <Text style={styles.levelTitle}>{t(seviye.unvan)}</Text>
+                                    <Text style={styles.levelNext}>
+                                        {seviye.sonrakiSeviyeXP - seviye.mevcutSeviyeXP} XP {t('home.remains')}
+                                    </Text>
+                                </View>
+                                <View style={styles.xpBadge}>
+                                    <Text style={[styles.xpText, { color: renkler.vurgu }]}>{seviye.toplamXP} XP</Text>
+                                </View>
                             </View>
-                            <View style={styles.seviyeInfo}>
-                                <Text style={styles.seviyeUnvan}>{t(seviye.unvan)}</Text>
-                                <Text style={styles.seviyeLabel}>
-                                    {t('home.level')} {seviye.seviye}
-                                </Text>
-                            </View>
-                            <View style={styles.seviyeXPBadge}>
-                                <Text style={styles.seviyeXPText}>{seviye.toplamXP} XP</Text>
-                            </View>
-                        </View>
 
-                        <View style={styles.xpBarContainer}>
-                            <View style={styles.xpBarBg}>
-                                <Animated.View
-                                    style={[
-                                        styles.xpBarFill,
-                                        {
-                                            width: xpBarAnim.interpolate({
-                                                inputRange: [0, 1],
-                                                outputRange: ['0%', '100%'],
-                                            })
-                                        }
-                                    ]}
-                                />
+                            {/* Custom Tech Progress Bar */}
+                            <View style={styles.progressBarContainer}>
+                                <View style={styles.progressBarBg}>
+                                    <View
+                                        style={[
+                                            styles.progressBarFill,
+                                            { width: `${Math.min((seviye.mevcutSeviyeXP / seviye.sonrakiSeviyeXP) * 100, 100)}%` }
+                                        ]}
+                                    />
+                                </View>
+                                <View style={styles.progressLabels}>
+                                    <Text style={styles.progressLabel}>{seviye.mevcutSeviyeXP}</Text>
+                                    <Text style={styles.progressLabel}>{seviye.sonrakiSeviyeXP}</Text>
+                                </View>
                             </View>
-                            <Text style={styles.xpBarText}>
-                                {seviye.mevcutSeviyeXP} / {seviye.sonrakiSeviyeXP} XP
-                            </Text>
-                        </View>
 
-                        {/* XP Kazanım Tablosu */}
-                        <View style={styles.xpKazanimRow}>
-                            <View style={styles.xpKazanimItem}>
-                                <Text style={styles.xpKazanimEmoji}>💧</Text>
-                                <Text style={styles.xpKazanimLabel}>+{XP_KAZANIMLARI.SU_ICME}</Text>
+                            {/* Mini Stats Grid */}
+                            <View style={styles.miniStatsGrid}>
+                                <View style={styles.miniStat}>
+                                    <Text style={styles.miniStatIcon}>💧</Text>
+                                    <Text style={styles.miniStatVal}>+{XP_KAZANIMLARI.SU_ICME}</Text>
+                                </View>
+                                <View style={styles.miniStatDivider} />
+                                <View style={styles.miniStat}>
+                                    <Text style={styles.miniStatIcon}>🔥</Text>
+                                    <Text style={styles.miniStatVal}>+{XP_KAZANIMLARI.STREAK_7}</Text>
+                                </View>
+                                <View style={styles.miniStatDivider} />
+                                <View style={styles.miniStat}>
+                                    <Text style={styles.miniStatIcon}>🏆</Text>
+                                    <Text style={styles.miniStatVal}>+{XP_KAZANIMLARI.REKOR_KIRMA}</Text>
+                                </View>
                             </View>
-                            <View style={styles.xpKazanimItem}>
-                                <Text style={styles.xpKazanimEmoji}>🎯</Text>
-                                <Text style={styles.xpKazanimLabel}>+{XP_KAZANIMLARI.HEDEF_TAMAMLAMA}</Text>
-                            </View>
-                            <View style={styles.xpKazanimItem}>
-                                <Text style={styles.xpKazanimEmoji}>🔥</Text>
-                                <Text style={styles.xpKazanimLabel}>+{XP_KAZANIMLARI.STREAK_7}</Text>
-                            </View>
-                            <View style={styles.xpKazanimItem}>
-                                <Text style={styles.xpKazanimEmoji}>🏆</Text>
-                                <Text style={styles.xpKazanimLabel}>+{XP_KAZANIMLARI.REKOR_KIRMA}</Text>
-                            </View>
-                        </View>
-                    </LinearGradient>
+                        </LinearGradient>
+                    </Animated.View>
                 )}
 
-                {/* Günlük Görevler */}
-                {gorevDurumu && (
-                    <View style={[styles.sectionCard, { backgroundColor: renkler.kartArkaplan }]}>
-                        <View style={styles.sectionHeader}>
-                            <Text style={styles.sectionEmoji}>📋</Text>
-                            <View style={{ flex: 1 }}>
-                                <Text style={[styles.sectionTitle, { color: renkler.metin }]}>
-                                    {t('gorevler.dailyTasks')}
-                                </Text>
-                                <Text style={[styles.sectionSubtitle, { color: renkler.metinSoluk }]}>
-                                    {t('gorevler.dailyTasksDesc')}
-                                </Text>
-                            </View>
-                            <View style={styles.gorevSayacBadge}>
-                                <Text style={styles.gorevSayacText}>
-                                    {gorevDurumu.toplamTamamlanan}/{gorevDurumu.gorevler.length}
-                                </Text>
-                            </View>
-                        </View>
+                {/* Daily Tasks Section */}
+                <View style={styles.sectionContainer}>
+                    <Text style={[styles.sectionTitleText, { color: renkler.metin }]}>{t('gorevler.dailyTasks')}</Text>
 
-                        {/* Genel İlerleme */}
-                        <View style={styles.genelIlerlemeContainer}>
-                            <View style={[styles.genelIlerlemeBg, { backgroundColor: renkler.arkaplan }]}>
-                                <LinearGradient
-                                    colors={gorevDurumu.toplamTamamlanan === gorevDurumu.gorevler.length
-                                        ? ['#4CAF50', '#66BB6A']
-                                        : ['#4FC3F7', '#29B6F6']}
-                                    style={[
-                                        styles.genelIlerlemeFill,
-                                        { width: `${(gorevDurumu.toplamTamamlanan / gorevDurumu.gorevler.length) * 100}%` }
-                                    ]}
-                                    start={{ x: 0, y: 0 }}
-                                    end={{ x: 1, y: 0 }}
-                                />
-                            </View>
-                        </View>
+                    {gorevDurumu?.gorevler.map((gorev, index) => {
+                        const isCompleted = gorev.tamamlandi;
+                        const progress = gorev.hedef > 0 ? (gorev.ilerleme / gorev.hedef) : (isCompleted ? 1 : 0);
 
-                        {/* Görev Listesi */}
-                        {gorevDurumu.gorevler.map((gorev, index) => {
-                            const progressAnim = progressAnims[index] || new Animated.Value(0);
-                            const ilerlemeYuzde = gorev.hedef > 0 ? Math.min((gorev.ilerleme / gorev.hedef) * 100, 100) : (gorev.tamamlandi ? 100 : 0);
+                        return (
+                            <Animated.View
+                                key={gorev.id}
+                                style={[
+                                    styles.taskCard,
+                                    {
+                                        backgroundColor: renkler.kartArkaplan,
+                                        opacity: fadeAnims[index + 2] || 1,
+                                        transform: [{ scale: scaleAnims[index + 2] || 1 }]
+                                    },
+                                    isCompleted && styles.taskCardCompleted
+                                ]}
+                            >
+                                <View style={styles.taskIconContainer}>
+                                    <Text style={styles.taskIcon}>{isCompleted ? '✅' : gorev.emoji}</Text>
+                                </View>
 
-                            return (
-                                <View
-                                    key={gorev.id}
-                                    style={[
-                                        styles.gorevItem,
-                                        { backgroundColor: renkler.arkaplan },
-                                        gorev.tamamlandi && styles.gorevTamamlandiItem
-                                    ]}
-                                >
-                                    <View style={styles.gorevItemLeft}>
-                                        <View style={[
-                                            styles.gorevEmojiContainer,
-                                            gorev.tamamlandi && styles.gorevEmojiTamamlandi
-                                        ]}>
-                                            <Text style={styles.gorevEmoji}>
-                                                {gorev.tamamlandi ? '✅' : gorev.emoji}
-                                            </Text>
-                                        </View>
-                                        <View style={styles.gorevTextContainer}>
-                                            <Text style={[
-                                                styles.gorevBaslik,
-                                                { color: renkler.metin },
-                                                gorev.tamamlandi && styles.gorevBaslikTamamlandi
-                                            ]}>
-                                                {t(gorev.baslik)}
-                                            </Text>
-                                            <Text style={[styles.gorevAciklama, { color: renkler.metinSoluk }]}>
-                                                {t(gorev.aciklama)}
-                                            </Text>
-                                        </View>
-                                    </View>
+                                <View style={styles.taskContent}>
+                                    <Text style={[styles.taskTitle, { color: renkler.metin }, isCompleted && styles.textCompleted]}>
+                                        {t(gorev.baslik)}
+                                    </Text>
+                                    <Text style={[styles.taskDesc, { color: renkler.metinSoluk }]} numberOfLines={1}>
+                                        {t(gorev.aciklama)}
+                                    </Text>
 
-                                    <View style={styles.gorevItemRight}>
-                                        <View style={styles.gorevProgressContainer}>
-                                            <View style={[styles.gorevProgressBg, { backgroundColor: renkler.arkaplan }]}>
-                                                <Animated.View
-                                                    style={[
-                                                        styles.gorevProgressFill,
-                                                        {
-                                                            backgroundColor: gorev.tamamlandi ? '#4CAF50' : '#4FC3F7',
-                                                            width: progressAnim.interpolate({
-                                                                inputRange: [0, 1],
-                                                                outputRange: ['0%', '100%'],
-                                                            })
-                                                        }
-                                                    ]}
-                                                />
-                                            </View>
-                                            <Text style={[styles.gorevProgressText, { color: renkler.metinSoluk }]}>
-                                                {Math.round(ilerlemeYuzde)}%
-                                            </Text>
-                                        </View>
-                                        <View style={[styles.xpBadge, gorev.tamamlandi && styles.xpBadgeKazanildi]}>
-                                            <Text style={[styles.xpBadgeText, gorev.tamamlandi && styles.xpBadgeTextKazanildi]}>
-                                                +{gorev.xpOdulu} XP
-                                            </Text>
-                                        </View>
+                                    {/* Task Progress Bar */}
+                                    <View style={styles.taskProgressBarBg}>
+                                        <View
+                                            style={[
+                                                styles.taskProgressBarFill,
+                                                {
+                                                    width: `${Math.min(progress * 100, 100)}%`,
+                                                    backgroundColor: isCompleted ? '#22c55e' : renkler.vurguAcik
+                                                }
+                                            ]}
+                                        />
                                     </View>
                                 </View>
-                            );
-                        })}
 
-                        {/* Tüm görevler tamamlandıysa kutlama */}
-                        {gorevDurumu.toplamTamamlanan === gorevDurumu.gorevler.length && (
-                            <LinearGradient
-                                colors={['#1B5E20', '#2E7D32']}
-                                style={styles.tumGorevTamamCard}
-                                start={{ x: 0, y: 0 }}
-                                end={{ x: 1, y: 1 }}
-                            >
-                                <Text style={styles.tumGorevTamamEmoji}>🎉</Text>
-                                <Text style={styles.tumGorevTamamText}>
-                                    {t('gorevler.allCompleted')}
-                                </Text>
-                            </LinearGradient>
-                        )}
-                    </View>
-                )}
+                                <View style={styles.taskReward}>
+                                    <Text style={[styles.taskXp, isCompleted ? { color: '#22c55e' } : { color: renkler.vurguAcik }]}>+{gorev.xpOdulu} XP</Text>
+                                </View>
+                            </Animated.View>
+                        );
+                    })}
+                </View>
 
-                {/* Başarı Rozetleri */}
-                <View style={[styles.sectionCard, { backgroundColor: renkler.kartArkaplan }]}>
-                    <View style={styles.sectionHeader}>
-                        <Text style={styles.sectionEmoji}>🏅</Text>
-                        <View style={{ flex: 1 }}>
-                            <Text style={[styles.sectionTitle, { color: renkler.metin }]}>
-                                {t('gorevler.badges')}
-                            </Text>
-                            <Text style={[styles.sectionSubtitle, { color: renkler.metinSoluk }]}>
-                                {t('gorevler.badgesDesc')}
-                            </Text>
-                        </View>
-                        <View style={styles.rozetSayacBadge}>
-                            <Text style={styles.rozetSayacText}>
-                                {kazanilanSayisi}/{toplamRozet}
+                <View style={styles.sectionContainer}>
+                    <View style={styles.sectionHeaderRow}>
+                        <Text style={[styles.sectionTitleText, { color: renkler.metin }]}>{t('gorevler.badges')}</Text>
+                        <View style={[styles.badgeCounter, { backgroundColor: renkler.kartArkaplan }]}>
+                            <Text style={[styles.badgeCounterText, { color: renkler.metin }]}>
+                                {rozetler.filter(r => r.kazanildi).length}/{rozetler.length}
                             </Text>
                         </View>
                     </View>
 
-                    {/* Rozet İlerleme Barı */}
-                    <View style={styles.rozetIlerlemeContainer}>
-                        <View style={[styles.rozetIlerlemeBg, { backgroundColor: renkler.arkaplan }]}>
-                            <LinearGradient
-                                colors={['#FFD700', '#FFA000']}
-                                style={[
-                                    styles.rozetIlerlemeFill,
-                                    { width: `${toplamRozet > 0 ? (kazanilanSayisi / toplamRozet) * 100 : 0}%` }
-                                ]}
-                                start={{ x: 0, y: 0 }}
-                                end={{ x: 1, y: 0 }}
-                            />
-                        </View>
-                        <Text style={[styles.rozetIlerlemeText, { color: renkler.metinSoluk }]}>
-                            %{toplamRozet > 0 ? Math.round((kazanilanSayisi / toplamRozet) * 100) : 0} {t('gorevler.completed')}
-                        </Text>
-                    </View>
-
-                    {/* Rozet Filtreleme Tabları */}
-                    <View style={styles.rozetTabContainer}>
-                        {(['tumu', 'kazanilan', 'kilitli'] as const).map((tab) => (
+                    {/* Filter Tabs */}
+                    <View style={styles.tabsContainer}>
+                        {['tumu', 'kazanilan', 'kilitli'].map((tab) => (
                             <TouchableOpacity
                                 key={tab}
                                 style={[
-                                    styles.rozetTab,
-                                    aktifRozetTab === tab && [styles.rozetTabActive, { borderColor: renkler.vurguAcik }]
+                                    styles.tab,
+                                    { borderColor: 'rgba(0,0,0,0.1)' },
+                                    aktifRozetTab === tab && { backgroundColor: renkler.vurguAcik, borderColor: renkler.vurguAcik }
                                 ]}
-                                onPress={() => setAktifRozetTab(tab)}
+                                onPress={() => {
+                                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                    setAktifRozetTab(tab as any);
+                                }}
                             >
                                 <Text style={[
-                                    styles.rozetTabText,
-                                    { color: renkler.metinSoluk },
-                                    aktifRozetTab === tab && { color: renkler.vurguAcik }
+                                    styles.tabText,
+                                    { color: aktifRozetTab === tab ? '#fff' : renkler.metinSoluk }
                                 ]}>
                                     {tab === 'tumu' ? t('gorevler.all') : tab === 'kazanilan' ? t('gorevler.earned') : t('gorevler.locked')}
                                 </Text>
@@ -411,156 +310,34 @@ export function GorevlerEkrani() {
                         ))}
                     </View>
 
-                    {/* Rozet Kategorileri */}
-                    {aktifRozetTab === 'tumu' ? (
-                        <>
-                            {/* Streak Rozetleri */}
-                            <View style={styles.rozetKategori}>
-                                <Text style={[styles.rozetKategoriTitle, { color: renkler.metin }]}>
-                                    🔥 {t('gorevler.streakBadges')}
-                                </Text>
-                                <View style={styles.rozetGrid}>
-                                    {streakRozetler.map((rozet, index) => (
-                                        <TouchableOpacity
-                                            key={rozet.id}
-                                            style={[
-                                                styles.rozetGridItem,
-                                                { backgroundColor: renkler.arkaplan },
-                                                rozet.kazanildi && styles.rozetGridItemKazanildi
-                                            ]}
-                                            onPress={() => { setSeciliRozet(rozet); setRozetModalGoster(true); }}
-                                            activeOpacity={0.7}
-                                        >
-                                            <Animated.View style={{
-                                                transform: [{ scale: badgeScaleAnims[rozetler.indexOf(rozet)] || new Animated.Value(1) }]
-                                            }}>
-                                                <Text style={styles.rozetGridEmoji}>
-                                                    {rozet.kazanildi ? rozet.emoji : '🔒'}
-                                                </Text>
-                                            </Animated.View>
-                                            <Text style={[
-                                                styles.rozetGridIsim,
-                                                { color: rozet.kazanildi ? renkler.metin : renkler.metinSoluk }
-                                            ]} numberOfLines={1}>
-                                                {t(rozet.isim)}
-                                            </Text>
-                                        </TouchableOpacity>
-                                    ))}
-                                </View>
-                            </View>
-
-                            {/* Toplam Su Rozetleri */}
-                            <View style={styles.rozetKategori}>
-                                <Text style={[styles.rozetKategoriTitle, { color: renkler.metin }]}>
-                                    💧 {t('gorevler.totalBadges')}
-                                </Text>
-                                <View style={styles.rozetGrid}>
-                                    {toplamRozetler.map((rozet) => (
-                                        <TouchableOpacity
-                                            key={rozet.id}
-                                            style={[
-                                                styles.rozetGridItem,
-                                                { backgroundColor: renkler.arkaplan },
-                                                rozet.kazanildi && styles.rozetGridItemKazanildi
-                                            ]}
-                                            onPress={() => { setSeciliRozet(rozet); setRozetModalGoster(true); }}
-                                            activeOpacity={0.7}
-                                        >
-                                            <Animated.View style={{
-                                                transform: [{ scale: badgeScaleAnims[rozetler.indexOf(rozet)] || new Animated.Value(1) }]
-                                            }}>
-                                                <Text style={styles.rozetGridEmoji}>
-                                                    {rozet.kazanildi ? rozet.emoji : '🔒'}
-                                                </Text>
-                                            </Animated.View>
-                                            <Text style={[
-                                                styles.rozetGridIsim,
-                                                { color: rozet.kazanildi ? renkler.metin : renkler.metinSoluk }
-                                            ]} numberOfLines={1}>
-                                                {t(rozet.isim)}
-                                            </Text>
-                                        </TouchableOpacity>
-                                    ))}
-                                </View>
-                            </View>
-
-                            {/* Özel Rozetler */}
-                            <View style={styles.rozetKategori}>
-                                <Text style={[styles.rozetKategoriTitle, { color: renkler.metin }]}>
-                                    ⭐ {t('gorevler.specialBadges')}
-                                </Text>
-                                <View style={styles.rozetGrid}>
-                                    {ozelRozetler.map((rozet) => (
-                                        <TouchableOpacity
-                                            key={rozet.id}
-                                            style={[
-                                                styles.rozetGridItem,
-                                                { backgroundColor: renkler.arkaplan },
-                                                rozet.kazanildi && styles.rozetGridItemKazanildi
-                                            ]}
-                                            onPress={() => { setSeciliRozet(rozet); setRozetModalGoster(true); }}
-                                            activeOpacity={0.7}
-                                        >
-                                            <Animated.View style={{
-                                                transform: [{ scale: badgeScaleAnims[rozetler.indexOf(rozet)] || new Animated.Value(1) }]
-                                            }}>
-                                                <Text style={styles.rozetGridEmoji}>
-                                                    {rozet.kazanildi ? rozet.emoji : '🔒'}
-                                                </Text>
-                                            </Animated.View>
-                                            <Text style={[
-                                                styles.rozetGridIsim,
-                                                { color: rozet.kazanildi ? renkler.metin : renkler.metinSoluk }
-                                            ]} numberOfLines={1}>
-                                                {t(rozet.isim)}
-                                            </Text>
-                                        </TouchableOpacity>
-                                    ))}
-                                </View>
-                            </View>
-                        </>
-                    ) : (
-                        <View style={styles.rozetGrid}>
-                            {filtrelenmisRozetler.map((rozet) => (
-                                <TouchableOpacity
-                                    key={rozet.id}
-                                    style={[
-                                        styles.rozetGridItem,
-                                        { backgroundColor: renkler.arkaplan },
-                                        rozet.kazanildi && styles.rozetGridItemKazanildi
-                                    ]}
-                                    onPress={() => { setSeciliRozet(rozet); setRozetModalGoster(true); }}
-                                    activeOpacity={0.7}
-                                >
-                                    <Text style={styles.rozetGridEmoji}>
+                    {/* Badges Grid */}
+                    <View style={styles.badgesGrid}>
+                        {filteredBadges.map((rozet, index) => (
+                            <TouchableOpacity
+                                key={rozet.id}
+                                style={[
+                                    styles.badgeItem,
+                                    { backgroundColor: renkler.kartArkaplan },
+                                    rozet.kazanildi && styles.badgeItemEarned
+                                ]}
+                                onPress={() => handleRozetPress(rozet)}
+                                activeOpacity={0.8}
+                            >
+                                <View style={[styles.badgeIconBg, rozet.kazanildi ? { backgroundColor: renkler.vurguAcik + '20' } : { backgroundColor: 'rgba(0,0,0,0.05)' }]}>
+                                    <Text style={[styles.badgeEmoji, !rozet.kazanildi && { opacity: 0.5 }]}>
                                         {rozet.kazanildi ? rozet.emoji : '🔒'}
                                     </Text>
-                                    <Text style={[
-                                        styles.rozetGridIsim,
-                                        { color: rozet.kazanildi ? renkler.metin : renkler.metinSoluk }
-                                    ]} numberOfLines={1}>
-                                        {t(rozet.isim)}
-                                    </Text>
-                                </TouchableOpacity>
-                            ))}
-                            {filtrelenmisRozetler.length === 0 && (
-                                <View style={styles.bosRozetContainer}>
-                                    <Text style={styles.bosRozetEmoji}>
-                                        {aktifRozetTab === 'kazanilan' ? '🌟' : '🎯'}
-                                    </Text>
-                                    <Text style={[styles.bosRozetText, { color: renkler.metinSoluk }]}>
-                                        {aktifRozetTab === 'kazanilan'
-                                            ? t('gorevler.noEarnedYet')
-                                            : t('gorevler.allEarned')}
-                                    </Text>
                                 </View>
-                            )}
-                        </View>
-                    )}
+                                <Text style={[styles.badgeName, { color: renkler.metin }]} numberOfLines={1}>
+                                    {t(rozet.isim)}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
                 </View>
             </Animated.ScrollView>
 
-            {/* Rozet Detay Modalı */}
+            {/* Modal */}
             <Modal
                 visible={rozetModalGoster}
                 transparent
@@ -572,45 +349,40 @@ export function GorevlerEkrani() {
                     activeOpacity={1}
                     onPress={() => setRozetModalGoster(false)}
                 >
-                    <View style={[styles.rozetModalContent, { backgroundColor: renkler.kartArkaplan }]}>
+                    <View style={[styles.modalContent, { backgroundColor: renkler.kartArkaplan }]}>
                         {seciliRozet && (
                             <>
-                                <View style={[
-                                    styles.rozetModalEmojiContainer,
-                                    seciliRozet.kazanildi ? styles.rozetModalKazanildi : styles.rozetModalKilitli
-                                ]}>
-                                    <Text style={styles.rozetModalEmoji}>
+                                <View style={[styles.modalBadgeDisplay, { backgroundColor: seciliRozet.kazanildi ? '#e0f2fe' : '#f1f5f9' }]}>
+                                    <Text style={styles.modalBadgeEmoji}>
                                         {seciliRozet.kazanildi ? seciliRozet.emoji : '🔒'}
                                     </Text>
                                 </View>
-                                <Text style={[styles.rozetModalTitle, { color: renkler.metin }]}>
+
+                                <Text style={[styles.modalTitle, { color: renkler.metin }]}>
                                     {t(seciliRozet.isim)}
                                 </Text>
-                                <Text style={[styles.rozetModalDesc, { color: renkler.metinSoluk }]}>
+
+                                <Text style={styles.modalDesc}>
                                     {t(seciliRozet.aciklama)}
                                 </Text>
-                                <View style={[
-                                    styles.rozetModalStatusBadge,
-                                    seciliRozet.kazanildi ? styles.statusKazanildi : styles.statusKilitli
-                                ]}>
-                                    <Text style={styles.rozetModalStatusText}>
-                                        {seciliRozet.kazanildi
-                                            ? `✅ ${t('gorevler.badgeEarned')}`
-                                            : `🎯 ${t(seciliRozet.kosul)}`}
+
+                                <View style={[styles.statusTag, { backgroundColor: seciliRozet.kazanildi ? '#dcfce7' : '#f1f5f9' }]}>
+                                    <Text style={[styles.statusText, { color: seciliRozet.kazanildi ? '#166534' : '#64748b' }]}>
+                                        {seciliRozet.kazanildi ? t('gorevler.earned') : t('gorevler.locked')}
                                     </Text>
                                 </View>
-                                {seciliRozet.kazanilmaTarihi && (
-                                    <Text style={[styles.rozetModalTarih, { color: renkler.metinSoluk }]}>
-                                        📅 {seciliRozet.kazanilmaTarihi}
+
+                                {seciliRozet.kazanildi && (
+                                    <Text style={styles.earningDate}>
+                                        {t('gorevler.earnedDate')}: {seciliRozet.kazanilmaTarihi}
                                     </Text>
                                 )}
+
                                 <TouchableOpacity
-                                    style={[styles.rozetModalKapat, { backgroundColor: renkler.vurguAcik }]}
+                                    style={styles.closeButton}
                                     onPress={() => setRozetModalGoster(false)}
                                 >
-                                    <Text style={[styles.rozetModalKapatText, { color: renkler.arkaplan }]}>
-                                        {t('common.close')}
-                                    </Text>
+                                    <Text style={styles.closeButtonText}>{t('common.close')}</Text>
                                 </TouchableOpacity>
                             </>
                         )}
@@ -621,462 +393,90 @@ export function GorevlerEkrani() {
     );
 }
 
-// --- STYLES ---
 const styles = StyleSheet.create({
-    safeArea: {
-        flex: 1,
-    },
-    container: {
-        flex: 1,
-    },
-    loadingContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
+    safeArea: { flex: 1 },
+    container: { flex: 1 },
+    loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+    contentContainer: { paddingHorizontal: 20, paddingBottom: 100 },
+
+    headerBackground: { position: 'absolute', top: 0, left: 0, right: 0, height: 200, zIndex: -1 },
 
     // Header
-    header: {
-        alignItems: 'center',
-        paddingTop: 12,
-        paddingBottom: 16,
-    },
-    headerEmoji: {
-        fontSize: 36,
-        marginBottom: 6,
-    },
-    headerTitle: {
-        fontSize: 26,
-        fontWeight: 'bold',
-        marginBottom: 4,
-    },
-    headerSubtitle: {
-        fontSize: 14,
-    },
+    header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 10, marginBottom: 20 },
+    headerTitle: { fontSize: 28, fontWeight: '800', letterSpacing: -0.5 },
+    headerSubtitle: { fontSize: 15, marginTop: 2 },
+    headerIconContainer: { width: 48, height: 48, borderRadius: 24, justifyContent: 'center', alignItems: 'center' },
+    headerIcon: { fontSize: 24 },
 
-    // Seviye Kartı
-    seviyeCard: {
-        marginHorizontal: 16,
-        marginBottom: 16,
-        borderRadius: 20,
-        padding: 20,
-    },
-    seviyeHeader: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 16,
-    },
-    seviyeBadge: {
-        width: 48,
-        height: 48,
-        borderRadius: 24,
-        backgroundColor: '#4FC3F7',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    seviyeNum: {
-        fontSize: 22,
-        fontWeight: 'bold',
-        color: '#0A2A3A',
-    },
-    seviyeInfo: {
-        flex: 1,
-        marginLeft: 14,
-    },
-    seviyeUnvan: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#FFFFFF',
-    },
-    seviyeLabel: {
-        fontSize: 13,
-        color: '#81D4FA',
-        marginTop: 2,
-    },
-    seviyeXPBadge: {
-        backgroundColor: 'rgba(79, 195, 247, 0.2)',
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 12,
-    },
-    seviyeXPText: {
-        fontSize: 13,
-        fontWeight: 'bold',
-        color: '#4FC3F7',
-    },
-    xpBarContainer: {
-        marginBottom: 14,
-    },
-    xpBarBg: {
-        height: 10,
-        backgroundColor: 'rgba(255,255,255,0.1)',
-        borderRadius: 5,
-        overflow: 'hidden',
-    },
-    xpBarFill: {
-        height: '100%',
-        backgroundColor: '#4FC3F7',
-        borderRadius: 5,
-    },
-    xpBarText: {
-        fontSize: 11,
-        color: '#81D4FA',
-        textAlign: 'right',
-        marginTop: 4,
-    },
-    xpKazanimRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-    },
-    xpKazanimItem: {
-        alignItems: 'center',
-    },
-    xpKazanimEmoji: {
-        fontSize: 18,
-        marginBottom: 2,
-    },
-    xpKazanimLabel: {
-        fontSize: 11,
-        color: '#81D4FA',
-        fontWeight: '600',
-    },
+    // Hero Card
+    heroCardContainer: { marginBottom: 24, shadowColor: "#0ea5e9", shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.3, shadowRadius: 16, elevation: 8 },
+    heroCard: { borderRadius: 24, padding: 24, overflow: 'hidden' },
+    heroContent: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 },
+    levelBadge: { alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.2)', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 16 },
+    levelNumber: { fontSize: 24, fontWeight: 'bold', color: '#fff' },
+    levelText: { fontSize: 10, color: 'rgba(255,255,255,0.8)', textTransform: 'uppercase' },
+    levelInfo: { flex: 1, paddingHorizontal: 16 },
+    levelTitle: { fontSize: 20, fontWeight: 'bold', color: '#fff' },
+    levelNext: { fontSize: 12, color: 'rgba(255,255,255,0.8)', marginTop: 4 },
+    xpBadge: { backgroundColor: '#fff', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 },
+    xpText: { color: '#0284c7', fontWeight: 'bold', fontSize: 12 },
 
-    // Section Card
-    sectionCard: {
-        marginHorizontal: 16,
-        marginBottom: 16,
-        borderRadius: 20,
-        padding: 20,
-    },
-    sectionHeader: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 12,
-    },
-    sectionEmoji: {
-        fontSize: 28,
-        marginRight: 12,
-    },
-    sectionTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    sectionSubtitle: {
-        fontSize: 12,
-        marginTop: 2,
-    },
+    progressBarContainer: { marginBottom: 20 },
+    progressBarBg: { height: 8, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 4, overflow: 'hidden' },
+    progressBarFill: { height: '100%', backgroundColor: '#fff', borderRadius: 4 },
+    progressLabels: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 6 },
+    progressLabel: { color: 'rgba(255,255,255,0.7)', fontSize: 11 },
 
-    // Görev Sayacı
-    gorevSayacBadge: {
-        backgroundColor: '#4FC3F7',
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 12,
-    },
-    gorevSayacText: {
-        fontSize: 14,
-        fontWeight: 'bold',
-        color: '#0A2A3A',
-    },
+    miniStatsGrid: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.1)', borderRadius: 16, padding: 12 },
+    miniStat: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+    miniStatIcon: { fontSize: 14 },
+    miniStatVal: { color: '#fff', fontWeight: '600', fontSize: 12 },
+    miniStatDivider: { width: 1, height: 16, backgroundColor: 'rgba(255,255,255,0.2)' },
 
-    // Genel İlerleme
-    genelIlerlemeContainer: {
-        marginBottom: 16,
-    },
-    genelIlerlemeBg: {
-        height: 6,
-        borderRadius: 3,
-        overflow: 'hidden',
-    },
-    genelIlerlemeFill: {
-        height: '100%',
-        borderRadius: 3,
-    },
+    // Sections
+    sectionContainer: { marginBottom: 24 },
+    sectionTitleText: { fontSize: 18, fontWeight: 'bold', marginBottom: 16 },
+    sectionHeaderRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
+    badgeCounter: { backgroundColor: 'rgba(0,0,0,0.05)', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 8 },
+    badgeCounterText: { fontSize: 12, fontWeight: 'bold' },
 
-    // Görev Item
-    gorevItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: 14,
-        borderRadius: 14,
-        marginBottom: 10,
-    },
-    gorevTamamlandiItem: {
-        opacity: 0.75,
-    },
-    gorevItemLeft: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        flex: 1,
-        marginRight: 10,
-    },
-    gorevEmojiContainer: {
-        width: 42,
-        height: 42,
-        borderRadius: 12,
-        backgroundColor: 'rgba(79, 195, 247, 0.15)',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginRight: 12,
-    },
-    gorevEmojiTamamlandi: {
-        backgroundColor: 'rgba(76, 175, 80, 0.15)',
-    },
-    gorevEmoji: {
-        fontSize: 20,
-    },
-    gorevTextContainer: {
-        flex: 1,
-    },
-    gorevBaslik: {
-        fontSize: 15,
-        fontWeight: '600',
-        marginBottom: 2,
-    },
-    gorevBaslikTamamlandi: {
-        textDecorationLine: 'line-through',
-        opacity: 0.7,
-    },
-    gorevAciklama: {
-        fontSize: 12,
-        lineHeight: 16,
-    },
-    gorevItemRight: {
-        alignItems: 'flex-end',
-    },
-    gorevProgressContainer: {
-        alignItems: 'flex-end',
-        marginBottom: 4,
-    },
-    gorevProgressBg: {
-        width: 60,
-        height: 5,
-        borderRadius: 3,
-        overflow: 'hidden',
-    },
-    gorevProgressFill: {
-        height: '100%',
-        borderRadius: 3,
-    },
-    gorevProgressText: {
-        fontSize: 10,
-        marginTop: 2,
-    },
-    xpBadge: {
-        backgroundColor: 'rgba(79, 195, 247, 0.15)',
-        paddingHorizontal: 8,
-        paddingVertical: 2,
-        borderRadius: 8,
-    },
-    xpBadgeKazanildi: {
-        backgroundColor: 'rgba(76, 175, 80, 0.15)',
-    },
-    xpBadgeText: {
-        fontSize: 10,
-        fontWeight: 'bold',
-        color: '#4FC3F7',
-    },
-    xpBadgeTextKazanildi: {
-        color: '#4CAF50',
-    },
+    // Tasks
+    taskCard: { flexDirection: 'row', alignItems: 'center', padding: 16, borderRadius: 20, marginBottom: 12, shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 8, elevation: 2 },
+    taskCardCompleted: { opacity: 0.8 },
+    taskIconContainer: { width: 44, height: 44, borderRadius: 14, backgroundColor: 'rgba(0,0,0,0.05)', justifyContent: 'center', alignItems: 'center', marginRight: 14 },
+    taskIcon: { fontSize: 20 },
+    taskContent: { flex: 1, marginRight: 12 },
+    taskTitle: { fontSize: 15, fontWeight: '600', marginBottom: 4 },
+    taskDesc: { fontSize: 12 },
+    textCompleted: { textDecorationLine: 'line-through', opacity: 0.6 },
+    taskReward: { alignItems: 'flex-end' },
+    taskXp: { fontSize: 13, fontWeight: 'bold' },
+    taskProgressBarBg: { height: 4, backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: 2, marginTop: 8, width: '80%' },
+    taskProgressBarFill: { height: '100%', borderRadius: 2 },
 
-    // Tüm görevler tamamlandı
-    tumGorevTamamCard: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 16,
-        borderRadius: 14,
-        marginTop: 6,
-    },
-    tumGorevTamamEmoji: {
-        fontSize: 24,
-        marginRight: 10,
-    },
-    tumGorevTamamText: {
-        fontSize: 15,
-        fontWeight: 'bold',
-        color: '#FFFFFF',
-    },
+    // Tabs
+    tabsContainer: { flexDirection: 'row', marginBottom: 16, gap: 10 },
+    tab: { paddingVertical: 8, paddingHorizontal: 16, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(0,0,0,0.1)' },
+    tabText: { fontSize: 13, fontWeight: '600' },
 
-    // Rozet Sayaç
-    rozetSayacBadge: {
-        backgroundColor: '#FFD700',
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 12,
-    },
-    rozetSayacText: {
-        fontSize: 14,
-        fontWeight: 'bold',
-        color: '#0A2A3A',
-    },
-
-    // Rozet İlerleme
-    rozetIlerlemeContainer: {
-        marginBottom: 14,
-    },
-    rozetIlerlemeBg: {
-        height: 6,
-        borderRadius: 3,
-        overflow: 'hidden',
-    },
-    rozetIlerlemeFill: {
-        height: '100%',
-        borderRadius: 3,
-    },
-    rozetIlerlemeText: {
-        fontSize: 11,
-        textAlign: 'right',
-        marginTop: 4,
-    },
-
-    // Rozet Tab
-    rozetTabContainer: {
-        flexDirection: 'row',
-        marginBottom: 16,
-        gap: 8,
-    },
-    rozetTab: {
-        paddingVertical: 8,
-        paddingHorizontal: 16,
-        borderRadius: 20,
-        borderWidth: 1,
-        borderColor: 'transparent',
-    },
-    rozetTabActive: {
-        borderWidth: 1,
-    },
-    rozetTabText: {
-        fontSize: 13,
-        fontWeight: '600',
-    },
-
-    // Rozet Kategori
-    rozetKategori: {
-        marginBottom: 16,
-    },
-    rozetKategoriTitle: {
-        fontSize: 15,
-        fontWeight: '600',
-        marginBottom: 10,
-    },
-
-    // Rozet Grid
-    rozetGrid: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: 10,
-    },
-    rozetGridItem: {
-        width: (SCREEN_WIDTH - 94) / 4,
-        alignItems: 'center',
-        paddingVertical: 12,
-        paddingHorizontal: 4,
-        borderRadius: 14,
-    },
-    rozetGridItemKazanildi: {
-        borderWidth: 1,
-        borderColor: 'rgba(255, 215, 0, 0.3)',
-    },
-    rozetGridEmoji: {
-        fontSize: 28,
-        marginBottom: 4,
-    },
-    rozetGridIsim: {
-        fontSize: 10,
-        fontWeight: '500',
-        textAlign: 'center',
-    },
-
-    // Boş rozet
-    bosRozetContainer: {
-        width: '100%',
-        alignItems: 'center',
-        paddingVertical: 30,
-    },
-    bosRozetEmoji: {
-        fontSize: 40,
-        marginBottom: 8,
-    },
-    bosRozetText: {
-        fontSize: 14,
-    },
+    // Badges
+    badgesGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'flex-start' },
+    badgeItem: { width: CARD_WIDTH, aspectRatio: 0.85, borderRadius: 16, padding: 8, alignItems: 'center', justifyContent: 'center', gap: 4 },
+    badgeItemEarned: { borderWidth: 1, borderColor: 'rgba(0,0,0,0.1)' },
+    badgeIconBg: { width: 42, height: 42, borderRadius: 21, justifyContent: 'center', alignItems: 'center' },
+    badgeEmoji: { fontSize: 22 },
+    badgeName: { fontSize: 9, fontWeight: '600', textAlign: 'center' },
 
     // Modal
-    modalOverlay: {
-        flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.6)',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 30,
-    },
-    rozetModalContent: {
-        width: '100%',
-        borderRadius: 24,
-        padding: 28,
-        alignItems: 'center',
-    },
-    rozetModalEmojiContainer: {
-        width: 80,
-        height: 80,
-        borderRadius: 40,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 16,
-    },
-    rozetModalKazanildi: {
-        backgroundColor: 'rgba(255, 215, 0, 0.15)',
-    },
-    rozetModalKilitli: {
-        backgroundColor: 'rgba(128, 128, 128, 0.15)',
-    },
-    rozetModalEmoji: {
-        fontSize: 44,
-    },
-    rozetModalTitle: {
-        fontSize: 22,
-        fontWeight: 'bold',
-        marginBottom: 8,
-        textAlign: 'center',
-    },
-    rozetModalDesc: {
-        fontSize: 14,
-        textAlign: 'center',
-        lineHeight: 20,
-        marginBottom: 16,
-    },
-    rozetModalStatusBadge: {
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        borderRadius: 20,
-        marginBottom: 12,
-    },
-    statusKazanildi: {
-        backgroundColor: 'rgba(76, 175, 80, 0.15)',
-    },
-    statusKilitli: {
-        backgroundColor: 'rgba(255, 193, 7, 0.15)',
-    },
-    rozetModalStatusText: {
-        fontSize: 13,
-        fontWeight: '600',
-        color: '#FFFFFF',
-    },
-    rozetModalTarih: {
-        fontSize: 12,
-        marginBottom: 16,
-    },
-    rozetModalKapat: {
-        paddingVertical: 12,
-        paddingHorizontal: 32,
-        borderRadius: 14,
-        minWidth: 120,
-        alignItems: 'center',
-    },
-    rozetModalKapatText: {
-        fontSize: 15,
-        fontWeight: 'bold',
-    },
+    modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center', padding: 24 },
+    modalContent: { width: '100%', borderRadius: 24, padding: 24, alignItems: 'center', shadowColor: "#000", shadowOffset: { width: 0, height: 10 }, shadowOpacity: 0.25, shadowRadius: 20, elevation: 10 },
+    modalBadgeDisplay: { width: 80, height: 80, borderRadius: 40, justifyContent: 'center', alignItems: 'center', marginBottom: 16 },
+    modalBadgeEmoji: { fontSize: 40 },
+    modalTitle: { fontSize: 20, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' },
+    modalDesc: { fontSize: 14, color: '#64748b', textAlign: 'center', marginBottom: 20 },
+    statusTag: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12, marginBottom: 20 },
+    statusText: { fontSize: 12, fontWeight: 'bold', textTransform: 'uppercase' },
+    earningDate: { fontSize: 12, color: '#94a3b8', marginBottom: 20 },
+    closeButton: { backgroundColor: '#0ea5e9', paddingVertical: 14, width: '100%', borderRadius: 16, alignItems: 'center' },
+    closeButtonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
 });

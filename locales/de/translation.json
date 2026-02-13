@@ -301,6 +301,8 @@
         "addWater": "+{amount} ml",
         "completed": "Abgeschlossen",
         "dailyTasks": "Tägliche Aufgaben",
+        "reminders": "Erinnerungen",
+        "remains": "Verbleibend",
         "drinkWater": "Wasser trinken",
         "explore": "ENTDECKEN",
         "glass": "Glas",

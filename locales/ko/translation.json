@@ -301,6 +301,8 @@
         "addWater": "+{amount} ml 추가됨",
         "completed": "완료",
         "dailyTasks": "일일 과제",
+        "reminders": "알림",
+        "remains": "남음",
         "drinkWater": "물 마시기",
         "explore": "자세히 보기",
         "glass": "컵",

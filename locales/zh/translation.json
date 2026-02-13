@@ -301,6 +301,8 @@
         "addWater": "+{amount} 毫升已添加",
         "completed": "已完成",
         "dailyTasks": "每日任务",
+        "reminders": "提醒",
+        "remains": "剩余",
         "drinkWater": "喝水",
         "explore": "了解更多",
         "glass": "杯",

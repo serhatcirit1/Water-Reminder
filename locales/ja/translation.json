@@ -301,6 +301,8 @@
         "addWater": "+{amount} ml追加",
         "completed": "完了",
         "dailyTasks": "デイリータスク",
+        "reminders": "リマインダー",
+        "remains": "残り",
         "drinkWater": "水を飲む",
         "explore": "詳しく見る",
         "glass": "コップ",

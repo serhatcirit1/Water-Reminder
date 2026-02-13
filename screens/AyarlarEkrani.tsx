@@ -673,53 +673,68 @@ export function AyarlarEkrani() {
                 <View style={[styles.temaContainer, { backgroundColor: renkler.kartArkaplan }]}>
                     <Text style={styles.temaBaslik}>🎨 {t('settings.theme')}</Text>
 
-                    {/* Mavi Mod (Gündüz/Açık) */}
-                    <View style={styles.modSatir}>
-                        <Text style={styles.modEtiket}>💧 {t('settings.themeBlue')}</Text>
-                        <Switch
-                            value={!otomatikMod && mod === 'acik'}
-                            onValueChange={(val) => {
-                                if (val) {
-                                    otomatikModDegistir(false);
-                                    modDegistir('acik');
-                                }
+                    {/* Modern Tema Seçici (Yan Yana) */}
+                    <View style={styles.temaSeciciContainer}>
+                        {/* Mavi Mod */}
+                        <TouchableOpacity
+                            style={[
+                                styles.temaSecenekKutu,
+                                !otomatikMod && mod === 'acik' && styles.temaSecenekAktif,
+                                { borderColor: !otomatikMod && mod === 'acik' ? '#42A5F5' : 'transparent' }
+                            ]}
+                            onPress={() => {
+                                modDegistir('acik');
                             }}
-                            trackColor={{ false: '#ccc', true: '#42A5F5' }}
-                            thumbColor={!otomatikMod && mod === 'acik' ? '#fff' : '#f4f3f4'}
-                        />
+                        >
+                            <Text style={styles.temaEmoji}>💧</Text>
+                            <Text style={[
+                                styles.temaAdi,
+                                !otomatikMod && mod === 'acik' && { color: '#42A5F5', fontWeight: 'bold' }
+                            ]}>{t('settings.themeBlue')}</Text>
+                        </TouchableOpacity>
+
+                        {/* Yeşil Mod */}
+                        <TouchableOpacity
+                            style={[
+                                styles.temaSecenekKutu,
+                                !otomatikMod && mod === 'koyu' && styles.temaSecenekAktif,
+                                { borderColor: !otomatikMod && mod === 'koyu' ? '#4CAF50' : 'transparent' }
+                            ]}
+                            onPress={() => {
+                                modDegistir('koyu');
+                            }}
+                        >
+                            <Text style={styles.temaEmoji}>🌿</Text>
+                            <Text style={[
+                                styles.temaAdi,
+                                !otomatikMod && mod === 'koyu' && { color: '#4CAF50', fontWeight: 'bold' }
+                            ]}>{t('settings.themeGreen')}</Text>
+                        </TouchableOpacity>
+
+                        {/* Sistem Modu */}
+                        <TouchableOpacity
+                            style={[
+                                styles.temaSecenekKutu,
+                                otomatikMod && styles.temaSecenekAktif,
+                                { borderColor: otomatikMod ? '#9C27B0' : 'transparent' }
+                            ]}
+                            onPress={() => {
+                                otomatikModDegistir(true);
+                            }}
+                        >
+                            <Text style={styles.temaEmoji}>🔄</Text>
+                            <Text style={[
+                                styles.temaAdi,
+                                otomatikMod && { color: '#9C27B0', fontWeight: 'bold' }
+                            ]}>{t('settings.themeSystem')}</Text>
+                        </TouchableOpacity>
                     </View>
 
-                    {/* Yeşil Mod (Akşam/Koyu) */}
-                    <View style={styles.modSatir}>
-                        <Text style={styles.modEtiket}>🌿 {t('settings.themeGreen')}</Text>
-                        <Switch
-                            value={!otomatikMod && mod === 'koyu'}
-                            onValueChange={(val) => {
-                                if (val) {
-                                    otomatikModDegistir(false);
-                                    modDegistir('koyu');
-                                }
-                            }}
-                            trackColor={{ false: '#ccc', true: '#4CAF50' }}
-                            thumbColor={!otomatikMod && mod === 'koyu' ? '#fff' : '#f4f3f4'}
-                        />
-                    </View>
-
-                    {/* Sistem Modu */}
-                    <View style={styles.modSatir}>
-                        <View style={{ flex: 1 }}>
-                            <Text style={styles.modEtiket}>🔄 {t('settings.themeSystem')}</Text>
-                            <Text style={styles.sessizAciklama}>{t('settings.themeSystemDesc')}</Text>
-                        </View>
-                        <Switch
-                            value={otomatikMod}
-                            onValueChange={(val) => {
-                                if (val) otomatikModDegistir(true);
-                            }}
-                            trackColor={{ false: '#ccc', true: '#9C27B0' }}
-                            thumbColor={otomatikMod ? '#fff' : '#f4f3f4'}
-                        />
-                    </View>
+                    {otomatikMod && (
+                        <Text style={[styles.sessizAciklama, { marginTop: 12, textAlign: 'center' }]}>
+                            {t('settings.themeSystemDesc')}
+                        </Text>
+                    )}
 
                     {/* Premium Temalar */}
                     <View style={{ marginTop: 15 }}>
@@ -1140,43 +1155,7 @@ export function AyarlarEkrani() {
                     )}
                 </View>
 
-                {/* 🛠️ Geliştirici Test Modu - KAPALI
-                <View style={[styles.temaContainer, { backgroundColor: renkler.kartArkaplan, borderColor: '#FF9800', borderWidth: 1 }]}>
-                    <Text style={[styles.temaBaslik, { color: '#FF9800' }]}>🛠️ Geliştirici Test Modu</Text>
-                    <Text style={styles.hedefAciklama}>
-                        Bu alan sadece geliştirme aşamasında görünür. Premium özelliklerini test etmek için kullanabilirsiniz.
-                    </Text>
 
-                    <View style={styles.modSatir}>
-                        <View>
-                            <Text style={styles.modEtiket}>Premium Kilidi</Text>
-                            <Text style={styles.sessizAciklama}>
-                                {premiumAktif ? 'Premium Açık (Kilitler Kalktı)' : 'Premium Kapalı (Kilitler Aktif)'}
-                            </Text>
-                        </View>
-                        <Switch
-                            value={premiumAktif}
-                            onValueChange={async (value) => {
-                                const yeniDurum = {
-                                    aktif: value,
-                                    paketId: value ? 'omur_boyu' as const : undefined,
-                                    satinAlmaTarihi: value ? new Date().toISOString() : undefined
-                                };
-                                await premiumDurumKaydet(yeniDurum);
-                                setPremium(yeniDurum);
-
-                                if (value) {
-                                    Alert.alert('Geliştirici Modu', 'Premium özellikleri aktif edildi.');
-                                } else {
-                                    Alert.alert('Geliştirici Modu', 'Premium özellikleri kapatıldı. Paywall ekranlarını test edebilirsiniz.');
-                                }
-                            }}
-                            trackColor={{ false: '#ccc', true: '#FF9800' }}
-                            thumbColor={premiumAktif ? '#fff' : '#f4f3f4'}
-                        />
-                    </View>
-                </View>
-                */}
 
                 {/* Uygulama Bilgileri */}
                 <View style={[styles.bilgiContainer, { backgroundColor: renkler.kartArkaplan }]}>
@@ -1527,12 +1506,42 @@ const styles = StyleSheet.create({
         borderWidth: 3,
         borderColor: '#FFFFFF',
     },
+    // Tema Seçici (Yan Yana)
+    temaSeciciContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        gap: 10,
+        marginBottom: 10,
+    },
+    temaSecenekKutu: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.2)',
+        borderRadius: 12,
+        paddingVertical: 15,
+        alignItems: 'center',       // Explicitly center content horizontally
+        justifyContent: 'center',   // Explicitly center content vertically
+        borderWidth: 2,
+        borderColor: 'transparent',
+    },
+    temaSecenekAktif: {
+        backgroundColor: 'rgba(255,255,255,0.1)',
+    },
+    temaEmoji: {
+        fontSize: 24,
+        marginBottom: 6,
+        textAlign: 'center',       // Ensure emoji is centered
+    },
+    temaAdi: {
+        fontSize: 12,
+        color: '#B0BEC5',
+        fontWeight: '600',
+        textAlign: 'center',       // Ensure text is centered
+    },
     renkTik: {
         color: '#FFFFFF',
         fontSize: 20,
         fontWeight: 'bold',
     },
-
     // Bardak Boyutu
     bardakSecenekleri: {
         flexDirection: 'row',

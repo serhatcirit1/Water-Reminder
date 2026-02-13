@@ -517,7 +517,7 @@ function premiumHtmlRaporOlustur(ozet: AylikOzet): string {
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon">🔥</div>
-                        <p class="stat-label">Streak</p>
+                        <p class="stat-label">${i18n.t('stats.currentStreak')}</p>
                         <p class="stat-value">${ozet.streak}</p>
                         <p class="stat-sub">${i18n.t('pdf.streak_daily')}</p>
                     </div>
