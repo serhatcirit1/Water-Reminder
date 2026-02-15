@@ -723,6 +723,7 @@
         "weekly_low": "Bu hafta {{total}}L su içtin. Hatırlatmaları açmayı dene!",
         "time_passed": "⏰ {{minutes}} dakikadır su içmedin! Şimdi bir bardak su iç 💧",
         "water_time_general": "💧 Su içme zamanı geldi! Sağlığın için bir bardak su iç 💪",
+        "daily_summary_desc": "Bugün henüz su tüketimi kaydetmedin. Yarın taze bir başlangıç yap! 💧",
         "no_record_today": "💧 Henüz bugün su içme kaydın yok. Hadi başla! 💪",
         "messages": {
             "msg1": "Sağlıklı kalmak için bir bardak su iç! 💪",

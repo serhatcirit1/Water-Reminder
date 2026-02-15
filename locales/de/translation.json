@@ -288,6 +288,7 @@
         "dailyTasks": "Tägliche Aufgaben",
         "dailyTasksDesc": "3 neue Aufgaben warten jeden Tag auf dich",
         "earned": "Verdient",
+        "earnedDate": "Erhalten am",
         "locked": "Gesperrt",
         "noEarnedYet": "Noch keine Abzeichen verdient. Trink weiter Wasser!",
         "specialBadges": "Spezialabzeichen",
@@ -393,7 +394,8 @@
         "weekly_growing": "{{success}}/7 Tage im Ziel. Nächste Woche wird besser!",
         "weekly_low": "Diese Woche hast du {{total}}L getrunken. Versuche Erinnerungen zu aktivieren!",
         "weekly_report_test": "📊 Wochenbericht (Test)",
-        "weekly_report_title": "📊 Wochenbericht"
+        "weekly_report_title": "📊 Wochenbericht",
+        "daily_summary_desc": "Du hast heute noch kein Wasser getrunken. Starte morgen frisch durch! 💧"
     },
     "onboarding": {
         "ai": "KI-Unterstützung",

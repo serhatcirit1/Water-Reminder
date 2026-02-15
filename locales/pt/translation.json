@@ -288,6 +288,7 @@
         "dailyTasks": "Tarefas Diárias",
         "dailyTasksDesc": "3 novas tarefas esperam por você todos os dias",
         "earned": "Ganho",
+        "earnedDate": "Data da conquista",
         "locked": "Bloqueado",
         "noEarnedYet": "Nenhum emblema ganho ainda. Continue bebendo água!",
         "specialBadges": "Emblemas Especiais",
@@ -393,7 +394,8 @@
         "weekly_growing": "{{success}}/7 dias meta atingida. A próxima semana pode ser melhor!",
         "weekly_low": "Você bebeu {{total}}L esta semana. Tente ativar os lembretes!",
         "weekly_report_test": "📊 Relatório Semanal (Teste)",
-        "weekly_report_title": "📊 Relatório Semanal"
+        "weekly_report_title": "📊 Relatório Semanal",
+        "daily_summary_desc": "Você não registrou nenhuma ingestão de água hoje. Comece de novo amanhã! 💧"
     },
     "onboarding": {
         "ai": "Suporte de IA",

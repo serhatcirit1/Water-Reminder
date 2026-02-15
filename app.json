@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -18,8 +18,7 @@
       "icon": "./assets/icon.png",
       "buildNumber": "5",
       "entitlements": {
-        "com.apple.developer.healthkit": true,
-        "com.apple.developer.healthkit.access": []
+        "com.apple.developer.healthkit": true
       },
       "infoPlist": {
         "NSHealthShareUsageDescription": "Smart Water: AI Insights needs access to Apple Health to sync your water intake data and provide you with accurate hydration insights.",

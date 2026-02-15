@@ -288,6 +288,7 @@
         "dailyTasks": "Tâches Quotidiennes",
         "dailyTasksDesc": "3 nouvelles tâches vous attendent chaque jour",
         "earned": "Gagné",
+        "earnedDate": "Date d'obtention",
         "locked": "Verrouillé",
         "noEarnedYet": "Aucun badge gagné pour l'instant. Continuez à boire !",
         "specialBadges": "Badges Spéciaux",
@@ -393,7 +394,8 @@
         "weekly_growing": "{{success}}/7 jours objectif atteint. La semaine prochaine peut être meilleure !",
         "weekly_low": "Vous avez bu {{total}}L cette semaine. Essayez d'activer les rappels !",
         "weekly_report_test": "📊 Rapport hebdomadaire (Test)",
-        "weekly_report_title": "📊 Rapport hebdomadaire"
+        "weekly_report_title": "📊 Rapport hebdomadaire",
+        "daily_summary_desc": "Vous n'avez pas enregistré de consommation d'eau aujourd'hui. Prenez un nouveau départ demain ! 💧"
     },
     "onboarding": {
         "ai": "Support IA",

@@ -664,11 +664,20 @@ export async function haftalikRaporPlanla(
                         tarih.setDate(tarih.getDate() - i);
                         const tarihStr = tarih.toISOString().split('T')[0];
 
-                        const gunlukMiktar = gecmis[tarihStr] || 0;
-                        toplam += gunlukMiktar;
+                        const gunData = gecmis[tarihStr];
+                        let gunlukMl = 0;
 
-                        // Bardak boyutunu varsayılan olarak 250ml al
-                        if (gunlukMiktar * 250 >= hedef) {
+                        if (gunData !== undefined) {
+                            if (typeof gunData === 'number') {
+                                gunlukMl = gunData * 250; // Eski veri
+                            } else if (typeof gunData === 'object') {
+                                gunlukMl = gunData.ml || (gunData.miktar * 250) || 0;
+                            }
+                        }
+
+                        toplam += gunlukMl;
+
+                        if (gunlukMl >= hedef) {
                             basari++;
                         }
                     }

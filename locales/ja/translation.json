@@ -288,6 +288,7 @@
         "dailyTasks": "デイリータスク",
         "dailyTasksDesc": "毎日3つの新しいタスクが待っています",
         "earned": "獲得済み",
+        "earnedDate": "獲得日",
         "locked": "未獲得",
         "noEarnedYet": "まだバッジを獲得していません。水を飲み続けましょう！",
         "specialBadges": "特別バッジ",
@@ -393,7 +394,8 @@
         "weekly_growing": "{{success}}/7日目標達成。来週はもっと良くなります！",
         "weekly_low": "今週{{total}}L飲みました。リマインダーを有効にしてみてください！",
         "weekly_report_test": "📊 週間レポート（テスト）",
-        "weekly_report_title": "📊 週間レポート"
+        "weekly_report_title": "📊 週間レポート",
+        "daily_summary_desc": "今日の水分摂取量が記録されていません。明日からまた頑張りましょう！ 💧"
     },
     "onboarding": {
         "ai": "AIサポート",

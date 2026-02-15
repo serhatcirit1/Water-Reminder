@@ -503,7 +503,8 @@
         "specialBadges": "Special Badges",
         "badgeEarned": "Earned!",
         "noEarnedYet": "No badges earned yet. Keep drinking water!",
-        "allEarned": "All badges earned! 🎉"
+        "allEarned": "All badges earned! 🎉",
+        "earnedDate": "Earned Date"
     },
     "tasks": {
         "sabah_su_title": "Start the Day",
@@ -722,6 +723,7 @@
         "weekly_low": "This week you drank {{total}}L. Try enabling reminders!",
         "time_passed": "⏰ It's been {{minutes}} minutes since you drank water! Have a glass now 💧",
         "water_time_general": "💧 Time to drink water! Have a glass for your health 💪",
+        "daily_summary_desc": "You haven't recorded any water intake today. Make a fresh start tomorrow! 💧",
         "no_record_today": "💧 No water intake recorded today. Let's start! 💪",
         "messages": {
             "msg1": "Drink a glass of water to stay healthy! 💪",
