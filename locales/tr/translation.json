@@ -249,8 +249,8 @@
         "pdfMonthlyDesc": "Detaylı aylık analiz ve grafikler",
         "pdfWeekly": "Haftalık PDF",
         "pdfWeeklyDesc": "Haftalık performans özeti",
-        "csvData": "CSV Verisi",
-        "csvDataDesc": "Excel uyumlu ham veriler",
+        "csvData": "Excel / CSV Verisi",
+        "csvDataDesc": "Tam detaylı ham veri analizi",
         "appInfo": "Uygulama Bilgileri",
         "version": "Versiyon",
         "developer": "Geliştirici",
@@ -629,7 +629,7 @@
         "weekly_trend": "Haftalık Trend",
         "month_highlights": "Ayın Öne Çıkanları",
         "based_on_avg": "Ortalama bazlı",
-        "generated_by": "Bu rapor Serhat Cirit tarafından geliştirilen Su Takip Premium için oluşturulmuştur.",
+        "generated_by": "Bu rapor Serhat Cirit tarafından geliştirilen Smart Water: AI Insights için oluşturulmuştur.",
         "premium_certified": "🛡️ Premium Onaylı Rapor",
         "created_at": "Oluşturulma",
         "week": "HAFTA",
@@ -675,7 +675,7 @@
         }
     },
     "csv": {
-        "title": "SU TAKİP PREMIUM - PROFESYONEL VERİ EKSPORTU",
+        "title": "SMART WATER: AI INSIGHTS - PROFESYONEL VERİ RAPORU",
         "report_date": "Rapor Oluşturma Tarihi",
         "total_tracked_days": "Toplam İzlenen Gün",
         "days": "gün",

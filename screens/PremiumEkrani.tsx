@@ -30,7 +30,6 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 // Feature and plan IDs - actual text will come from translations
 const FEATURE_KEYS = [
     { id: 2, titleKey: 'premium.features.aiInsights', descKey: 'premium.features.aiInsightsDesc', emoji: '🧠' },
-    { id: 3, titleKey: 'premium.features.appleHealth', descKey: 'premium.features.appleHealthDesc', emoji: '⌚' },
     { id: 4, titleKey: 'premium.features.badges', descKey: 'premium.features.badgesDesc', emoji: '💎' },
     { id: 5, titleKey: 'premium.features.reminders', descKey: 'premium.features.remindersDesc', emoji: '🔔' },
     { id: 6, titleKey: 'premium.features.themes', descKey: 'premium.features.themesDesc', emoji: '🎨' },

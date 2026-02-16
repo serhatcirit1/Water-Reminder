@@ -7,7 +7,7 @@ import { Text, View, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
 import './locales/i18n';
-import { bildirimIzniIste, hatirlatmalariPlanla, bildirimAyarlariniKaydet, gunlukOzetPlanla, haftalikRaporPlanla } from './bildirimler';
+import { bildirimIzniIste, hatirlatmalariPlanla, bildirimAyarlariniKaydet, gunlukOzetPlanla, haftalikRaporPlanla, bildirimAyarlariniYukle } from './bildirimler';
 import { healthKitAyarYukle, healthKitBaslat } from './healthKit';
 
 // Ekranlar ve Context
@@ -92,7 +92,30 @@ function AppContent() {
   useEffect(() => {
     checkOnboarding();
     initHealthKit();
+    setupNotifications();
   }, []);
+
+  const setupNotifications = async () => {
+    try {
+      // Mevcut izin durumunu kontrol et
+      const izinVerildi = await bildirimIzniIste();
+      if (izinVerildi) {
+        // Kayıtlı ayarları yükle
+        const { aktif, aralikDakika } = await bildirimAyarlariniYukle();
+
+        if (aktif) {
+          // Hatırlatma bildirimlerini yeniden planla
+          await hatirlatmalariPlanla(aralikDakika);
+          // Günlük özet bildirimini planla
+          await gunlukOzetPlanla();
+          // Haftalık rapor bildirimini planla
+          await haftalikRaporPlanla();
+        }
+      }
+    } catch (error) {
+      console.error('Bildirim başlatma hatası:', error);
+    }
+  };
 
   const initHealthKit = async () => {
     try {

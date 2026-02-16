@@ -218,10 +218,10 @@ function modernBarChartSvg(degerler: number[]): string {
 
         return `
             <g>
-                <rect x="${x}" y="0" width="${barWidth}" height="${height}" rx="${borderRadius}" fill="rgba(255,255,255,0.05)" />
+                <rect x="${x}" y="0" width="${barWidth}" height="${height}" rx="${borderRadius}" fill="#F1F5F9" />
                 <rect x="${x}" y="${y}" width="${barWidth}" height="${barHeight}" rx="${borderRadius}" fill="url(#barGradient)" />
-                <text x="${x + barWidth / 2}" y="${height + 20}" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="10" font-weight="600">${i18n.t('pdf.week')} ${i + 1}</text>
-                <text x="${x + barWidth / 2}" y="${y - 10}" text-anchor="middle" fill="#4FC3F7" font-size="10" font-weight="700">${deger}</text>
+                <text x="${x + barWidth / 2}" y="${height + 20}" text-anchor="middle" fill="#64748B" font-size="10" font-weight="600">${i18n.t('pdf.week')} ${i + 1}</text>
+                <text x="${x + barWidth / 2}" y="${y - 10}" text-anchor="middle" fill="#0EA5E9" font-size="10" font-weight="700">${deger}</text>
             </g>
         `;
     }).join('');
@@ -251,9 +251,9 @@ function progressRingSvg(yuzde: number): string {
 
     return `
         <svg height="120" width="120" style="display: block; margin: 0 auto;">
-            <circle stroke="rgba(255,255,255,0.1)" stroke-width="${stroke}" fill="transparent" r="${normalizedRadius}" cx="60" cy="60"/>
-            <circle stroke="#4FC3F7" stroke-dasharray="${circumference} ${circumference}" style="stroke-dashoffset: ${offset}; transition: stroke-dashoffset 0.35s; transform: rotate(-90deg); transform-origin: 50% 50%;" stroke-width="${stroke}" stroke-linecap="round" fill="transparent" r="${normalizedRadius}" cx="60" cy="60"/>
-            <text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="white" font-size="20" font-weight="bold">${yuzde}%</text>
+            <circle stroke="#E2E8F0" stroke-width="${stroke}" fill="transparent" r="${normalizedRadius}" cx="60" cy="60"/>
+            <circle stroke="#0EA5E9" stroke-dasharray="${circumference} ${circumference}" style="stroke-dashoffset: ${offset}; transition: stroke-dashoffset 0.35s; transform: rotate(-90deg); transform-origin: 50% 50%;" stroke-width="${stroke}" stroke-linecap="round" fill="transparent" r="${normalizedRadius}" cx="60" cy="60"/>
+            <text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="#0F172A" font-size="20" font-weight="bold">${yuzde}%</text>
         </svg>
     `;
 }
@@ -280,8 +280,8 @@ function premiumHtmlRaporOlustur(ozet: AylikOzet): string {
                 * { margin: 0; padding: 0; box-sizing: border-box; }
                 body {
                     font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
-                    background-color: #050B18;
-                    color: #FFFFFF;
+                    background-color: #F9FAFB;
+                    color: #374151;
                     width: 100%;
                     padding: 40px;
                 }
@@ -341,8 +341,8 @@ function premiumHtmlRaporOlustur(ozet: AylikOzet): string {
                 }
 
                 .hero-card {
-                    background: linear-gradient(135deg, rgba(25, 118, 210, 0.1), rgba(13, 71, 161, 0.05));
-                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    background: #FFFFFF;
+                    border: 1px solid #E2E8F0;
                     border-radius: 32px;
                     padding: 40px;
                     margin-bottom: 24px;
@@ -351,6 +351,7 @@ function premiumHtmlRaporOlustur(ozet: AylikOzet): string {
                     align-items: center;
                     overflow: hidden;
                     position: relative;
+                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
                 }
 
                 .hero-card::before {
@@ -390,17 +391,18 @@ function premiumHtmlRaporOlustur(ozet: AylikOzet): string {
                 }
 
                 .stat-card {
-                    background: rgba(255, 255, 255, 0.04);
-                    border: 1px solid rgba(255, 255, 255, 0.08);
+                    background: #FFFFFF;
+                    border: 1px solid #E2E8F0;
                     border-radius: 24px;
                     padding: 24px;
                     text-align: center;
+                    box-shadow: 0 2px 4px -1px rgba(0,0,0,0.05);
                 }
 
                 .stat-icon { font-size: 24px; margin-bottom: 12px; }
-                .stat-label { font-size: 12px; font-weight: 600; opacity: 0.5; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
-                .stat-value { font-size: 28px; font-weight: 700; }
-                .stat-sub { font-size: 12px; opacity: 0.4; margin-top: 4px; }
+                .stat-label { font-size: 12px; font-weight: 600; color: #64748B; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+                .stat-value { font-size: 28px; font-weight: 800; color: #0F172A; }
+                .stat-sub { font-size: 12px; color: #94A3B8; margin-top: 4px; }
 
                 .section {
                     margin-bottom: 40px;
@@ -417,10 +419,11 @@ function premiumHtmlRaporOlustur(ozet: AylikOzet): string {
                 .section-title { font-size: 18px; font-weight: 700; }
 
                 .chart-container {
-                    background: rgba(255, 255, 255, 0.04);
-                    border: 1px solid rgba(255, 255, 255, 0.08);
+                    background: #FFFFFF;
+                    border: 1px solid #E2E8F0;
                     border-radius: 24px;
                     padding: 32px;
+                    box-shadow: 0 2px 4px -1px rgba(0,0,0,0.05);
                 }
 
                 .detail-table {
@@ -485,7 +488,7 @@ function premiumHtmlRaporOlustur(ozet: AylikOzet): string {
                 <header class="header">
                     <div class="brand">
                         <div class="logo-square">💧</div>
-                        <div class="brand-name">SU TAKİP</div>
+                        <div class="brand-name">SMART WATER: AI INSIGHTS</div>
                     </div>
                     <div class="report-title">
                         <h1>${i18n.t('pdf.monthly_report')}</h1>
@@ -538,7 +541,7 @@ function premiumHtmlRaporOlustur(ozet: AylikOzet): string {
                     </div>
                 </div>
 
-                <div class="section">
+                <div class="section" style="page-break-before: always;">
                     <div class="section-header">
                         <h2 class="section-title">${i18n.t('pdf.month_highlights')}</h2>
                     </div>
@@ -677,13 +680,12 @@ export async function haftalikPdfOlusturVePaylas(gunlukHedef: number = 2000): Pr
                     * { margin: 0; padding: 0; box-sizing: border-box; }
                     body {
                         font-family: 'Plus Jakarta Sans', sans-serif;
-                        background: #050B18;
-                        color: white;
-                        padding: 40px;
-                        min-height: 100vh;
+                        background: #F9FAFB;
+                        color: #374151;
+                        padding: 30px;
                     }
-                    .header { margin-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 20px; }
-                    .header h1 { font-size: 24px; font-weight: 800; color: #4FC3F7; }
+                    .header { margin-bottom: 40px; border-bottom: 1px solid #E2E8F0; padding-bottom: 20px; }
+                    .header h1 { font-size: 24px; font-weight: 800; color: #0EA5E9; }
                     
                     .hero-grid {
                         display: grid;
@@ -693,14 +695,15 @@ export async function haftalikPdfOlusturVePaylas(gunlukHedef: number = 2000): Pr
                     }
 
                     .card {
-                        background: rgba(255,255,255,0.04);
-                        border: 1px solid rgba(255,255,255,0.08);
+                        background: #FFFFFF;
+                        border: 1px solid #E2E8F0;
                         border-radius: 20px;
                         padding: 20px;
+                        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
                     }
 
-                    .stat-value { font-size: 24px; font-weight: 800; color: #FFFFFF; }
-                    .stat-label { font-size: 11px; font-weight: 600; opacity: 0.5; text-transform: uppercase; margin-top: 4px; }
+                    .stat-value { font-size: 24px; font-weight: 800; color: #0F172A; }
+                    .stat-label { font-size: 11px; font-weight: 700; color: #64748B; text-transform: uppercase; margin-top: 4px; }
                     
                     .day-list { margin-top: 32px; }
                     .day-row {
@@ -708,13 +711,14 @@ export async function haftalikPdfOlusturVePaylas(gunlukHedef: number = 2000): Pr
                         justify-content: space-between;
                         align-items: center;
                         padding: 16px;
-                        background: rgba(255,255,255,0.02);
+                        background: #FFFFFF;
                         margin-bottom: 8px;
                         border-radius: 12px;
+                        border: 1px solid #E2E8F0;
                     }
                     .day-info { display: flex; align-items: center; gap: 12px; }
-                    .day-name { font-weight: 700; }
-                    .day-ml { font-weight: 800; color: #4FC3F7; }
+                    .day-name { font-weight: 700; color: #1E293B; }
+                    .day-ml { font-weight: 800; color: #0EA5E9; }
                     
                     .status-tag {
                         padding: 4px 10px;

@@ -104,57 +104,85 @@ export async function bildirimIzniIste(): Promise<boolean> {
 }
 
 // --- HATIRLATMA BİLDİRİMİ ZAMANLAMA ---
-// Belirli aralıklarla bildirim gönder
+// Kalıcı olarak her gün belirli saatlerde bildirim gönder
 export async function hatirlatmalariPlanla(aralikDakika: number = 120): Promise<void> {
     // Önce tüm mevcut bildirimleri iptal et
     await tumBildirimleriIptalEt();
 
-    // Sessiz saatler ayarını yükle
+    // Ayarları yükle
     const sessizAyar = await sessizSaatlerYukle();
+    const bioritimAyar = await bioritimAyarYukle();
 
-    // Yeni bildirimler planla
-    // Günde kaç bildirim olacağını hesapla (sabah 8 - gece 22 arası)
-    // 14 saatlik süre / aralık = bildirim sayısı
-    const gunlukSaat = 14; // Aktif saat sayısı
-    const bildirimSayisi = Math.floor((gunlukSaat * 60) / aralikDakika);
+    // Başlangıç ve bitiş saatlerini belirle
+    // Varsayılan: 08:00 - 22:00
+    let baslangicSaat = 8;
+    let baslangicDakika = 0;
+    let bitisSaat = 22;
+    let bitisDakika = 0;
 
-    const simdi = new Date();
+    if (bioritimAyar.aktif) {
+        const [uSaat, uDak] = bioritimAyar.uyanmaSaati.split(':').map(Number);
+        const [uySaat, uyDak] = bioritimAyar.uyumaSaati.split(':').map(Number);
 
-    // Her bildirim için ayrı zamanlama yap
-    for (let i = 1; i <= bildirimSayisi; i++) {
-        const saniyeSonra = i * aralikDakika * 60; // Dakikayı saniyeye çevir
-
-        // Bildirimin düşeceği saati hesapla
-        const bildirimZamani = new Date(simdi.getTime() + saniyeSonra * 1000);
-        const bildirimSaati = bildirimZamani.getHours();
-
-        const sessizAyar = await sessizSaatlerYukle();
-        const bioritimAyar = await bioritimAyarYukle();
-
-        // Sessiz saate düşüyorsa bu bildirimi atla
-        // Bioritim aktifse, bioritim saatleri dışındaysa atla
-        if (bioritimAyar.aktif) {
-            if (!bioritimUygunMu(bildirimSaati, bioritimAyar)) continue;
+        // Geçerli saatler mi?
+        if (!isNaN(uSaat) && !isNaN(uySaat)) {
+            baslangicSaat = uSaat;
+            baslangicDakika = uDak;
+            bitisSaat = uySaat;
+            bitisDakika = uyDak;
         }
-        // Bioritim kapalıysa klasik sessiz saatleri kontrol et
-        else if (saatSessizMi(bildirimSaati, sessizAyar)) {
+    }
+
+    // Döngü için başlangıç zamanı (dakika cinsinden günün dakikası)
+    let suankiDakika = baslangicSaat * 60 + baslangicDakika;
+    const bitisGununDakikasi = bitisSaat * 60 + bitisDakika;
+
+    // Eğer bitiş saati başlangıçtan küçükse (gece yarısını geçiyorsa), bitişe 24 saat ekle
+    const efektifBitis = bitisGununDakikasi < suankiDakika
+        ? bitisGununDakikasi + 1440
+        : bitisGununDakikasi;
+
+    let sayac = 0; // Güvenlik için sonsuz döngü koruması
+
+    // İlk bildirim uyanır uyanmaz değil, ilk aralıktan sonra gelsin
+    suankiDakika += aralikDakika;
+
+    while (suankiDakika < efektifBitis && sayac < 20) {
+        // Saat ve dakikayı hesapla
+        let planlananSaat = Math.floor(suankiDakika / 60);
+        const planlananDakika = suankiDakika % 60;
+
+        // 24 saat formatına uyarla
+        if (planlananSaat >= 24) planlananSaat -= 24;
+
+        // Sessiz saat kontrolü (Bioritim dışı manuel sessiz saatler)
+        if (!bioritimAyar.aktif && saatSessizMi(planlananSaat, sessizAyar)) {
+            suankiDakika += aralikDakika;
             continue;
         }
 
+        // Bildirimi planla (Her gün tekrar edecek)
         await Notifications.scheduleNotificationAsync({
             content: {
                 title: i18n.t('notif.water_time_title'),
-                body: getRandomMesaj(), // Her seferinde farklı mesaj
+                body: getRandomMesaj(),
                 sound: true,
-                priority: Notifications.AndroidNotificationPriority.HIGH,
+                badge: 1,
             },
             trigger: {
-                type: SchedulableTriggerInputTypes.TIME_INTERVAL,
-                seconds: saniyeSonra,
-                repeats: false, // Tek seferlik
+                type: SchedulableTriggerInputTypes.CALENDAR,
+                hour: planlananSaat,
+                minute: planlananDakika,
+                repeats: true, // ÖNEMLİ: Her gün tekrarla
             },
         });
+
+        // Bir sonraki aralığa geç
+        suankiDakika += aralikDakika;
+        sayac++;
     }
+
+    console.log(`${sayac} adet kalıcı bildirim planlandı.`);
 }
 
 // --- TÜM BİLDİRİMLERİ İPTAL ET ---
@@ -575,8 +603,10 @@ export async function gunlukOzetPlanla(suMl?: number, hedefMl?: number, saat?: n
                 sound: true,
             },
             trigger: {
-                type: SchedulableTriggerInputTypes.DATE,
-                date: bildirimZamani,
+                type: SchedulableTriggerInputTypes.CALENDAR,
+                hour: kullanilacakSaat,
+                minute: 0,
+                repeats: true, // Her gün aynı saatte tekrarla
             },
         });
     } catch (hata) {

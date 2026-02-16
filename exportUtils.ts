@@ -211,7 +211,7 @@ export async function csvOlusturVePaylas(hedef: number = 2000): Promise<boolean>
 
         // Localized file prefix
         const filePrefixes: { [key: string]: string } = {
-            'tr': 'SuTakip_Rapor',
+            'tr': 'SmartWater_Rapor',
             'en': 'WaterTracker_Report',
             'es': 'AguaTracker_Informe',
             'de': 'WasserTracker_Bericht'

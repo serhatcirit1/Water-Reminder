@@ -84,6 +84,52 @@ const SettingSwitch = ({ icon, label, subLabel, value, onValueChange }: { icon: 
     </View>
 );
 
+const ExportCard = ({
+    icon,
+    title,
+    subtitle,
+    onPress,
+    colors,
+    locked
+}: {
+    icon: string,
+    title: string,
+    subtitle: string,
+    onPress: () => void,
+    colors: readonly [string, string, ...string[]],
+    locked: boolean
+}) => (
+    <TouchableOpacity
+        style={styles.exportCard}
+        onPress={onPress}
+        activeOpacity={0.8}
+    >
+        <LinearGradient
+            colors={colors}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.exportIconContainer}
+        >
+            <Text style={{ fontSize: 24 }}>{icon}</Text>
+        </LinearGradient>
+        <View style={styles.exportContent}>
+            <Text style={styles.exportTitle}>{title}</Text>
+            <Text style={styles.exportSubtitle}>{subtitle}</Text>
+        </View>
+        <View style={styles.exportAction}>
+            {locked ? (
+                <View style={styles.lockContainer}>
+                    <Text style={{ fontSize: 14 }}>🔒</Text>
+                </View>
+            ) : (
+                <View style={styles.downloadIconContainer}>
+                    <Text style={styles.downloadIcon}>📥</Text>
+                </View>
+            )}
+        </View>
+    </TouchableOpacity>
+);
+
 // --- MAIN COMPONENT ---
 export function AyarlarEkrani() {
     const [bildirimAktif, setBildirimAktif] = useState(true);
@@ -442,40 +488,37 @@ export function AyarlarEkrani() {
                 </SettingSection>
 
                 {/* 4. EXPORT & DATA */}
-                <SettingSection title={t('settings.dataExport')}>
-                    <SettingRow
+                {/* 4. EXPORT & DATA */}
+                <View style={[styles.section, { marginBottom: 40 }]}>
+                    <Text style={[styles.sectionTitle, { marginLeft: 4, marginBottom: 16 }]}>{t('settings.dataExport')}</Text>
+
+                    <ExportCard
                         icon="📊"
-                        label={t('settings.pdfWeekly')}
-                        showArrow={true}
+                        title={t('settings.pdfWeekly')}
+                        subtitle={t('settings.pdfWeeklyDesc')}
+                        colors={['#03A9F4', '#01579B'] as const}
+                        locked={!premiumAktif}
                         onPress={async () => premiumAktif ? await haftalikPdfOlusturVePaylas(gunlukHedef) : setPremiumModalGoster(true)}
-                        style={{ opacity: premiumAktif ? 1 : 0.6 }}
                     />
-                    <SettingRow
+
+                    <ExportCard
                         icon="📄"
-                        label={t('settings.pdfMonthly')}
-                        showArrow={true}
+                        title={t('settings.pdfMonthly')}
+                        subtitle={t('settings.pdfMonthlyDesc')}
+                        colors={['#FFCA28', '#FF6F00'] as const}
+                        locked={!premiumAktif}
                         onPress={async () => premiumAktif ? await aylikPdfOlusturVePaylas(gunlukHedef) : setPremiumModalGoster(true)}
-                        style={{ opacity: premiumAktif ? 1 : 0.6 }}
                     />
-                    <SettingRow
-                        icon="📥"
-                        label={t('settings.csvData')}
-                        showArrow={true}
+
+                    <ExportCard
+                        icon="💾"
+                        title={t('settings.csvData')}
+                        subtitle={t('settings.csvDataDesc')}
+                        colors={['#00E676', '#1B5E20'] as const}
+                        locked={!premiumAktif}
                         onPress={async () => premiumAktif ? await csvOlusturVePaylas(gunlukHedef) : setPremiumModalGoster(true)}
-                        style={{ opacity: premiumAktif ? 1 : 0.6 }}
                     />
-                    {healthKitDestekleniyor() && (
-                        <SettingSwitch
-                            icon="❤️"
-                            label={t('settings.appleHealth')}
-                            value={healthKitAktif}
-                            onValueChange={async () => {
-                                const val = await healthKitToggle();
-                                setHealthKitAktif(val);
-                            }}
-                        />
-                    )}
-                </SettingSection>
+                </View>
 
                 {/* LEGALS */}
                 <View style={styles.footerLinks}>
@@ -514,6 +557,9 @@ export function AyarlarEkrani() {
                     { label: `1 ${t('time.hours')}`, value: 60 },
                     { label: `2 ${t('time.hours')}`, value: 120 },
                     { label: `3 ${t('time.hours')}`, value: 180 },
+                    { label: `4 ${t('time.hours')}`, value: 240 },
+                    { label: `5 ${t('time.hours')}`, value: 300 },
+                    { label: `6 ${t('time.hours')}`, value: 360 },
                 ]}
                 onSelect={(val) => aralikDegistir(Number(val))}
                 onClose={() => setBildirimAralikModalGoster(false)}
@@ -732,4 +778,41 @@ const styles = StyleSheet.create({
     recommendationValue: { color: '#4FC3F7', fontSize: 20, fontWeight: 'bold' },
     applyRecommendButton: { backgroundColor: '#4FC3F7', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 12 },
     applyRecommendButtonText: { color: '#000', fontWeight: 'bold', fontSize: 13 },
+
+    // Export Card Styles
+    exportCard: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: 'rgba(255,255,255,0.07)',
+        borderRadius: 24,
+        padding: 20,
+        marginBottom: 16,
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.12)',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.25,
+        shadowRadius: 12,
+        elevation: 8
+    },
+    exportIconContainer: {
+        width: 60,
+        height: 60,
+        borderRadius: 22,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 18,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 4
+    },
+    exportContent: { flex: 1 },
+    exportTitle: { fontSize: 18, fontWeight: '800', color: '#FFF', marginBottom: 6, letterSpacing: 0.3 },
+    exportSubtitle: { fontSize: 13, color: 'rgba(255,255,255,0.6)', lineHeight: 18, fontWeight: '500' },
+    exportAction: { paddingLeft: 12 },
+    lockContainer: { width: 44, height: 44, borderRadius: 16, backgroundColor: 'rgba(0,0,0,0.3)', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
+    downloadIconContainer: { width: 44, height: 44, borderRadius: 16, backgroundColor: 'rgba(255,255,255,0.1)', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)' },
+    downloadIcon: { fontSize: 20 },
 });

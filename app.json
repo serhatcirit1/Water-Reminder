@@ -1,12 +1,12 @@
 {
   "expo": {
     "name": "Smart Water: AI Insights",
-    "slug": "water-reminder",
+    "slug": "Smart-Water-AI-Insights",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": false,
+    "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -16,7 +16,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.selcukciritacademy.smartwater",
       "icon": "./assets/icon.png",
-      "buildNumber": "5",
+      "buildNumber": "6",
       "entitlements": {
         "com.apple.developer.healthkit": true
       },
