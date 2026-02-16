@@ -17,7 +17,15 @@
             "next_week_great": "📈 Vous pouvez facilement atteindre votre objectif la semaine prochaine ! (Estimation : {{amount}}ml)",
             "next_week_hard": "⚠️ La semaine prochaine pourrait être difficile à ce rythme. Vous devriez boire {{amount}}ml de plus par jour.",
             "next_week_insufficient": "Pas assez de données pour la semaine prochaine.",
-            "on_track": "À ce rythme, vous atteindrez votre objectif hebdomadaire {{day}} ! 🚀"
+            "on_track": "À ce rythme, vous atteindrez votre objectif hebdomadaire {{day}} ! 🚀",
+            "title": "Prévisions Hebdomadaires",
+            "weeklyPrediction": "À Ce Rythme...",
+            "trend": "Tendance",
+            "improving": "Amélioration",
+            "stable": "Stable",
+            "declining": "Déclin",
+            "weeklyTotal": "Total Hebdomadaire",
+            "suggestion": "Suggestion"
         },
         "insights": {
             "active_hour": "⏰ Vous buvez le plus à {{hour}}:00. Gardez cette habitude !",

@@ -15,7 +15,7 @@ interface ForecastCardProps {
 
 export function ForecastCard({ gunlukHedef, bugunIcilen }: ForecastCardProps) {
     const [tahmin, setTahmin] = useState<AITahmin | null>(null);
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
 
     useEffect(() => {
         const tahminHesapla = async () => {
@@ -26,7 +26,7 @@ export function ForecastCard({ gunlukHedef, bugunIcilen }: ForecastCardProps) {
         if (gunlukHedef > 0) {
             tahminHesapla();
         }
-    }, [gunlukHedef, bugunIcilen]);
+    }, [gunlukHedef, bugunIcilen, i18n.language]);
 
     if (!tahmin) {
         return null;

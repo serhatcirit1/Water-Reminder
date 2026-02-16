@@ -21,7 +21,7 @@ export function InsightsCard({ onRefresh, bugunIcilen = 0, gunlukHedef = 2500, o
     const [icgoruler, setIcgoruler] = useState<AIIcgoru[]>([]);
     const [modalGoster, setModalGoster] = useState(false);
     const [yukleniyor, setYukleniyor] = useState(true);
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const { isPremium } = usePremium();
 
     // İçgörüleri yükle fonksiyonu
@@ -30,7 +30,7 @@ export function InsightsCard({ onRefresh, bugunIcilen = 0, gunlukHedef = 2500, o
         const sonuclar = await icgorulerUret(bugunIcilen, gunlukHedef);
         setIcgoruler(sonuclar);
         setYukleniyor(false);
-    }, [bugunIcilen, gunlukHedef]);
+    }, [bugunIcilen, gunlukHedef, i18n.language]);
 
     // İlk yükleme
     useEffect(() => {

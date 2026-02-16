@@ -601,7 +601,15 @@
             "next_week_great": "📈 Gelecek hafta hedefini rahatlıkla tamamlayabilirsin! (Tahmini: {{amount}}ml)",
             "next_week_good": "⬆️ Gelecek hafta hedefe yaklaşabilirsin. Biraz daha gayret! (Tahmini: %{{percent}})",
             "next_week_hard": "⚠️ Mevcut tempoda gelecek hafta zor olabilir. Günlük {{amount}}ml daha fazla içmelisin.",
-            "next_week_insufficient": "Gelecek hafta için yeterli veri yok."
+            "next_week_insufficient": "Gelecek hafta için yeterli veri yok.",
+            "title": "Haftalık Tahmin",
+            "weeklyPrediction": "Bu Hızla Gidersen...",
+            "trend": "Eğilim",
+            "improving": "İyileşiyor",
+            "stable": "Stabil",
+            "declining": "Düşüşte",
+            "weeklyTotal": "Haftalık Toplam",
+            "suggestion": "Öneri"
         },
         "adaptive": {
             "best_hour": "{{hour}}:00 - En çok tepki verdiğin saat",

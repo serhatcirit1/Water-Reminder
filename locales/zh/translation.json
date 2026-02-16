@@ -17,7 +17,15 @@
             "next_week_great": "📈 下周您可以轻松达成目标！（预计：{{amount}}毫升）",
             "next_week_hard": "⚠️ 按这个速度，下周可能会困难。您每天应该多喝{{amount}}毫升。",
             "next_week_insufficient": "下周数据不足。",
-            "on_track": "按这个速度，您将在{{day}}达成每周目标！🚀"
+            "on_track": "按这个速度，您将在{{day}}达成每周目标！🚀",
+            "title": "每周预测",
+            "weeklyPrediction": "按照这个速度...",
+            "trend": "趋势",
+            "improving": "改善中",
+            "stable": "稳定",
+            "declining": "下降中",
+            "weeklyTotal": "每周总计",
+            "suggestion": "建议"
         },
         "insights": {
             "active_hour": "⏰ 您在 {{hour}}:00 饮水最多。保持这个习惯！",

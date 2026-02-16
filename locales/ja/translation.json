@@ -17,7 +17,15 @@
             "next_week_great": "📈 来週は楽に目標達成できます！（推定: {{amount}}ml）",
             "next_week_hard": "⚠️ このペースでは来週は厳しいかも。1日{{amount}}ml多く飲みましょう。",
             "next_week_insufficient": "来週のデータが不足しています。",
-            "on_track": "このペースなら、{{day}}に週間目標を達成します！🚀"
+            "on_track": "このペースなら、{{day}}に週間目標を達成します！🚀",
+            "title": "週間予測",
+            "weeklyPrediction": "このペースだと...",
+            "trend": "傾向",
+            "improving": "改善中",
+            "stable": "安定",
+            "declining": "減少中",
+            "weeklyTotal": "週間合計",
+            "suggestion": "提案"
         },
         "insights": {
             "active_hour": "⏰ {{hour}}:00に最も多く飲んでいます。この習慣を維持しましょう！",
