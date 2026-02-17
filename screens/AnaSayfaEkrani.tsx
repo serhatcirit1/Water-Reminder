@@ -19,7 +19,8 @@ import { PremiumEkrani } from './index';
 import {
     hedefYukle, bardakBoyutuYukle, bardakBoyutuKaydet,
     rekorKontrolEt, suIcmeSaatiKaydet, sonIcmeZamaniKaydet, BARDAK_SECENEKLERI,
-    streakHesapla, StreakBilgisi, sonIcmeZamaniYukle, rekoruYenidenHesapla
+    streakHesapla, StreakBilgisi, sonIcmeZamaniYukle, rekoruYenidenHesapla,
+    akilliHatirlatmaAyarYukle
 } from '../ayarlarUtils';
 import { suIcmeXP, seviyeDurumuYukle, hedefTamamlamaXP, SeviyeDurumu } from '../seviyeSistemi';
 import { gunlukGorevleriYukle, GunlukGorevDurumu, suIcmeGorevKontrol } from '../gunlukGorevler';
@@ -41,8 +42,8 @@ import { suSesiCal } from '../sesUtils';
 import { useTranslation } from 'react-i18next';
 import { suFaydasiAl, hedefTamamlandiMesaji } from '../suFaydalari';
 import { AchievementModal, AchievementType } from '../components/AchievementModal';
-import { gunlukOzetPlanla } from '../bildirimler';
-import { suTuketimiKaydet } from '../healthKit';
+import { gunlukOzetPlanla, akilliHatirlatmaPlanla } from '../bildirimler';
+import { suTuketimiKaydet, healthKitToggle } from '../healthKit';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -261,6 +262,12 @@ export function AnaSayfaEkrani() {
 
         // Adaptif hatırlatma: Bildirimden sonra su içildiğini kaydet
         await bildirimTepkisiKaydet();
+
+        // Akıllı hatırlatmayı yeniden planla (Sayacı sıfırla)
+        const akilliAyar = await akilliHatirlatmaAyarYukle();
+        if (akilliAyar.aktif) {
+            await akilliHatirlatmaPlanla(0, akilliAyar.aralikDakika);
+        }
 
         // Günlük görev kontrolü
         const saat = new Date().getHours();

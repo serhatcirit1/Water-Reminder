@@ -16,6 +16,8 @@ import {
     haftalikRaporAyarYukle,
     HaftalikRaporAyar,
     haftalikRaporPlanla,
+    akilliHatirlatmaPlanla,
+    akilliHatirlatmaIptal,
 } from '../bildirimler';
 import {
     hedefKaydet, hedefYukle, HEDEF_SECENEKLERI,
@@ -24,7 +26,8 @@ import {
     sesAyarKaydet, sesAyarYukle,
     profilKaydet, profilYukle, KullaniciProfil, onerilenSuHesapla,
     akilliHatirlatmaAyarKaydet, akilliHatirlatmaAyarYukle, AkilliHatirlatmaAyar,
-    bioritimAyarKaydet, bioritimAyarYukle, BioritimAyar
+    bioritimAyarKaydet, bioritimAyarYukle, BioritimAyar,
+    sonIcmedenGecenDakika,
 } from '../ayarlarUtils';
 import { useTema } from '../TemaContext';
 import { healthKitDestekleniyor, healthKitAyarYukle, healthKitToggle, dinamikHedefAyarYukle, dinamikHedefAyarKaydet, dinamikHedefHesapla, DinamikHedefSonuc } from '../healthKit';
@@ -404,6 +407,13 @@ export function AyarlarEkrani() {
                                     const yeni = { ...akilliHatirlatma, aktif: val };
                                     setAkilliHatirlatma(yeni);
                                     await akilliHatirlatmaAyarKaydet(yeni);
+
+                                    if (val) {
+                                        const gecen = await sonIcmedenGecenDakika();
+                                        await akilliHatirlatmaPlanla(gecen, yeni.aralikDakika);
+                                    } else {
+                                        await akilliHatirlatmaIptal();
+                                    }
                                 }}
                             />
                             {akilliHatirlatma.aktif && (
@@ -598,6 +608,11 @@ export function AyarlarEkrani() {
                     const yeni = { ...akilliHatirlatma, aralikDakika: Number(val) };
                     setAkilliHatirlatma(yeni);
                     await akilliHatirlatmaAyarKaydet(yeni);
+
+                    if (yeni.aktif) {
+                        const gecen = await sonIcmedenGecenDakika();
+                        await akilliHatirlatmaPlanla(gecen, yeni.aralikDakika);
+                    }
                 }}
                 onClose={() => setAkilliAralikModalGoster(false)}
             />

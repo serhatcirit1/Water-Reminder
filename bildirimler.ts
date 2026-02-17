@@ -405,6 +405,13 @@ export async function akilliHatirlatmaPlanla(
     }
 }
 
+/**
+ * Akıllı hatırlatmayı iptal et
+ */
+export async function akilliHatirlatmaIptal(): Promise<void> {
+    await Notifications.cancelScheduledNotificationAsync('akilli-hatirlatma');
+}
+
 // --- AKILLI HATIRLATMA TEST ---
 export async function akilliHatirlatmaTestBildirimi(): Promise<void> {
     try {
