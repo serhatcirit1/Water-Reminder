@@ -37,6 +37,7 @@ import { csvOlusturVePaylas } from '../exportUtils';
 import { aylikPdfOlusturVePaylas, haftalikPdfOlusturVePaylas } from '../pdfExport';
 import { useTranslation } from 'react-i18next';
 import { LANGUAGES, changeLanguage, getCurrentLanguage } from '../locales/i18n';
+import { responsiveStyles } from '../responsive';
 
 // --- STYLES & SUB-COMPONENTS ---
 const SettingSection = ({ title, children, style }: { title?: string, children: React.ReactNode, style?: any }) => (
@@ -260,9 +261,9 @@ export function AyarlarEkrani() {
     }
 
     return (
-        <SafeAreaView style={[styles.safeArea, { backgroundColor: renkler.arkaplan }]} edges={['top']}>
+        <SafeAreaView style={[styles.safeArea, responsiveStyles.screenWrapper(renkler.arkaplan)]} edges={['top']}>
             <ScrollView
-                style={[styles.container, { backgroundColor: renkler.arkaplan }]}
+                style={[styles.container, responsiveStyles.container(), { backgroundColor: renkler.arkaplan }]}
                 contentContainerStyle={{ paddingBottom: 100 }}
                 showsVerticalScrollIndicator={false}
             >

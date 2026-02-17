@@ -24,6 +24,7 @@ import { useTema } from '../TemaContext';
 import { premiumDurumKaydet } from '../premiumUtils';
 import { usePremium } from '../PremiumContext';
 import { useTranslation } from 'react-i18next';
+import { responsiveStyles } from '../responsive';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -123,7 +124,7 @@ export default function PremiumEkrani({ onClose }: PremiumEkraniProps) {
                     </Animated.View>
                 </View>
 
-                <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+                <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent} style={responsiveStyles.container()}>
                     {/* Features List */}
                     <View style={styles.featuresContainer}>
                         {FEATURE_KEYS.map((feature, index) => (
@@ -197,7 +198,7 @@ export default function PremiumEkrani({ onClose }: PremiumEkraniProps) {
                 </ScrollView>
 
                 {/* Aksiyon Butonu */}
-                <View style={styles.buttonContainer}>
+                <View style={[styles.buttonContainer, responsiveStyles.container()]}>
                     <TouchableOpacity style={styles.mainButton} onPress={() => handleSatinAl()}>
                         <LinearGradient
                             colors={['#FFD700', '#FFA000']}

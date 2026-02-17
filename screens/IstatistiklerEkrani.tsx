@@ -25,6 +25,7 @@ import { gunlukGorevleriYukle, GunlukGorevDurumu } from '../gunlukGorevler';
 import { usePremium } from '../PremiumContext';
 import { useTranslation } from 'react-i18next';
 import { StreakShareCard } from '../components';
+import { responsiveStyles, isTablet, TABLET_CONTENT_MAX_WIDTH } from '../responsive';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const GECMIS_KEY = '@su_gecmisi';
@@ -260,10 +261,15 @@ export function IstatistiklerEkrani() {
         );
     }
 
+    // Chart Dimensions
+    const screenWidth = Dimensions.get('window').width;
+    const containerWidth = isTablet() ? TABLET_CONTENT_MAX_WIDTH : screenWidth;
+    const chartWidth = containerWidth - 100; // Keep existing margin logic
+
     return (
-        <SafeAreaView style={[styles.safeArea, { backgroundColor: renkler.arkaplan }]} edges={['top']}>
+        <SafeAreaView style={[styles.safeArea, responsiveStyles.screenWrapper(renkler.arkaplan)]} edges={['top']}>
             <ScrollView
-                style={styles.container}
+                style={[styles.container, responsiveStyles.container()]}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ paddingBottom: 100 }}
             >
@@ -350,22 +356,20 @@ export function IstatistiklerEkrani() {
 
                     {/* 24 Saatlik Çizgi Grafik */}
                     <View style={styles.lineChartContainer}>
-                        <Svg width={SCREEN_WIDTH - 100} height={140}>
+                        <Svg width={chartWidth} height={140}>
                             {/* Arka plan çizgileri */}
-                            <Line x1={0} y1={30} x2={SCREEN_WIDTH - 100} y2={30} stroke="#1E5166" strokeWidth={0.5} />
-                            <Line x1={0} y1={60} x2={SCREEN_WIDTH - 100} y2={60} stroke="#1E5166" strokeWidth={0.5} />
-                            <Line x1={0} y1={90} x2={SCREEN_WIDTH - 100} y2={90} stroke="#1E5166" strokeWidth={1} />
+                            <Line x1={0} y1={30} x2={chartWidth} y2={30} stroke="#1E5166" strokeWidth={0.5} />
+                            <Line x1={0} y1={60} x2={chartWidth} y2={60} stroke="#1E5166" strokeWidth={0.5} />
+                            <Line x1={0} y1={90} x2={chartWidth} y2={90} stroke="#1E5166" strokeWidth={1} />
 
                             {/* Çizgi Path */}
                             {saatIstatistikleri.length > 0 && (() => {
                                 const maxToplam = Math.max(...saatIstatistikleri.map(s => s.toplam), 1);
-                                const chartWidth = SCREEN_WIDTH - 100;
-                                const chartHeight = 60;
 
                                 let pathD = '';
                                 saatIstatistikleri.forEach((s, i) => {
                                     const x = (i / 23) * chartWidth;
-                                    const y = 90 - (s.toplam / maxToplam) * chartHeight;
+                                    const y = 90 - (s.toplam / maxToplam) * 60;
                                     pathD += (i === 0 ? `M ${x} ${y}` : ` L ${x} ${y}`);
                                 });
 
@@ -383,7 +387,7 @@ export function IstatistiklerEkrani() {
                             {/* Noktalar */}
                             {saatIstatistikleri.map((s, i) => {
                                 const maxToplam = Math.max(...saatIstatistikleri.map(st => st.toplam), 1);
-                                const x = (i / 23) * (SCREEN_WIDTH - 100);
+                                const x = (i / 23) * chartWidth;
                                 const y = 90 - (s.toplam / maxToplam) * 60;
                                 const isTop = s.toplam === maxToplam && s.toplam > 0;
                                 const isSelected = seciliSaat?.saat === i;
@@ -402,7 +406,7 @@ export function IstatistiklerEkrani() {
 
                             {/* Saat etiketleri */}
                             {[0, 6, 12, 18, 23].map((hour) => {
-                                const x = (hour / 23) * (SCREEN_WIDTH - 100);
+                                const x = (hour / 23) * chartWidth;
                                 // İlk ve son etiketleri içeri al
                                 const adjustedX = hour === 0 ? x + 12 : hour === 23 ? x - 12 : x;
                                 const hourLabel = hour < 10 ? `0${hour}` : `${hour}`;
@@ -425,7 +429,7 @@ export function IstatistiklerEkrani() {
                         {/* Touch areas for interaction */}
                         <View style={styles.chartTouchLayer}>
                             {saatIstatistikleri.map((s, i) => {
-                                const x = (i / 23) * (SCREEN_WIDTH - 100);
+                                const x = (i / 23) * chartWidth;
                                 return (
                                     <TouchableOpacity
                                         key={i}
@@ -911,7 +915,7 @@ const styles = StyleSheet.create({
     grafikTooltipText: { fontSize: 13, color: '#FFFFFF', fontWeight: '500' },
 
     barChart: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', height: 160, marginBottom: 20 },
-    barWrapper: { alignItems: 'center', width: (SCREEN_WIDTH - 80) / 7 },
+    barWrapper: { alignItems: 'center', width: '13%' },
     barValue: { fontSize: 9, color: '#90CAF9', marginBottom: 5 },
     barBg: { width: 20, height: 120, justifyContent: 'flex-end', backgroundColor: '#0D3A4D', borderRadius: 10 },
     bar: { width: '100%', borderRadius: 10 },
@@ -920,7 +924,7 @@ const styles = StyleSheet.create({
     barLabel: { marginTop: 8, fontSize: 11, color: '#90CAF9' },
 
     monthlyChart: { flexDirection: 'row', alignItems: 'flex-end', height: 100, marginBottom: 30, justifyContent: 'space-between' },
-    monthlyBarWrapper: { width: (SCREEN_WIDTH - 80) / 30, height: '100%', justifyContent: 'flex-end', alignItems: 'center' },
+    monthlyBarWrapper: { width: '2.8%', height: '100%', justifyContent: 'flex-end', alignItems: 'center' },
     monthlyBar: { width: '70%', borderRadius: 2 },
     monthlyDateLabel: { fontSize: 7, color: '#90CAF9', marginTop: 4, position: 'absolute', bottom: -18 },
 

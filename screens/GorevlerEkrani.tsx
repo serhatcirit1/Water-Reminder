@@ -17,6 +17,7 @@ import { seviyeDurumuYukle, SeviyeDurumu, XP_KAZANIMLARI } from '../seviyeSistem
 import { rozetleriYukle, Rozet } from '../rozetler';
 import { gunlukGorevleriYukle, GunlukGorevDurumu } from '../gunlukGorevler';
 import { useTranslation } from 'react-i18next';
+import { responsiveStyles, isTablet, TABLET_CONTENT_MAX_WIDTH } from '../responsive';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const GAP = 8;
@@ -119,6 +120,13 @@ export function GorevlerEkrani() {
 
     const filteredBadges = getFilteredBadges();
 
+    // Responsive Layout Dimensions
+    const screenWidth = Dimensions.get('window').width;
+    const containerWidth = isTablet() ? TABLET_CONTENT_MAX_WIDTH : screenWidth;
+    const GAP = 8;
+    const PADDING = 40;
+    const badgeWidth = (containerWidth - PADDING - (GAP * 3)) / 4;
+
     if (yukleniyor) {
         return (
             <View style={[styles.loadingContainer, { backgroundColor: renkler.arkaplan }]}>
@@ -128,7 +136,7 @@ export function GorevlerEkrani() {
     }
 
     return (
-        <SafeAreaView style={[styles.safeArea, { backgroundColor: renkler.arkaplan }]} edges={['top']}>
+        <SafeAreaView style={[styles.safeArea, responsiveStyles.screenWrapper(renkler.arkaplan)]} edges={['top']}>
             {/* Header Arkaplan Efekti */}
             <View style={styles.headerBackground}>
                 <LinearGradient
@@ -138,7 +146,7 @@ export function GorevlerEkrani() {
             </View>
 
             <Animated.ScrollView
-                style={styles.container}
+                style={[styles.container, responsiveStyles.container()]}
                 contentContainerStyle={styles.contentContainer}
                 showsVerticalScrollIndicator={false}
                 onScroll={Animated.event(
@@ -317,7 +325,7 @@ export function GorevlerEkrani() {
                                 key={rozet.id}
                                 style={[
                                     styles.badgeItem,
-                                    { backgroundColor: renkler.kartArkaplan },
+                                    { backgroundColor: renkler.kartArkaplan, width: badgeWidth },
                                     rozet.kazanildi && styles.badgeItemEarned
                                 ]}
                                 onPress={() => handleRozetPress(rozet)}

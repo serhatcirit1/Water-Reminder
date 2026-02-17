@@ -133,7 +133,7 @@ export function AchievementModal({
                             },
                         ]}
                     >
-                        <TouchableOpacity activeOpacity={1}>
+                        <TouchableOpacity activeOpacity={1} style={{ alignItems: 'center' }}>
                             {/* Glow Effect */}
                             <Animated.View
                                 style={[
@@ -148,9 +148,19 @@ export function AchievementModal({
                                 ]}
                             />
 
+                            {/* Emoji Container - Moved Outside & Above */}
+                            <View style={[styles.emojiContainer, { marginBottom: -40, marginTop: 0, zIndex: 10, elevation: 10 }]}>
+                                <LinearGradient
+                                    colors={colors.gradient}
+                                    style={styles.emojiBackground}
+                                >
+                                    <Text style={styles.emoji}>{defaultEmoji}</Text>
+                                </LinearGradient>
+                            </View>
+
                             <LinearGradient
                                 colors={['#1a1a2e', '#16213e']}
-                                style={styles.cardBackground}
+                                style={[styles.cardBackground, { paddingTop: 50, width: '100%' }]}
                             >
                                 {/* Top accent bar */}
                                 <LinearGradient
@@ -159,16 +169,6 @@ export function AchievementModal({
                                     end={{ x: 1, y: 0 }}
                                     style={styles.accentBar}
                                 />
-
-                                {/* Emoji Container */}
-                                <View style={styles.emojiContainer}>
-                                    <LinearGradient
-                                        colors={colors.gradient}
-                                        style={styles.emojiBackground}
-                                    >
-                                        <Text style={styles.emoji}>{defaultEmoji}</Text>
-                                    </LinearGradient>
-                                </View>
 
                                 {/* Content */}
                                 <View style={styles.content}>

@@ -17,6 +17,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useTema } from '../TemaContext';
 import { useTranslation } from 'react-i18next';
 import { gorselPaylas, metinPaylas, motivasyonelMesajUret, StreakPaylasimiVerisi } from '../shareUtils';
+import { isTablet } from '../responsive';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -184,7 +185,7 @@ export default function StreakShareCard({
     );
 }
 
-const CARD_WIDTH = SCREEN_WIDTH - 60;
+const CARD_WIDTH = isTablet() ? 400 : SCREEN_WIDTH - 60;
 const CARD_HEIGHT = CARD_WIDTH * 1.77; // Instagram story ratio (9:16)
 
 const styles = StyleSheet.create({

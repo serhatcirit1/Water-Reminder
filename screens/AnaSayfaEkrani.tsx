@@ -44,6 +44,7 @@ import { suFaydasiAl, hedefTamamlandiMesaji } from '../suFaydalari';
 import { AchievementModal, AchievementType } from '../components/AchievementModal';
 import { gunlukOzetPlanla, akilliHatirlatmaPlanla } from '../bildirimler';
 import { suTuketimiKaydet, healthKitToggle } from '../healthKit';
+import { responsiveStyles } from '../responsive';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -426,9 +427,9 @@ export function AnaSayfaEkrani() {
     };
 
     return (
-        <SafeAreaView style={[styles.safeArea, { backgroundColor: renkler.arkaplan }]} edges={['top']}>
+        <SafeAreaView style={[styles.safeArea, responsiveStyles.screenWrapper(renkler.arkaplan)]} edges={['top']}>
             <ScrollView
-                style={styles.container}
+                style={[styles.container, responsiveStyles.container()]}
                 contentContainerStyle={styles.contentContainer}
                 showsVerticalScrollIndicator={false}
             >

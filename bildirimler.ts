@@ -357,45 +357,77 @@ export async function akilliHatirlatmaPlanla(
 
         // Sessiz saatler ayarını yükle
         const sessizAyar = await sessizSaatlerYukle();
+        const bioritimAyar = await bioritimAyarYukle();
 
         // Kalan süreyi hesapla
         const kalanDakika = Math.max(aralikDakika - sonIcmeDakika, 1);
 
         // Bildirimin gönderileceği saati hesapla
         const simdi = new Date();
-        const bildirimSaati = new Date(simdi.getTime() + kalanDakika * 60 * 1000);
-        const saat = bildirimSaati.getHours();
+        const bildirimZamani = new Date(simdi.getTime() + kalanDakika * 60 * 1000);
 
-        // Sessiz saate düşüyorsa bildirim gönderme
-        const bioritimAyar = await bioritimAyarYukle();
+        // Eğer bildirim zamanı gece yarısını geçiyorsa ve bioritim/sessiz ayarlar bunu engelliyorsa:
+        // Bir sonraki uygun zamana (sabaha) ertele
+
+        let planlananZaman = bildirimZamani;
+        const saat = planlananZaman.getHours();
+        let ertelendi = false;
 
         if (bioritimAyar.aktif) {
-            if (!bioritimUygunMu(saat, bioritimAyar)) return;
+            if (!bioritimUygunMu(saat, bioritimAyar)) {
+                // Bioritime uygun değil, uyanma saatine ertele
+                const [uSaat, uDak] = bioritimAyar.uyanmaSaati.split(':').map(Number);
+                const yeniZaman = new Date(planlananZaman);
+                yeniZaman.setHours(uSaat, uDak, 0, 0);
+
+                // Eğer uyanma saati şu anki hedef saatten önceyse, bu yarına demektir
+                if (yeniZaman <= planlananZaman) {
+                    yeniZaman.setDate(yeniZaman.getDate() + 1);
+                }
+
+                planlananZaman = yeniZaman;
+                ertelendi = true;
+            }
         } else if (saatSessizMi(saat, sessizAyar)) {
-            return;
+            // Sessiz saatte, sessiz saatin bitişine ertele
+            const bitisSaat = sessizAyar.bitis;
+            const yeniZaman = new Date(planlananZaman);
+            yeniZaman.setHours(bitisSaat, 0, 0, 0);
+
+            if (yeniZaman <= planlananZaman) {
+                yeniZaman.setDate(yeniZaman.getDate() + 1);
+            }
+
+            planlananZaman = yeniZaman;
+            ertelendi = true;
         }
 
         // Dinamik mesaj oluştur
         let mesaj = '';
-        if (sonIcmeDakika >= aralikDakika) {
+        if (ertelendi) {
+            // Sabah hatırlatması
+            mesaj = i18n.t('notif.morning_reminder', { defaultValue: 'Günaydın! Güne su içerek başla. ☀️' });
+        } else if (sonIcmeDakika >= aralikDakika) {
             mesaj = i18n.t('notif.time_passed', { minutes: sonIcmeDakika });
         } else {
             mesaj = i18n.t('notif.water_time_general');
         }
 
-        // Adaptif öğrenme için bildirim kaydı
-        await bildirimGonderildiKaydet(saat);
+        // Adaptif öğrenme için bildirim kaydı (Planlanan saat için)
+        await bildirimGonderildiKaydet(planlananZaman.getHours());
+
+        const triggerSeconds = Math.max(1, Math.floor((planlananZaman.getTime() - Date.now()) / 1000));
 
         await Notifications.scheduleNotificationAsync({
             identifier: 'akilli-hatirlatma',
             content: {
-                title: i18n.t('notif.smart_reminder_title'),
+                title: ertelendi ? '☀️ ' + i18n.t('notif.smart_reminder_title') : i18n.t('notif.smart_reminder_title'),
                 body: mesaj,
                 sound: true,
             },
             trigger: {
                 type: SchedulableTriggerInputTypes.TIME_INTERVAL,
-                seconds: kalanDakika * 60,
+                seconds: triggerSeconds,
                 repeats: false,
             },
         });

@@ -21,6 +21,7 @@ import { useTema } from '../TemaContext';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTranslation } from 'react-i18next';
 import { bildirimIzniIste } from '../bildirimler';
+import { responsiveStyles } from '../responsive';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -169,16 +170,18 @@ export default function OnboardingEkrani({ onComplete }: OnboardingEkraniProps) 
 
         return (
             <View key={slide.id} style={styles.slide}>
-                <Animated.View style={[styles.emojiContainer, { transform: [{ scale }], opacity }]}>
-                    <Text style={styles.emoji}>{slide.emoji}</Text>
-                </Animated.View>
+                <View style={[styles.slideContent, responsiveStyles.container()]}>
+                    <Animated.View style={[styles.emojiContainer, { transform: [{ scale }], opacity }]}>
+                        <Text style={styles.emoji}>{slide.emoji}</Text>
+                    </Animated.View>
 
-                <Animated.View style={{ opacity }}>
-                    <Text style={[styles.title, { color: renkler.metin }]}>{slide.title}</Text>
-                    <Text style={[styles.description, { color: renkler.metinSoluk }]}>
-                        {slide.description}
-                    </Text>
-                </Animated.View>
+                    <Animated.View style={{ opacity }}>
+                        <Text style={[styles.title, { color: renkler.metin }]}>{slide.title}</Text>
+                        <Text style={[styles.description, { color: renkler.metinSoluk }]}>
+                            {slide.description}
+                        </Text>
+                    </Animated.View>
+                </View>
             </View>
         );
     };
@@ -235,7 +238,7 @@ export default function OnboardingEkrani({ onComplete }: OnboardingEkraniProps) 
                 </TouchableOpacity>
             </View>
 
-            <ScrollView style={styles.profileScroll} showsVerticalScrollIndicator={false}>
+            <ScrollView style={[styles.profileScroll, responsiveStyles.container()]} showsVerticalScrollIndicator={false}>
                 {/* Title */}
                 <View style={styles.profileTitleContainer}>
                     <Text style={styles.profileEmoji}>👤</Text>
@@ -507,6 +510,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 40,
     },
+    slideContent: {
+        width: '100%',
+        alignItems: 'center',
+    },
     emojiContainer: {
         marginBottom: 40,
         width: 160,
@@ -524,6 +531,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         marginBottom: 16,
+        paddingHorizontal: 20,
+        width: '100%',
     },
     description: {
         fontSize: 18,
