@@ -104,10 +104,19 @@ export default function PremiumEkrani({ onClose }: PremiumEkraniProps) {
         const id = planId || seciliPlan;
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
+        // 1. ADIM: Bizim plan isimlerimizi, Apple'daki gerçek ID'ler ile eşleştiriyoruz (Mapping)
+        const PRODUCT_ID_MAP: { [key: string]: string } = {
+            'aylik': 'sw_monthly_premium',
+            'yillik': 'sw_yearly_premium',
+            'omur_boyu': 'sw_lifetimes_premium'
+        };
+
+        // Seçilen plana denk gelen gerçek Apple Product ID'sini alıyoruz
+        const gercekUrunId = PRODUCT_ID_MAP[id];
+
         try {
-            // DİKKAT: RevenueCat üzerinden gerçek satın alma tetikleniyor
-            // 'id' değeri (aylik, yillik, omur_boyu) Mağaza Ürün Kimliği (Product ID) ile eşleşmelidir.
-            const { customerInfo } = await Purchases.purchaseProduct(id);
+            // 2. ADIM: Apple'a 'id' (yillik) yerine 'gercekUrunId' (sw_yearly_premium) gönderiyoruz
+            const { customerInfo } = await Purchases.purchaseProduct(gercekUrunId);
 
             // Satın alma başarılı olduysa, entitlement kontrolü yapıyoruz
             if (typeof customerInfo.entitlements.active['premium'] !== 'undefined') {
@@ -130,9 +139,11 @@ export default function PremiumEkrani({ onClose }: PremiumEkraniProps) {
             // Kullanıcı satın alma sayfasını kapatırsa (Cancel) hata vermiyoruz
             if (!error.userCancelled) {
                 console.error("Purchase Error:", error);
+
+                // 3. ADIM: Eğer tekrar hata alırsak tam olarak sebebini görmek için error.message ekledik
                 Alert.alert(
-                    t('common.error'),
-                    t('common.errorOccurred', 'Bir hata oluştu. Lütfen tekrar deneyin.')
+                    "Satın Alma Hatası",
+                    error.message || t('common.errorOccurred', 'Bir hata oluştu. Lütfen tekrar deneyin.')
                 );
             }
         }
