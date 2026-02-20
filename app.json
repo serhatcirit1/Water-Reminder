@@ -23,7 +23,6 @@
       "infoPlist": {
         "NSHealthShareUsageDescription": "Smart Water: AI Insights needs access to Apple Health to sync your water intake data and provide you with accurate hydration insights.",
         "NSHealthUpdateUsageDescription": "Smart Water: AI Insights writes your water intake to Apple Health so you can track all your health data in one place.",
-        "NSUserTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you.",
         "ITSAppUsesNonExemptEncryption": false
       }
     },

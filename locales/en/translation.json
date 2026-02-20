@@ -92,6 +92,13 @@
             "termsOfUse": "Terms of Use",
             "privacyPolicy": "Privacy Policy"
         },
+        "restore": {
+            "button": "Restore Purchases",
+            "success": "Your premium membership has been successfully restored.",
+            "noActive": "No active subscription found for this Apple ID.",
+            "error": "An error occurred during the restore process.",
+            "restoring": "Restoring..."
+        },
         "footer": "You can cancel anytime. Payments are charged through your App Store account."
     },
     "home": {

@@ -537,7 +537,7 @@ export function AyarlarEkrani() {
                         <Text style={styles.linkText}>{t('settings.legal.privacyPolicy')}</Text>
                     </TouchableOpacity>
                     <Text style={styles.linkDot}>•</Text>
-                    <TouchableOpacity onPress={() => Linking.openURL('https://serhatcirit1.github.io/Smart-Water-AI-Insights-Privacy-Policy/terms.html')}>
+                    <TouchableOpacity onPress={() => Linking.openURL('https://www.apple.com/legal/internet-services/itunes/dev/stdeula/')}>
                         <Text style={styles.linkText}>{t('settings.legal.termsOfUse')}</Text>
                     </TouchableOpacity>
                 </View>

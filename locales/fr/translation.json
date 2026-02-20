@@ -524,8 +524,15 @@
         },
         "footer": "Vous pouvez annuler à tout moment. Les paiements sont débités sur votre compte App Store.",
         "legal": {
-            "privacyPolicy": "Politique de confidentialité",
-            "termsOfUse": "Conditions d'utilisation"
+            "privacyPolicy": "Politique de Confidentialité",
+            "termsOfUse": "Conditions d'Utilisation"
+        },
+        "restore": {
+            "button": "Restaurer les achats",
+            "success": "Votre abonnement premium a été restauré avec succès.",
+            "noActive": "Aucun abonnement actif trouvé pour cet identifiant Apple.",
+            "error": "Une erreur est survenue lors du processus de restauration.",
+            "restoring": "Restauration..."
         },
         "plans": {
             "lifetime": "À vie",

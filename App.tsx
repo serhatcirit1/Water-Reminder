@@ -3,9 +3,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import { Text, View, ActivityIndicator } from 'react-native';
+import { Text, View, ActivityIndicator, Platform } from 'react-native'; // Platform eklendi
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
+import Purchases from 'react-native-purchases'; // REVENUECAT EKLENDİ
 import './locales/i18n';
 import { bildirimIzniIste, hatirlatmalariPlanla, bildirimAyarlariniKaydet, gunlukOzetPlanla, haftalikRaporPlanla, bildirimAyarlariniYukle } from './bildirimler';
 import { healthKitAyarYukle, healthKitBaslat } from './healthKit';
@@ -93,7 +94,16 @@ function AppContent() {
     checkOnboarding();
     initHealthKit();
     setupNotifications();
+    setupRevenueCat(); // REVENUECAT BAŞLATICI EKLENDİ
   }, []);
+
+  // REVENUECAT KURULUM FONKSİYONU
+  const setupRevenueCat = async () => {
+    if (Platform.OS === 'ios') {
+      // DİKKAT: KENDİ REVENUECAT API ANAHTARINI BURAYA YAPIŞTIR
+      Purchases.configure({ apiKey: "appl_MAcVXMrFsFKTsulhTVfhZBfFBiI" });
+    }
+  };
 
   const setupNotifications = async () => {
     try {

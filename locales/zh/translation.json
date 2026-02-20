@@ -527,6 +527,13 @@
             "privacyPolicy": "隐私政策",
             "termsOfUse": "使用条款"
         },
+        "restore": {
+            "button": "恢复购买",
+            "success": "您的高级会员资格已成功恢复。",
+            "noActive": "未找到与此Apple ID关联的有效订阅。",
+            "error": "恢复过程中发生错误。",
+            "restoring": "恢复中..."
+        },
         "plans": {
             "lifetime": "终身",
             "monthly": "月付",

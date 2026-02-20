@@ -525,7 +525,14 @@
         "footer": "언제든지 취소할 수 있습니다. 결제는 App Store 계정으로 청구됩니다.",
         "legal": {
             "privacyPolicy": "개인정보 처리방침",
-            "termsOfUse": "이용약관"
+            "termsOfUse": "이용 약관"
+        },
+        "restore": {
+            "button": "구매 복원",
+            "success": "프리미엄 멤버십이 성공적으로 복원되었습니다.",
+            "noActive": "이 Apple ID에 대한 활성 구독을 찾을 수 없습니다.",
+            "error": "복원 과정에서 오류가 발생했습니다.",
+            "restoring": "복원 중..."
         },
         "plans": {
             "lifetime": "평생",

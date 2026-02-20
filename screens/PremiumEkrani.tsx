@@ -2,6 +2,7 @@
 // PREMIUM EKRANI (Paywall)
 // ============================================
 // Uygulamanın ücretli özelliklerini tanıtan premium ekran
+import Purchases from 'react-native-purchases'; // Bu importun sayfanın en üstünde olduğundan emin ol
 
 import React, { useEffect, useRef, useState } from 'react';
 import {
@@ -53,30 +54,87 @@ export default function PremiumEkrani({ onClose }: PremiumEkraniProps) {
     const { setPremium } = usePremium();
     const { t } = useTranslation();
     const [seciliPlan, setSeciliPlan] = useState<string>('yillik');
+    const [restoring, setRestoring] = useState<boolean>(false);
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const slideAnim = useRef(new Animated.Value(50)).current;
 
-    const handleSatinAl = async (planId?: string) => {
-        const id = planId || seciliPlan;
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    const handleRestore = async () => {
+        setRestoring(true);
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
         try {
-            const yeniDurum = {
-                aktif: true,
-                paketId: id as any,
-                satinAlmaTarihi: new Date().toISOString()
-            };
+            // GERÇEK REVENUECAT BAĞLANTISI (Apple sunucularına gider)
+            const customerInfo = await Purchases.restorePurchases();
 
-            await premiumDurumKaydet(yeniDurum);
-            setPremium(yeniDurum);
+            // 'premium' kısmı RevenueCat'te belirlediğin entitlement (hak) ID'sidir
+            if (typeof customerInfo.entitlements.active['premium'] !== 'undefined') {
+                // Aktif abonelik bulundu!
+                const yeniDurum = {
+                    aktif: true,
+                    paketId: 'yillik',
+                    satinAlmaTarihi: new Date().toISOString()
+                };
+                await premiumDurumKaydet(yeniDurum);
+                setPremium(yeniDurum);
 
-            Alert.alert(
-                t('premium.congratulations'),
-                t('premium.purchaseSuccess'),
-                [{ text: t('common.great'), onPress: onClose }]
-            );
+                Alert.alert(
+                    t('common.success'),
+                    t('premium.restore.success'),
+                    [{ text: t('common.ok'), onPress: onClose }]
+                );
+            } else {
+                // Aktif abonelik YOKSA bu uyarıyı vermeliyiz
+                Alert.alert(
+                    t('common.info', 'Bilgi'), // Eğer çeviride info yoksa varsayılan 'Bilgi' yazar
+                    t('premium.restore.noActive')
+                );
+            }
         } catch (error) {
-            Alert.alert(t('common.error'), t('common.errorOccurred'));
+            // Kullanıcı şifre girmekten vazgeçerse veya internet koparsa
+            Alert.alert(
+                t('common.error'),
+                t('premium.restore.error')
+            );
+        } finally {
+            setRestoring(false);
+        }
+    };
+
+    const handleSatinAl = async (planId?: string) => {
+        const id = planId || seciliPlan;
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+        try {
+            // DİKKAT: RevenueCat üzerinden gerçek satın alma tetikleniyor
+            // 'id' değeri (aylik, yillik, omur_boyu) Mağaza Ürün Kimliği (Product ID) ile eşleşmelidir.
+            const { customerInfo } = await Purchases.purchaseProduct(id);
+
+            // Satın alma başarılı olduysa, entitlement kontrolü yapıyoruz
+            if (typeof customerInfo.entitlements.active['premium'] !== 'undefined') {
+                const yeniDurum = {
+                    aktif: true,
+                    paketId: id as any,
+                    satinAlmaTarihi: new Date().toISOString()
+                };
+
+                await premiumDurumKaydet(yeniDurum);
+                setPremium(yeniDurum);
+
+                Alert.alert(
+                    t('premium.congratulations'),
+                    t('premium.purchaseSuccess'),
+                    [{ text: t('common.great'), onPress: onClose }]
+                );
+            }
+        } catch (error: any) {
+            // Kullanıcı satın alma sayfasını kapatırsa (Cancel) hata vermiyoruz
+            if (!error.userCancelled) {
+                console.error("Purchase Error:", error);
+                Alert.alert(
+                    t('common.error'),
+                    t('common.errorOccurred', 'Bir hata oluştu. Lütfen tekrar deneyin.')
+                );
+            }
         }
     };
 
@@ -217,7 +275,7 @@ export default function PremiumEkrani({ onClose }: PremiumEkraniProps) {
                                 t('premium.trialText.lifetime')}
                     </Text>
                     <View style={styles.legalLinksContainer}>
-                        <TouchableOpacity onPress={() => Linking.openURL('https://serhatcirit1.github.io/Smart-Water-AI-Insights-Privacy-Policy/terms.html')}>
+                        <TouchableOpacity onPress={() => Linking.openURL('https://www.apple.com/legal/internet-services/itunes/dev/stdeula/')}>
                             <Text style={styles.legalLink}>{t('premium.legal.termsOfUse')}</Text>
                         </TouchableOpacity>
                         <Text style={styles.legalSeparator}>•</Text>
@@ -225,8 +283,17 @@ export default function PremiumEkrani({ onClose }: PremiumEkraniProps) {
                             <Text style={styles.legalLink}>{t('premium.legal.privacyPolicy')}</Text>
                         </TouchableOpacity>
                     </View>
+                    <TouchableOpacity
+                        style={styles.restoreButton}
+                        onPress={handleRestore}
+                        disabled={restoring}
+                    >
+                        <Text style={styles.restoreButtonText}>
+                            {restoring ? t('premium.restore.restoring') : t('premium.restore.button')}
+                        </Text>
+                    </TouchableOpacity>
                 </View>
-            </SafeAreaView>
+            </SafeAreaView >
         </View >
     );
 }
@@ -479,5 +546,16 @@ const styles = StyleSheet.create({
     legalSeparator: {
         color: '#64748B',
         fontSize: 12,
+    },
+    restoreButton: {
+        marginTop: 15,
+        alignSelf: 'center',
+        paddingVertical: 5,
+    },
+    restoreButtonText: {
+        color: '#64748B',
+        fontSize: 12,
+        textDecorationLine: 'underline',
+        fontWeight: '500',
     },
 });

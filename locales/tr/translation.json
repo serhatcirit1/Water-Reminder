@@ -92,6 +92,13 @@
             "termsOfUse": "Kullanım Koşulları",
             "privacyPolicy": "Gizlilik Politikası"
         },
+        "restore": {
+            "button": "Satın Almaları Geri Yükle",
+            "success": "Premium üyeliğiniz başarıyla geri yüklendi.",
+            "noActive": "Bu Apple Kimliğine ait aktif bir abonelik bulunamadı.",
+            "error": "Geri yükleme işlemi sırasında bir sorun oluştu.",
+            "restoring": "Geri yükleniyor..."
+        },
         "footer": "İstediğiniz zaman iptal edebilirsiniz. Ödemeler App Store hesabınızdan tahsil edilir."
     },
     "home": {

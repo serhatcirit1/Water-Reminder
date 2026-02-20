@@ -519,6 +519,13 @@
             "privacyPolicy": "Datenschutzrichtlinie",
             "termsOfUse": "Nutzungsbedingungen"
         },
+        "restore": {
+            "button": "Käufe wiederherstellen",
+            "success": "Ihre Premium-Mitgliedschaft wurde erfolgreich wiederhergestellt.",
+            "noActive": "Kein aktives Abonnement für diese Apple-ID gefunden.",
+            "error": "Beim Wiederherstellungsvorgang ist ein Fehler aufgetreten.",
+            "restoring": "Wiederherstellung..."
+        },
         "plans": {
             "lifetime": "Lebenslang",
             "monthly": "Monatlich",

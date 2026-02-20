@@ -527,6 +527,13 @@
             "privacyPolicy": "Política de Privacidade",
             "termsOfUse": "Termos de Uso"
         },
+        "restore": {
+            "button": "Restaurar compras",
+            "success": "Sua assinatura premium foi restaurada com sucesso.",
+            "noActive": "Nenhuma assinatura ativa encontrada para este Apple ID.",
+            "error": "Ocurreu um erro durante o processo de restauração.",
+            "restoring": "Restaurando..."
+        },
         "plans": {
             "lifetime": "Vitalício",
             "monthly": "Mensal",

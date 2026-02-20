@@ -527,6 +527,13 @@
             "privacyPolicy": "プライバシーポリシー",
             "termsOfUse": "利用規約"
         },
+        "restore": {
+            "button": "購入を復元",
+            "success": "プレミアムメンバーシップが正常に復元されました。",
+            "noActive": "このApple IDに関連するアクティブなサブスクリプションは見つかりませんでした。",
+            "error": "復元処理中にエラーが発生しました。",
+            "restoring": "復元中..."
+        },
         "plans": {
             "lifetime": "永久",
             "monthly": "月額",
