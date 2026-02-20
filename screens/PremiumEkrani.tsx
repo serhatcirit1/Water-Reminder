@@ -71,11 +71,11 @@ export default function PremiumEkrani({ onClose }: PremiumEkraniProps) {
                 // Aktif abonelik bulundu!
                 const yeniDurum = {
                     aktif: true,
-                    paketId: 'yillik',
+                    paketId: 'yillik' as any,
                     satinAlmaTarihi: new Date().toISOString()
                 };
-                await premiumDurumKaydet(yeniDurum);
-                setPremium(yeniDurum);
+                await premiumDurumKaydet(yeniDurum as any);
+                setPremium(yeniDurum as any);
 
                 Alert.alert(
                     t('common.success'),
@@ -117,8 +117,8 @@ export default function PremiumEkrani({ onClose }: PremiumEkraniProps) {
                     satinAlmaTarihi: new Date().toISOString()
                 };
 
-                await premiumDurumKaydet(yeniDurum);
-                setPremium(yeniDurum);
+                await premiumDurumKaydet(yeniDurum as any);
+                setPremium(yeniDurum as any);
 
                 Alert.alert(
                     t('premium.congratulations'),
