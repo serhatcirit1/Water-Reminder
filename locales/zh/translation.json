@@ -598,10 +598,10 @@
         "goalUpdated": "目标已更新",
         "language": "语言",
         "legal": {
-            "close": "关闭",
-            "privacyPolicy": "隐私政策",
             "termsOfUse": "使用条款",
-            "title": "法律信息"
+            "medicalDisclaimer": "医学免责声明",
+            "title": "法律信息",
+            "close": "关闭"
         },
         "lightMode": "蓝色模式",
         "newGoalMessage": "新目标：{goal} 毫升",
@@ -810,5 +810,11 @@
         "snow": "下雪",
         "storm": "暴风雨",
         "unknown": "未知"
+    },
+    "medicalDisclaimer": {
+        "title": "医学免责声明与来源",
+        "message": "Smart Water: AI Insights 提供常识性的补水信息，不能替代专业的医疗建议。在做出医疗决定时，请务必咨询医疗保健提供者。\n\n我们的饮水计算和见解均基于以下机构的通用指南：\n• 美国国家科学院、工程院和医学园\n• 世界卫生组织 (WHO)",
+        "whoSource": "阅读 WHO 指南",
+        "nasSource": "阅读国家科学院报告"
     }
 }

@@ -598,10 +598,10 @@
         "goalUpdated": "目標更新済み",
         "language": "言語",
         "legal": {
-            "close": "閉じる",
-            "privacyPolicy": "プライバシーポリシー",
             "termsOfUse": "利用規約",
-            "title": "法的情報"
+            "medicalDisclaimer": "免責事項",
+            "title": "法的情報",
+            "close": "閉じる"
         },
         "lightMode": "ブルーモード",
         "newGoalMessage": "新しい目標: {goal} ml",
@@ -810,5 +810,11 @@
         "snow": "雪",
         "storm": "嵐",
         "unknown": "不明"
+    },
+    "medicalDisclaimer": {
+        "title": "免責事項と出典",
+        "message": "Smart Water: AI Insightsは、水分補給に関する一般的な情報を提供するものであり、専門的な医学的アドバイスに代わるものではありません。医学的な決定については、常に医療提供者に相談してください。\n\n当アプリの水分補給計算とインサイトは、以下の一般的なガイドラインに基づいています：\n• 米国国立科学・工学・医学アカデミー\n• 世界保健機関 (WHO)",
+        "whoSource": "WHOのガイドラインを読む",
+        "nasSource": "全米アカデミーズの報告書"
     }
 }

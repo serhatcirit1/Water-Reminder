@@ -588,10 +588,10 @@
         "goalUpdated": "Ziel aktualisiert",
         "language": "Sprache",
         "legal": {
-            "close": "Schließen",
-            "privacyPolicy": "Datenschutzrichtlinie",
             "termsOfUse": "Nutzungsbedingungen",
-            "title": "Rechtliches"
+            "medicalDisclaimer": "Haftungsausschluss",
+            "title": "Rechtliches",
+            "close": "Schließen"
         },
         "lightMode": "Blauer Modus",
         "newGoalMessage": "Dein neues Ziel: {goal} ml",
@@ -802,5 +802,11 @@
         "snow": "Schneeig",
         "storm": "Stürmisch",
         "unknown": "Unbekannt"
+    },
+    "medicalDisclaimer": {
+        "title": "Haftungsausschluss & Quellen",
+        "message": "Smart Water: AI Insights bietet allgemeine Informationen zur Hydratation und ist kein Ersatz für professionelle medizinische Beratung. Konsultieren Sie bei medizinischen Entscheidungen immer einen Arzt.\n\nUnsere Hydratationsberechnungen und Erkenntnisse basieren auf allgemeinen Richtlinien von:\n• U.S. National Academies of Sciences, Engineering, and Medicine\n• Weltgesundheitsorganisation (WHO)",
+        "whoSource": "WHO-Richtlinien lesen",
+        "nasSource": "Bericht der US National Academies"
     }
 }

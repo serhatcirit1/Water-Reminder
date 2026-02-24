@@ -292,6 +292,7 @@
             "title": "Yasal",
             "privacyPolicy": "Gizlilik Politikası",
             "termsOfUse": "Kullanım Koşulları",
+            "medicalDisclaimer": "Tıbbi Sorumluluk Reddi",
             "close": "Kapat"
         },
         "pickerTitles": {
@@ -810,5 +811,11 @@
         "basagrisi_migren": "{{amount}} su ile migren şiddetini azaltmaya yardımcı oldun! Düzenli su içmek migreni önler.",
         "goalComplete": "Günlük hedefini tamamladın! Vücudun sana teşekkür ediyor! 🏆",
         "streak": "{{days}} gündür düzenli su içiyorsun! Sağlıklı alışkanlığın pekişiyor! 🔥"
+    },
+    "medicalDisclaimer": {
+        "title": "Tıbbi Sorumluluk Reddi ve Kaynaklar",
+        "message": "Smart Water: AI Insights genel bilgilendirme amaçlıdır ve profesyonel tıbbi tavsiye yerine geçmez. Sağlık kararlarınız için daima bir doktora danışın.\n\nSu tüketimi hesaplamalarımız ve tavsiyelerimiz aşağıdaki kurumların genel verilerine dayanmaktadır:\n• U.S. National Academies of Sciences, Engineering, and Medicine\n• Dünya Sağlık Örgütü (WHO)",
+        "whoSource": "WHO Kaynağını Oku",
+        "nasSource": "US National Academies Raporu"
     }
 }

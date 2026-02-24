@@ -292,6 +292,7 @@
             "title": "Legal",
             "privacyPolicy": "Privacy Policy",
             "termsOfUse": "Terms of Use",
+            "medicalDisclaimer": "Medical Disclaimer",
             "close": "Close"
         },
         "pickerTitles": {
@@ -810,5 +811,11 @@
         "basagrisi_migren": "{{amount}} of water helped reduce migraine severity! Regular hydration prevents migraines.",
         "goalComplete": "You completed your daily goal! Your body thanks you! 🏆",
         "streak": "{{days}} days of consistent hydration! Your healthy habit is growing! 🔥"
+    },
+    "medicalDisclaimer": {
+        "title": "Medical Disclaimer & Sources",
+        "message": "Smart Water: AI Insights provides general hydration information and is not a substitute for professional medical advice. Always consult a healthcare provider for medical decisions.\n\nOur hydration calculations and insights are based on general guidelines from:\n• U.S. National Academies of Sciences, Engineering, and Medicine\n• World Health Organization (WHO)",
+        "whoSource": "Read WHO Guidelines",
+        "nasSource": "US National Academies Report"
     }
 }

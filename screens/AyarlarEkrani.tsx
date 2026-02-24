@@ -250,6 +250,28 @@ export function AyarlarEkrani() {
         await profilKaydet(yeniProfil);
     };
 
+    const showMedicalDisclaimer = () => {
+        Alert.alert(
+            t('medicalDisclaimer.title'),
+            t('medicalDisclaimer.message'),
+            [
+                {
+                    text: t('medicalDisclaimer.whoSource'),
+                    onPress: () => Linking.openURL('https://www.who.int/news-room/fact-sheets/detail/drinking-water')
+                },
+                {
+                    text: t('medicalDisclaimer.nasSource'),
+                    onPress: () => Linking.openURL('https://www.nationalacademies.org/news/report-sets-dietary-intake-levels-for-water-salt-and-potassium-to-maintain-health-and-reduce-chronic-disease-risk')
+                },
+                {
+                    text: t('common.close'),
+                    style: 'cancel'
+                }
+            ],
+            { cancelable: true }
+        );
+    };
+
     if (yukleniyor) {
         return (
             <SafeAreaView style={[styles.safeArea, { backgroundColor: renkler.arkaplan }]}>
@@ -539,6 +561,10 @@ export function AyarlarEkrani() {
                     <Text style={styles.linkDot}>•</Text>
                     <TouchableOpacity onPress={() => Linking.openURL('https://www.apple.com/legal/internet-services/itunes/dev/stdeula/')}>
                         <Text style={styles.linkText}>{t('settings.legal.termsOfUse')}</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.linkDot}>•</Text>
+                    <TouchableOpacity onPress={showMedicalDisclaimer}>
+                        <Text style={styles.linkText}>{t('settings.legal.medicalDisclaimer')}</Text>
                     </TouchableOpacity>
                 </View>
                 <Text style={styles.versionText}>v{t('appInfo.versionValue')} • {t('appInfo.developerName')}</Text>
